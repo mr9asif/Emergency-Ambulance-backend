@@ -1,0 +1,44 @@
+enum TripStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model Trip {
+  id         String @id @default(uuid()) @db.Uuid
+  tripNumber String @unique @map("trip_number") @db.VarChar(30)
+
+  emergencyRequestId   String @unique @map("emergency_request_id") @db.Uuid
+  dispatchAssignmentId String @unique @map("dispatch_assignment_id") @db.Uuid
+  driverId             String @map("driver_id") @db.Uuid
+  ambulanceId          String @map("ambulance_id") @db.Uuid
+  hospitalId           String @map("hospital_id") @db.Uuid
+
+  startedAt           DateTime? @map("started_at")
+  pickedUpAt          DateTime? @map("picked_up_at")
+  arrivedAtHospitalAt DateTime? @map("arrived_at_hospital_at")
+  completedAt         DateTime? @map("completed_at")
+
+  distanceKm Decimal? @map("distance_km") @db.Decimal(10, 2)
+  fareAmount Decimal? @map("fare_amount") @db.Decimal(12, 2)
+
+  status TripStatus @default(NOT_STARTED)
+
+  emergencyRequest   EmergencyRequest   @relation(fields: [emergencyRequestId], references: [id], onDelete: Restrict)
+  dispatchAssignment DispatchAssignment @relation(fields: [dispatchAssignmentId], references: [id], onDelete: Restrict)
+  driver             OperatorProfile    @relation("DriverTrips", fields: [driverId], references: [id], onDelete: Restrict)
+  ambulance          Ambulance          @relation("AmbulanceTrips", fields: [ambulanceId], references: [id], onDelete: Restrict)
+  hospital           Hospital           @relation(fields: [hospitalId], references: [id], onDelete: Restrict)
+
+  payment Payment?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([driverId])
+  @@index([ambulanceId])
+  @@index([hospitalId])
+  @@index([status])
+  @@map("trips")
+}

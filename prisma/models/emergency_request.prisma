@@ -1,0 +1,71 @@
+enum EmergencyType {
+    ACCIDENT
+    CARDIAC
+    STROKE
+    PREGNANCY
+    BREATHING_PROBLEM
+    TRAUMA
+    OTHER
+}
+
+enum Priority {
+    CRITICAL
+    HIGH
+    MEDIUM
+    LOW
+}
+
+enum EmergencyRequestStatus {
+    PENDING
+    DISPATCHING
+    ASSIGNED
+    EN_ROUTE_TO_PICKUP
+    ARRIVED_AT_PICKUP
+    PATIENT_PICKED_UP
+    EN_ROUTE_TO_HOSPITAL
+    ARRIVED_AT_HOSPITAL
+    COMPLETED
+    CANCELLED
+}
+
+model EmergencyRequest {
+    id            String @id @default(uuid()) @db.Uuid
+    requestNumber String @unique @map("request_number") @db.VarChar(30)
+
+    customerId String  @map("customer_id") @db.Uuid
+    patientId  String  @db.Uuid
+    hospitalId String? @map("hospital_id") @db.Uuid
+
+    pickupAddress   String  @map("pickup_address") @db.Text
+    pickupLatitude  Decimal @map("pickup_latitude") @db.Decimal(10, 7)
+    pickupLongitude Decimal @map("pickup_longitude") @db.Decimal(10, 7)
+
+    emergencyType EmergencyType @map("emergency_type")
+    priority      Priority
+    requiredTime  DateTime      @map("required_time")
+    notes         String?       @db.Text
+
+    status EmergencyRequestStatus @default(PENDING)
+
+    cancellationReason String?   @map("cancellation_reason") @db.Text
+    cancelledBy        String?   @map("cancelled_by") @db.Uuid
+    cancelledAt        DateTime? @map("cancelled_at")
+
+    customer        User      @relation(fields: [customerId], references: [id], onDelete: Restrict)
+    patient         Patient   @relation(fields: [patientId], references: [id], onDelete: Restrict)
+    hospital        Hospital? @relation(fields: [hospitalId], references: [id], onDelete: SetNull)
+    cancelledByUser User?     @relation("CancelledBy", fields: [cancelledBy], references: [id], onDelete: SetNull)
+
+    dispatchAssignments DispatchAssignment[]
+    trip                Trip?
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@index([customerId])
+    @@index([patientId])
+    @@index([status])
+    @@index([priority, status])
+    @@index([hospitalId])
+    @@map("emergency_requests")
+}

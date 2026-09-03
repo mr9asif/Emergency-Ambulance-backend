@@ -1,0 +1,18 @@
+model PricingRule {
+    id            String        @id @default(uuid()) @db.Uuid
+    ambulanceType AmbulanceType @map("ambulance_type")
+
+    baseFare        Decimal @map("base_fare") @db.Decimal(10, 2)
+    perKmRate       Decimal @map("per_km_rate") @db.Decimal(10, 2)
+    emergencyCharge Decimal @default(0) @map("emergency_charge") @db.Decimal(10, 2)
+
+    isActive      Boolean   @default(true) @map("is_active")
+    effectiveFrom DateTime  @map("effective_from")
+    effectiveTo   DateTime? @map("effective_to")
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@index([ambulanceType, isActive])
+    @@map("pricing_rules")
+}

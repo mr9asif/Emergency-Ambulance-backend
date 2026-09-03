@@ -1,0 +1,21 @@
+model Hospital {
+  id           String  @id @default(uuid()) @db.Uuid
+  name         String  @db.VarChar(200)
+  phone        String? @db.VarChar(20)
+  address      String  @db.Text
+  latitude     Decimal @db.Decimal(10, 7)
+  longitude    Decimal @db.Decimal(10, 7)
+  isActive     Boolean @default(true) @map("is_active")
+  hasEmergency Boolean @default(true) @map("has_emergency")
+
+  operators         OperatorProfile[]
+  ambulances        Ambulance[]
+  emergencyRequests EmergencyRequest[]
+  trips             Trip[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([latitude, longitude])
+  @@map("hospitals")
+}

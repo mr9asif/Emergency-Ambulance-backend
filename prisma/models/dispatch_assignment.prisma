@@ -1,0 +1,44 @@
+enum AssignmentMethod {
+    AUTO
+    MANUAL
+}
+
+enum AssignmentStatus {
+    OFFERED
+    ACCEPTED
+    REJECTED
+    EXPIRED
+    CANCELLED
+}
+
+model DispatchAssignment {
+    id                 String  @id @default(uuid()) @db.Uuid
+    emergencyRequestId String  @map("emergency_request_id") @db.Uuid
+    driverId           String  @map("driver_id") @db.Uuid
+    ambulanceId        String  @map("ambulance_id") @db.Uuid
+    assignedBy         String? @map("assigned_by") @db.Uuid
+
+    assignmentMethod AssignmentMethod @map("assignment_method")
+    status           AssignmentStatus @default(OFFERED)
+
+    offeredAt       DateTime  @map("offered_at")
+    respondedAt     DateTime? @map("responded_at")
+    expiresAt       DateTime? @map("expires_at")
+    rejectionReason String?   @map("rejection_reason") @db.Text
+
+    emergencyRequest EmergencyRequest @relation(fields: [emergencyRequestId], references: [id], onDelete: Cascade)
+    driver           OperatorProfile  @relation("DriverAssignments", fields: [driverId], references: [id], onDelete: Restrict)
+    ambulance        Ambulance        @relation("AmbulanceAssignments", fields: [ambulanceId], references: [id], onDelete: Restrict)
+    assignedByUser   User?            @relation(fields: [assignedBy], references: [id], onDelete: SetNull)
+
+    trip Trip?
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@index([emergencyRequestId])
+    @@index([driverId, status])
+    @@index([ambulanceId, status])
+    @@index([status, expiresAt])
+    @@map("dispatch_assignments")
+}

@@ -1,0 +1,17 @@
+model AmbulanceLocation {
+    id          String @id @default(uuid()) @db.Uuid
+    ambulanceId String @map("ambulance_id") @db.Uuid
+
+    latitude  Decimal  @db.Decimal(10, 7)
+    longitude Decimal  @db.Decimal(10, 7)
+    accuracy  Decimal? @db.Decimal(8, 2)
+    speed     Decimal? @db.Decimal(8, 2)
+    heading   Decimal? @db.Decimal(6, 2)
+
+    recordedAt DateTime @default(now()) @map("recorded_at")
+
+    ambulance Ambulance @relation(fields: [ambulanceId], references: [id], onDelete: Cascade)
+
+    @@index([ambulanceId, recordedAt])
+    @@map("ambulance_locations")
+}

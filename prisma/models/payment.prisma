@@ -1,0 +1,43 @@
+enum PaymentGateway {
+    BKASH
+    STRIPE
+    SSLCOMMERZ
+}
+
+enum PaymentStatus {
+    PENDING
+    PROCESSING
+    SUCCESS
+    FAILED
+    REFUNDED
+    CANCELLED
+}
+
+model Payment {
+    id            String @id @default(uuid()) @db.Uuid
+    paymentNumber String @unique @map("payment_number") @db.VarChar(50)
+
+    tripId     String @unique @map("trip_id") @db.Uuid
+    customerId String @map("customer_id") @db.Uuid
+
+    amount   Decimal @db.Decimal(12, 2)
+    currency String  @default("BDT") @db.VarChar(10)
+
+    gateway          PaymentGateway
+    transactionId    String?        @unique @map("transaction_id") @db.VarChar(255)
+    gatewayReference String?        @map("gateway_reference") @db.VarChar(255)
+
+    status        PaymentStatus @default(PENDING)
+    paidAt        DateTime?     @map("paid_at")
+    failureReason String?       @map("failure_reason") @db.Text
+
+    trip     Trip @relation(fields: [tripId], references: [id], onDelete: Restrict)
+    customer User @relation(fields: [customerId], references: [id], onDelete: Restrict)
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@index([customerId])
+    @@index([status])
+    @@map("payments")
+}

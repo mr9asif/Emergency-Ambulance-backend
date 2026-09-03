@@ -1,0 +1,37 @@
+enum Gender {
+    MALE
+    FEMALE
+    OTHER
+}
+
+enum BloodGroup {
+    A_POSITIVE
+    A_NEGATIVE
+    B_POSITIVE
+    B_NEGATIVE
+    AB_POSITIVE
+    AB_NEGATIVE
+    O_POSITIVE
+    O_NEGATIVE
+}
+
+model Patient {
+    id               String      @id @default(uuid()) @db.Uuid
+    userId           String      @map("user_id") @db.Uuid
+    name             String      @db.VarChar(100)
+    phone            String?     @db.VarChar(20)
+    dateOfBirth      DateTime?   @map("date_of_birth") @db.Date
+    gender           Gender?
+    bloodGroup       BloodGroup? @map("blood_group")
+    medicalNotes     String?     @map("medical_notes") @db.Text
+    emergencyContact String?     @map("emergency_contact") @db.VarChar(20)
+
+    user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+    emergencyRequests EmergencyRequest[]
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@index([userId])
+    @@map("patients")
+}

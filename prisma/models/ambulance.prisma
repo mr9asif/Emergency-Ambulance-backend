@@ -1,0 +1,37 @@
+enum AmbulanceType {
+  BASIC
+  AC
+  ICU
+  CARDIAC
+  NEONATAL
+}
+
+enum AmbulanceStatus {
+  AVAILABLE
+  BUSY
+  MAINTENANCE
+  OFFLINE
+}
+
+model Ambulance {
+  id                 String          @id @default(uuid()) @db.Uuid
+  registrationNumber String          @unique @map("registration_number") @db.VarChar(50)
+  ambulanceType      AmbulanceType   @map("ambulance_type")
+  status             AmbulanceStatus @default(OFFLINE)
+  baseHospitalId     String?         @map("base_hospital_id") @db.Uuid
+  currentLatitude    Decimal?        @map("current_latitude") @db.Decimal(10, 7)
+  currentLongitude   Decimal?        @map("current_longitude") @db.Decimal(10, 7)
+
+  baseHospital        Hospital?            @relation(fields: [baseHospitalId], references: [id], onDelete: SetNull)
+  locations           AmbulanceLocation[]
+  dispatchAssignments DispatchAssignment[] @relation("AmbulanceAssignments")
+  trips               Trip[]               @relation("AmbulanceTrips")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([status])
+  @@index([ambulanceType, status])
+  @@index([baseHospitalId])
+  @@map("ambulances")
+}
