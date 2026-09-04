@@ -29,7 +29,8 @@ model DispatchAssignment {
     emergencyRequest EmergencyRequest @relation(fields: [emergencyRequestId], references: [id], onDelete: Cascade)
     driver           OperatorProfile  @relation("DriverAssignments", fields: [driverId], references: [id], onDelete: Restrict)
     ambulance        Ambulance        @relation("AmbulanceAssignments", fields: [ambulanceId], references: [id], onDelete: Restrict)
-    assignedByUser   User?            @relation(fields: [assignedBy], references: [id], onDelete: SetNull)
+
+    assignedByUser User? @relation(fields: [assignedBy], references: [id], onDelete: SetNull)
 
     trip Trip?
 
