@@ -10,5 +10,10 @@ router.post(
   validateRequest(UserValidation.registerSchema),
   authController.registerUser,
 );
+router.post(
+  "/verify-email",
+  validateRequest(UserValidation.PatientEmailVerifyZodSchema),
+  authController.verifyUserEmail,
+);
 
 export const authRouter = router;
