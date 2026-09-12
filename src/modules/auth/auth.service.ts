@@ -12,6 +12,7 @@ import { jwtUtils } from "../../utils/jwt.js";
 import {
   ILoginUserPayload,
   IRegisterPayload,
+  IRequestUser,
   IVerifyEmailPayload,
 } from "./auth.types.js";
 
@@ -279,9 +280,30 @@ const refreshToken = async (token: string) => {
   };
 };
 
+const getMe = async (user: IRequestUser) => {
+  const isUserExists = await prisma.user.findUnique({
+    where: {
+      id: user.userId,
+    },
+    include: {
+      patients: true,
+    },
+    omit: {
+      passwordHash: true,
+    },
+  });
+
+  if (!isUserExists) {
+    throw new Error("User not found");
+  }
+
+  return isUserExists;
+};
+
 export const authService = {
   registerUser,
   verifyRegisterPatiend,
   loginUser,
   refreshToken,
+  getMe,
 };
