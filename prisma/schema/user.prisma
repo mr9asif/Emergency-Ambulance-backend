@@ -21,6 +21,7 @@ model User {
   phone              String       @unique @db.VarChar(20)
   email              String?      @unique @db.VarChar(255)
   passwordHash       String       @map("password_hash") @db.VarChar(255)
+  emailVerified      Boolean      @default(false)
   role               UserRole     @default(CUSTOMER)
   status             UserStatus   @default(ACTIVE)
   googleId           String?      @unique

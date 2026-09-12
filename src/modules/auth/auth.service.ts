@@ -116,6 +116,7 @@ const verifyRegisterPatiend = async (payload: IVerifyEmailPayload) => {
       phone: UserPayload.phone,
       email: UserPayload.email,
       passwordHash: UserPayload.password,
+      emailVerified: true,
     },
     omit: { passwordHash: true },
   });
@@ -183,6 +184,9 @@ const loginUser = async (payload: ILoginUserPayload) => {
     throw new Error("User not found");
   }
 
+  if (user.emailVerified === false) {
+    throw new Error("user not verified");
+  }
   if (user.status === UserStatus.BLOCKED) {
     throw new Error("User is blocked");
   }

@@ -30,6 +30,7 @@ export type UserMinAggregateOutputType = {
   phone: string | null
   email: string | null
   passwordHash: string | null
+  emailVerified: boolean | null
   role: $Enums.UserRole | null
   status: $Enums.UserStatus | null
   googleId: string | null
@@ -47,6 +48,7 @@ export type UserMaxAggregateOutputType = {
   phone: string | null
   email: string | null
   passwordHash: string | null
+  emailVerified: boolean | null
   role: $Enums.UserRole | null
   status: $Enums.UserStatus | null
   googleId: string | null
@@ -64,6 +66,7 @@ export type UserCountAggregateOutputType = {
   phone: number
   email: number
   passwordHash: number
+  emailVerified: number
   role: number
   status: number
   googleId: number
@@ -83,6 +86,7 @@ export type UserMinAggregateInputType = {
   phone?: true
   email?: true
   passwordHash?: true
+  emailVerified?: true
   role?: true
   status?: true
   googleId?: true
@@ -100,6 +104,7 @@ export type UserMaxAggregateInputType = {
   phone?: true
   email?: true
   passwordHash?: true
+  emailVerified?: true
   role?: true
   status?: true
   googleId?: true
@@ -117,6 +122,7 @@ export type UserCountAggregateInputType = {
   phone?: true
   email?: true
   passwordHash?: true
+  emailVerified?: true
   role?: true
   status?: true
   googleId?: true
@@ -207,6 +213,7 @@ export type UserGroupByOutputType = {
   phone: string
   email: string | null
   passwordHash: string
+  emailVerified: boolean
   role: $Enums.UserRole
   status: $Enums.UserStatus
   googleId: string | null
@@ -245,6 +252,7 @@ export type UserWhereInput = {
   phone?: Prisma.StringFilter<"User"> | string
   email?: Prisma.StringNullableFilter<"User"> | string | null
   passwordHash?: Prisma.StringFilter<"User"> | string
+  emailVerified?: Prisma.BoolFilter<"User"> | boolean
   role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
   status?: Prisma.EnumUserStatusFilter<"User"> | $Enums.UserStatus
   googleId?: Prisma.StringNullableFilter<"User"> | string | null
@@ -270,6 +278,7 @@ export type UserOrderByWithRelationInput = {
   phone?: Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
+  emailVerified?: Prisma.SortOrder
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
   googleId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -299,6 +308,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   name?: Prisma.StringFilter<"User"> | string
   passwordHash?: Prisma.StringFilter<"User"> | string
+  emailVerified?: Prisma.BoolFilter<"User"> | boolean
   role?: Prisma.EnumUserRoleFilter<"User"> | $Enums.UserRole
   status?: Prisma.EnumUserStatusFilter<"User"> | $Enums.UserStatus
   authProvider?: Prisma.EnumAuthProviderFilter<"User"> | $Enums.AuthProvider
@@ -323,6 +333,7 @@ export type UserOrderByWithAggregationInput = {
   phone?: Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
+  emailVerified?: Prisma.SortOrder
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
   googleId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -346,6 +357,7 @@ export type UserScalarWhereWithAggregatesInput = {
   phone?: Prisma.StringWithAggregatesFilter<"User"> | string
   email?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   passwordHash?: Prisma.StringWithAggregatesFilter<"User"> | string
+  emailVerified?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   role?: Prisma.EnumUserRoleWithAggregatesFilter<"User"> | $Enums.UserRole
   status?: Prisma.EnumUserStatusWithAggregatesFilter<"User"> | $Enums.UserStatus
   googleId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
@@ -363,6 +375,7 @@ export type UserCreateInput = {
   phone: string
   email?: string | null
   passwordHash: string
+  emailVerified?: boolean
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   googleId?: string | null
@@ -388,6 +401,7 @@ export type UserUncheckedCreateInput = {
   phone: string
   email?: string | null
   passwordHash: string
+  emailVerified?: boolean
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   googleId?: string | null
@@ -413,6 +427,7 @@ export type UserUpdateInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -438,6 +453,7 @@ export type UserUncheckedUpdateInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -463,6 +479,7 @@ export type UserCreateManyInput = {
   phone: string
   email?: string | null
   passwordHash: string
+  emailVerified?: boolean
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   googleId?: string | null
@@ -480,6 +497,7 @@ export type UserUpdateManyMutationInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -497,6 +515,7 @@ export type UserUncheckedUpdateManyInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -524,6 +543,7 @@ export type UserCountOrderByAggregateInput = {
   phone?: Prisma.SortOrder
   email?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
+  emailVerified?: Prisma.SortOrder
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
   googleId?: Prisma.SortOrder
@@ -541,6 +561,7 @@ export type UserMaxOrderByAggregateInput = {
   phone?: Prisma.SortOrder
   email?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
+  emailVerified?: Prisma.SortOrder
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
   googleId?: Prisma.SortOrder
@@ -558,6 +579,7 @@ export type UserMinOrderByAggregateInput = {
   phone?: Prisma.SortOrder
   email?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
+  emailVerified?: Prisma.SortOrder
   role?: Prisma.SortOrder
   status?: Prisma.SortOrder
   googleId?: Prisma.SortOrder
@@ -705,6 +727,7 @@ export type UserCreateWithoutAuditLogsInput = {
   phone: string
   email?: string | null
   passwordHash: string
+  emailVerified?: boolean
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   googleId?: string | null
@@ -729,6 +752,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   phone: string
   email?: string | null
   passwordHash: string
+  emailVerified?: boolean
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   googleId?: string | null
@@ -769,6 +793,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -793,6 +818,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -817,6 +843,7 @@ export type UserCreateWithoutAssignedByUserInput = {
   phone: string
   email?: string | null
   passwordHash: string
+  emailVerified?: boolean
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   googleId?: string | null
@@ -841,6 +868,7 @@ export type UserUncheckedCreateWithoutAssignedByUserInput = {
   phone: string
   email?: string | null
   passwordHash: string
+  emailVerified?: boolean
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   googleId?: string | null
@@ -881,6 +909,7 @@ export type UserUpdateWithoutAssignedByUserInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -905,6 +934,7 @@ export type UserUncheckedUpdateWithoutAssignedByUserInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -929,6 +959,7 @@ export type UserCreateWithoutEmergencyRequestsInput = {
   phone: string
   email?: string | null
   passwordHash: string
+  emailVerified?: boolean
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   googleId?: string | null
@@ -953,6 +984,7 @@ export type UserUncheckedCreateWithoutEmergencyRequestsInput = {
   phone: string
   email?: string | null
   passwordHash: string
+  emailVerified?: boolean
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   googleId?: string | null
@@ -982,6 +1014,7 @@ export type UserCreateWithoutCancelledRequestsInput = {
   phone: string
   email?: string | null
   passwordHash: string
+  emailVerified?: boolean
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   googleId?: string | null
@@ -1006,6 +1039,7 @@ export type UserUncheckedCreateWithoutCancelledRequestsInput = {
   phone: string
   email?: string | null
   passwordHash: string
+  emailVerified?: boolean
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   googleId?: string | null
@@ -1046,6 +1080,7 @@ export type UserUpdateWithoutEmergencyRequestsInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1070,6 +1105,7 @@ export type UserUncheckedUpdateWithoutEmergencyRequestsInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1105,6 +1141,7 @@ export type UserUpdateWithoutCancelledRequestsInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1129,6 +1166,7 @@ export type UserUncheckedUpdateWithoutCancelledRequestsInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1153,6 +1191,7 @@ export type UserCreateWithoutNotificationsInput = {
   phone: string
   email?: string | null
   passwordHash: string
+  emailVerified?: boolean
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   googleId?: string | null
@@ -1177,6 +1216,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   phone: string
   email?: string | null
   passwordHash: string
+  emailVerified?: boolean
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   googleId?: string | null
@@ -1217,6 +1257,7 @@ export type UserUpdateWithoutNotificationsInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1241,6 +1282,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1265,6 +1307,7 @@ export type UserCreateWithoutOperatorProfileInput = {
   phone: string
   email?: string | null
   passwordHash: string
+  emailVerified?: boolean
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   googleId?: string | null
@@ -1289,6 +1332,7 @@ export type UserUncheckedCreateWithoutOperatorProfileInput = {
   phone: string
   email?: string | null
   passwordHash: string
+  emailVerified?: boolean
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   googleId?: string | null
@@ -1329,6 +1373,7 @@ export type UserUpdateWithoutOperatorProfileInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1353,6 +1398,7 @@ export type UserUncheckedUpdateWithoutOperatorProfileInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1377,6 +1423,7 @@ export type UserCreateWithoutPatientsInput = {
   phone: string
   email?: string | null
   passwordHash: string
+  emailVerified?: boolean
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   googleId?: string | null
@@ -1401,6 +1448,7 @@ export type UserUncheckedCreateWithoutPatientsInput = {
   phone: string
   email?: string | null
   passwordHash: string
+  emailVerified?: boolean
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   googleId?: string | null
@@ -1441,6 +1489,7 @@ export type UserUpdateWithoutPatientsInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1465,6 +1514,7 @@ export type UserUncheckedUpdateWithoutPatientsInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1489,6 +1539,7 @@ export type UserCreateWithoutPaymentsInput = {
   phone: string
   email?: string | null
   passwordHash: string
+  emailVerified?: boolean
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   googleId?: string | null
@@ -1513,6 +1564,7 @@ export type UserUncheckedCreateWithoutPaymentsInput = {
   phone: string
   email?: string | null
   passwordHash: string
+  emailVerified?: boolean
   role?: $Enums.UserRole
   status?: $Enums.UserStatus
   googleId?: string | null
@@ -1553,6 +1605,7 @@ export type UserUpdateWithoutPaymentsInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1577,6 +1630,7 @@ export type UserUncheckedUpdateWithoutPaymentsInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
   status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
   googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1686,6 +1740,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   phone?: boolean
   email?: boolean
   passwordHash?: boolean
+  emailVerified?: boolean
   role?: boolean
   status?: boolean
   googleId?: boolean
@@ -1712,6 +1767,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   phone?: boolean
   email?: boolean
   passwordHash?: boolean
+  emailVerified?: boolean
   role?: boolean
   status?: boolean
   googleId?: boolean
@@ -1729,6 +1785,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   phone?: boolean
   email?: boolean
   passwordHash?: boolean
+  emailVerified?: boolean
   role?: boolean
   status?: boolean
   googleId?: boolean
@@ -1746,6 +1803,7 @@ export type UserSelectScalar = {
   phone?: boolean
   email?: boolean
   passwordHash?: boolean
+  emailVerified?: boolean
   role?: boolean
   status?: boolean
   googleId?: boolean
@@ -1757,7 +1815,7 @@ export type UserSelectScalar = {
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "phone" | "email" | "passwordHash" | "role" | "status" | "googleId" | "authProvider" | "needPasswordChange" | "isDeleted" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "phone" | "email" | "passwordHash" | "emailVerified" | "role" | "status" | "googleId" | "authProvider" | "needPasswordChange" | "isDeleted" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   operatorProfile?: boolean | Prisma.User$operatorProfileArgs<ExtArgs>
   patients?: boolean | Prisma.User$patientsArgs<ExtArgs>
@@ -1790,6 +1848,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     phone: string
     email: string | null
     passwordHash: string
+    emailVerified: boolean
     role: $Enums.UserRole
     status: $Enums.UserStatus
     googleId: string | null
@@ -2235,6 +2294,7 @@ export interface UserFieldRefs {
   readonly phone: Prisma.FieldRef<"User", 'String'>
   readonly email: Prisma.FieldRef<"User", 'String'>
   readonly passwordHash: Prisma.FieldRef<"User", 'String'>
+  readonly emailVerified: Prisma.FieldRef<"User", 'Boolean'>
   readonly role: Prisma.FieldRef<"User", 'UserRole'>
   readonly status: Prisma.FieldRef<"User", 'UserStatus'>
   readonly googleId: Prisma.FieldRef<"User", 'String'>
