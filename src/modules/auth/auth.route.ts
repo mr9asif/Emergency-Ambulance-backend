@@ -15,5 +15,11 @@ router.post(
   validateRequest(UserValidation.PatientEmailVerifyZodSchema),
   authController.verifyUserEmail,
 );
+router.post(
+  "/login",
+  validateRequest(UserValidation.LoginZodSchema),
+  authController.loginUser,
+);
+router.post("/refresh-token", authController.refreshToken);
 
 export const authRouter = router;
