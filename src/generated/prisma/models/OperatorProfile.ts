@@ -487,10 +487,6 @@ export type OperatorProfileUncheckedUpdateManyWithoutHospitalNestedInput = {
   deleteMany?: Prisma.OperatorProfileScalarWhereInput | Prisma.OperatorProfileScalarWhereInput[]
 }
 
-export type EnumOperatorTypeFieldUpdateOperationsInput = {
-  set?: $Enums.OperatorType
-}
-
 export type OperatorProfileCreateNestedOneWithoutTripsInput = {
   create?: Prisma.XOR<Prisma.OperatorProfileCreateWithoutTripsInput, Prisma.OperatorProfileUncheckedCreateWithoutTripsInput>
   connectOrCreate?: Prisma.OperatorProfileCreateOrConnectWithoutTripsInput

@@ -30,7 +30,8 @@ model User {
   isDeleted          Boolean      @default(false)
   deletedAt          DateTime?
 
-  operatorProfile   OperatorProfile?
+  operatorProfile OperatorProfile?
+
   patients          Patient[]
   emergencyRequests EmergencyRequest[]
   cancelledRequests EmergencyRequest[]   @relation("CancelledBy")
@@ -38,6 +39,10 @@ model User {
   payments          Payment[]
   auditLogs         AuditLog[]
   assignedByUser    DispatchAssignment[]
+
+  operatorApplicationsReviewed OperatorApplication[] @relation("OperatorApplicationReviewer")
+  operatorApplication          OperatorApplication?  @relation("OperatorApplicationUser")
+  operatorInvitationsSent      OperatorInvitation[]  @relation("OperatorInvitationsSent")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

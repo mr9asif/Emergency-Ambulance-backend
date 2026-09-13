@@ -1,0 +1,37 @@
+model OperatorInvitation {
+    id String @id @default(uuid()) @db.Uuid
+
+    email String @db.VarChar(255)
+
+    tokenHash String @unique @map("token_hash") @db.VarChar(255)
+
+    expiresAt DateTime @map("expires_at")
+
+    status OperatorInvitationStatus @default(PENDING)
+
+    operatorType OperatorType @map("operator_type")
+
+    name  String @db.VarChar(100)
+    phone String @db.VarChar(20)
+
+    licenseNumber String? @map("license_number") @db.VarChar(100)
+    employeeCode  String? @map("employee_code") @db.VarChar(100)
+
+    hospitalId String? @map("hospital_id") @db.Uuid
+
+    invitedBy String @map("invited_by") @db.Uuid
+
+    acceptedAt DateTime?
+
+    invitedByUser User @relation("OperatorInvitationsSent", fields: [invitedBy], references: [id], onDelete: Restrict)
+
+    hospital Hospital? @relation(fields: [hospitalId], references: [id], onDelete: SetNull)
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@index([email])
+    @@index([status, expiresAt])
+    @@index([invitedBy])
+    @@map("operator_invitations")
+}

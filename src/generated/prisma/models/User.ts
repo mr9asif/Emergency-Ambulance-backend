@@ -270,6 +270,9 @@ export type UserWhereInput = {
   payments?: Prisma.PaymentListRelationFilter
   auditLogs?: Prisma.AuditLogListRelationFilter
   assignedByUser?: Prisma.DispatchAssignmentListRelationFilter
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationListRelationFilter
+  operatorApplication?: Prisma.XOR<Prisma.OperatorApplicationNullableScalarRelationFilter, Prisma.OperatorApplicationWhereInput> | null
+  operatorInvitationsSent?: Prisma.OperatorInvitationListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -296,6 +299,9 @@ export type UserOrderByWithRelationInput = {
   payments?: Prisma.PaymentOrderByRelationAggregateInput
   auditLogs?: Prisma.AuditLogOrderByRelationAggregateInput
   assignedByUser?: Prisma.DispatchAssignmentOrderByRelationAggregateInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationOrderByRelationAggregateInput
+  operatorApplication?: Prisma.OperatorApplicationOrderByWithRelationInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -325,6 +331,9 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   payments?: Prisma.PaymentListRelationFilter
   auditLogs?: Prisma.AuditLogListRelationFilter
   assignedByUser?: Prisma.DispatchAssignmentListRelationFilter
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationListRelationFilter
+  operatorApplication?: Prisma.XOR<Prisma.OperatorApplicationNullableScalarRelationFilter, Prisma.OperatorApplicationWhereInput> | null
+  operatorInvitationsSent?: Prisma.OperatorInvitationListRelationFilter
 }, "id" | "phone" | "email" | "googleId">
 
 export type UserOrderByWithAggregationInput = {
@@ -393,6 +402,9 @@ export type UserCreateInput = {
   payments?: Prisma.PaymentCreateNestedManyWithoutCustomerInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   assignedByUser?: Prisma.DispatchAssignmentCreateNestedManyWithoutAssignedByUserInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationCreateNestedManyWithoutReviewedByUserInput
+  operatorApplication?: Prisma.OperatorApplicationCreateNestedOneWithoutUserInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationCreateNestedManyWithoutInvitedByUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -419,6 +431,9 @@ export type UserUncheckedCreateInput = {
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutCustomerInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   assignedByUser?: Prisma.DispatchAssignmentUncheckedCreateNestedManyWithoutAssignedByUserInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUncheckedCreateNestedManyWithoutReviewedByUserInput
+  operatorApplication?: Prisma.OperatorApplicationUncheckedCreateNestedOneWithoutUserInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUncheckedCreateNestedManyWithoutInvitedByUserInput
 }
 
 export type UserUpdateInput = {
@@ -445,6 +460,9 @@ export type UserUpdateInput = {
   payments?: Prisma.PaymentUpdateManyWithoutCustomerNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   assignedByUser?: Prisma.DispatchAssignmentUpdateManyWithoutAssignedByUserNestedInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUpdateManyWithoutReviewedByUserNestedInput
+  operatorApplication?: Prisma.OperatorApplicationUpdateOneWithoutUserNestedInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUpdateManyWithoutInvitedByUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -471,6 +489,9 @@ export type UserUncheckedUpdateInput = {
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutCustomerNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   assignedByUser?: Prisma.DispatchAssignmentUncheckedUpdateManyWithoutAssignedByUserNestedInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUncheckedUpdateManyWithoutReviewedByUserNestedInput
+  operatorApplication?: Prisma.OperatorApplicationUncheckedUpdateOneWithoutUserNestedInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUncheckedUpdateManyWithoutInvitedByUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -667,6 +688,52 @@ export type UserUpdateOneRequiredWithoutNotificationsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutNotificationsInput, Prisma.UserUpdateWithoutNotificationsInput>, Prisma.UserUncheckedUpdateWithoutNotificationsInput>
 }
 
+export type UserCreateNestedOneWithoutOperatorApplicationsReviewedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutOperatorApplicationsReviewedInput, Prisma.UserUncheckedCreateWithoutOperatorApplicationsReviewedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOperatorApplicationsReviewedInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutOperatorApplicationInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutOperatorApplicationInput, Prisma.UserUncheckedCreateWithoutOperatorApplicationInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOperatorApplicationInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutOperatorApplicationsReviewedNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutOperatorApplicationsReviewedInput, Prisma.UserUncheckedCreateWithoutOperatorApplicationsReviewedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOperatorApplicationsReviewedInput
+  upsert?: Prisma.UserUpsertWithoutOperatorApplicationsReviewedInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutOperatorApplicationsReviewedInput, Prisma.UserUpdateWithoutOperatorApplicationsReviewedInput>, Prisma.UserUncheckedUpdateWithoutOperatorApplicationsReviewedInput>
+}
+
+export type UserUpdateOneWithoutOperatorApplicationNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutOperatorApplicationInput, Prisma.UserUncheckedCreateWithoutOperatorApplicationInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOperatorApplicationInput
+  upsert?: Prisma.UserUpsertWithoutOperatorApplicationInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutOperatorApplicationInput, Prisma.UserUpdateWithoutOperatorApplicationInput>, Prisma.UserUncheckedUpdateWithoutOperatorApplicationInput>
+}
+
+export type UserCreateNestedOneWithoutOperatorInvitationsSentInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutOperatorInvitationsSentInput, Prisma.UserUncheckedCreateWithoutOperatorInvitationsSentInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOperatorInvitationsSentInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutOperatorInvitationsSentNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutOperatorInvitationsSentInput, Prisma.UserUncheckedCreateWithoutOperatorInvitationsSentInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutOperatorInvitationsSentInput
+  upsert?: Prisma.UserUpsertWithoutOperatorInvitationsSentInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutOperatorInvitationsSentInput, Prisma.UserUpdateWithoutOperatorInvitationsSentInput>, Prisma.UserUncheckedUpdateWithoutOperatorInvitationsSentInput>
+}
+
 export type UserCreateNestedOneWithoutOperatorProfileInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutOperatorProfileInput, Prisma.UserUncheckedCreateWithoutOperatorProfileInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutOperatorProfileInput
@@ -744,6 +811,9 @@ export type UserCreateWithoutAuditLogsInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutCustomerInput
   assignedByUser?: Prisma.DispatchAssignmentCreateNestedManyWithoutAssignedByUserInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationCreateNestedManyWithoutReviewedByUserInput
+  operatorApplication?: Prisma.OperatorApplicationCreateNestedOneWithoutUserInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationCreateNestedManyWithoutInvitedByUserInput
 }
 
 export type UserUncheckedCreateWithoutAuditLogsInput = {
@@ -769,6 +839,9 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutCustomerInput
   assignedByUser?: Prisma.DispatchAssignmentUncheckedCreateNestedManyWithoutAssignedByUserInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUncheckedCreateNestedManyWithoutReviewedByUserInput
+  operatorApplication?: Prisma.OperatorApplicationUncheckedCreateNestedOneWithoutUserInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUncheckedCreateNestedManyWithoutInvitedByUserInput
 }
 
 export type UserCreateOrConnectWithoutAuditLogsInput = {
@@ -810,6 +883,9 @@ export type UserUpdateWithoutAuditLogsInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutCustomerNestedInput
   assignedByUser?: Prisma.DispatchAssignmentUpdateManyWithoutAssignedByUserNestedInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUpdateManyWithoutReviewedByUserNestedInput
+  operatorApplication?: Prisma.OperatorApplicationUpdateOneWithoutUserNestedInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUpdateManyWithoutInvitedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuditLogsInput = {
@@ -835,6 +911,9 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutCustomerNestedInput
   assignedByUser?: Prisma.DispatchAssignmentUncheckedUpdateManyWithoutAssignedByUserNestedInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUncheckedUpdateManyWithoutReviewedByUserNestedInput
+  operatorApplication?: Prisma.OperatorApplicationUncheckedUpdateOneWithoutUserNestedInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUncheckedUpdateManyWithoutInvitedByUserNestedInput
 }
 
 export type UserCreateWithoutAssignedByUserInput = {
@@ -860,6 +939,9 @@ export type UserCreateWithoutAssignedByUserInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutCustomerInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationCreateNestedManyWithoutReviewedByUserInput
+  operatorApplication?: Prisma.OperatorApplicationCreateNestedOneWithoutUserInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationCreateNestedManyWithoutInvitedByUserInput
 }
 
 export type UserUncheckedCreateWithoutAssignedByUserInput = {
@@ -885,6 +967,9 @@ export type UserUncheckedCreateWithoutAssignedByUserInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutCustomerInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUncheckedCreateNestedManyWithoutReviewedByUserInput
+  operatorApplication?: Prisma.OperatorApplicationUncheckedCreateNestedOneWithoutUserInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUncheckedCreateNestedManyWithoutInvitedByUserInput
 }
 
 export type UserCreateOrConnectWithoutAssignedByUserInput = {
@@ -926,6 +1011,9 @@ export type UserUpdateWithoutAssignedByUserInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutCustomerNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUpdateManyWithoutReviewedByUserNestedInput
+  operatorApplication?: Prisma.OperatorApplicationUpdateOneWithoutUserNestedInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUpdateManyWithoutInvitedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAssignedByUserInput = {
@@ -951,6 +1039,9 @@ export type UserUncheckedUpdateWithoutAssignedByUserInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutCustomerNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUncheckedUpdateManyWithoutReviewedByUserNestedInput
+  operatorApplication?: Prisma.OperatorApplicationUncheckedUpdateOneWithoutUserNestedInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUncheckedUpdateManyWithoutInvitedByUserNestedInput
 }
 
 export type UserCreateWithoutEmergencyRequestsInput = {
@@ -976,6 +1067,9 @@ export type UserCreateWithoutEmergencyRequestsInput = {
   payments?: Prisma.PaymentCreateNestedManyWithoutCustomerInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   assignedByUser?: Prisma.DispatchAssignmentCreateNestedManyWithoutAssignedByUserInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationCreateNestedManyWithoutReviewedByUserInput
+  operatorApplication?: Prisma.OperatorApplicationCreateNestedOneWithoutUserInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationCreateNestedManyWithoutInvitedByUserInput
 }
 
 export type UserUncheckedCreateWithoutEmergencyRequestsInput = {
@@ -1001,6 +1095,9 @@ export type UserUncheckedCreateWithoutEmergencyRequestsInput = {
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutCustomerInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   assignedByUser?: Prisma.DispatchAssignmentUncheckedCreateNestedManyWithoutAssignedByUserInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUncheckedCreateNestedManyWithoutReviewedByUserInput
+  operatorApplication?: Prisma.OperatorApplicationUncheckedCreateNestedOneWithoutUserInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUncheckedCreateNestedManyWithoutInvitedByUserInput
 }
 
 export type UserCreateOrConnectWithoutEmergencyRequestsInput = {
@@ -1031,6 +1128,9 @@ export type UserCreateWithoutCancelledRequestsInput = {
   payments?: Prisma.PaymentCreateNestedManyWithoutCustomerInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   assignedByUser?: Prisma.DispatchAssignmentCreateNestedManyWithoutAssignedByUserInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationCreateNestedManyWithoutReviewedByUserInput
+  operatorApplication?: Prisma.OperatorApplicationCreateNestedOneWithoutUserInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationCreateNestedManyWithoutInvitedByUserInput
 }
 
 export type UserUncheckedCreateWithoutCancelledRequestsInput = {
@@ -1056,6 +1156,9 @@ export type UserUncheckedCreateWithoutCancelledRequestsInput = {
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutCustomerInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   assignedByUser?: Prisma.DispatchAssignmentUncheckedCreateNestedManyWithoutAssignedByUserInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUncheckedCreateNestedManyWithoutReviewedByUserInput
+  operatorApplication?: Prisma.OperatorApplicationUncheckedCreateNestedOneWithoutUserInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUncheckedCreateNestedManyWithoutInvitedByUserInput
 }
 
 export type UserCreateOrConnectWithoutCancelledRequestsInput = {
@@ -1097,6 +1200,9 @@ export type UserUpdateWithoutEmergencyRequestsInput = {
   payments?: Prisma.PaymentUpdateManyWithoutCustomerNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   assignedByUser?: Prisma.DispatchAssignmentUpdateManyWithoutAssignedByUserNestedInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUpdateManyWithoutReviewedByUserNestedInput
+  operatorApplication?: Prisma.OperatorApplicationUpdateOneWithoutUserNestedInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUpdateManyWithoutInvitedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutEmergencyRequestsInput = {
@@ -1122,6 +1228,9 @@ export type UserUncheckedUpdateWithoutEmergencyRequestsInput = {
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutCustomerNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   assignedByUser?: Prisma.DispatchAssignmentUncheckedUpdateManyWithoutAssignedByUserNestedInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUncheckedUpdateManyWithoutReviewedByUserNestedInput
+  operatorApplication?: Prisma.OperatorApplicationUncheckedUpdateOneWithoutUserNestedInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUncheckedUpdateManyWithoutInvitedByUserNestedInput
 }
 
 export type UserUpsertWithoutCancelledRequestsInput = {
@@ -1158,6 +1267,9 @@ export type UserUpdateWithoutCancelledRequestsInput = {
   payments?: Prisma.PaymentUpdateManyWithoutCustomerNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   assignedByUser?: Prisma.DispatchAssignmentUpdateManyWithoutAssignedByUserNestedInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUpdateManyWithoutReviewedByUserNestedInput
+  operatorApplication?: Prisma.OperatorApplicationUpdateOneWithoutUserNestedInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUpdateManyWithoutInvitedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCancelledRequestsInput = {
@@ -1183,6 +1295,9 @@ export type UserUncheckedUpdateWithoutCancelledRequestsInput = {
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutCustomerNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   assignedByUser?: Prisma.DispatchAssignmentUncheckedUpdateManyWithoutAssignedByUserNestedInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUncheckedUpdateManyWithoutReviewedByUserNestedInput
+  operatorApplication?: Prisma.OperatorApplicationUncheckedUpdateOneWithoutUserNestedInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUncheckedUpdateManyWithoutInvitedByUserNestedInput
 }
 
 export type UserCreateWithoutNotificationsInput = {
@@ -1208,6 +1323,9 @@ export type UserCreateWithoutNotificationsInput = {
   payments?: Prisma.PaymentCreateNestedManyWithoutCustomerInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   assignedByUser?: Prisma.DispatchAssignmentCreateNestedManyWithoutAssignedByUserInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationCreateNestedManyWithoutReviewedByUserInput
+  operatorApplication?: Prisma.OperatorApplicationCreateNestedOneWithoutUserInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationCreateNestedManyWithoutInvitedByUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -1233,6 +1351,9 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutCustomerInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   assignedByUser?: Prisma.DispatchAssignmentUncheckedCreateNestedManyWithoutAssignedByUserInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUncheckedCreateNestedManyWithoutReviewedByUserInput
+  operatorApplication?: Prisma.OperatorApplicationUncheckedCreateNestedOneWithoutUserInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUncheckedCreateNestedManyWithoutInvitedByUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -1274,6 +1395,9 @@ export type UserUpdateWithoutNotificationsInput = {
   payments?: Prisma.PaymentUpdateManyWithoutCustomerNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   assignedByUser?: Prisma.DispatchAssignmentUpdateManyWithoutAssignedByUserNestedInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUpdateManyWithoutReviewedByUserNestedInput
+  operatorApplication?: Prisma.OperatorApplicationUpdateOneWithoutUserNestedInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUpdateManyWithoutInvitedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -1299,6 +1423,393 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutCustomerNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   assignedByUser?: Prisma.DispatchAssignmentUncheckedUpdateManyWithoutAssignedByUserNestedInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUncheckedUpdateManyWithoutReviewedByUserNestedInput
+  operatorApplication?: Prisma.OperatorApplicationUncheckedUpdateOneWithoutUserNestedInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUncheckedUpdateManyWithoutInvitedByUserNestedInput
+}
+
+export type UserCreateWithoutOperatorApplicationsReviewedInput = {
+  id?: string
+  name: string
+  phone: string
+  email?: string | null
+  passwordHash: string
+  emailVerified?: boolean
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  googleId?: string | null
+  authProvider?: $Enums.AuthProvider
+  needPasswordChange?: boolean
+  isDeleted?: boolean
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  operatorProfile?: Prisma.OperatorProfileCreateNestedOneWithoutUserInput
+  patients?: Prisma.PatientCreateNestedManyWithoutUserInput
+  emergencyRequests?: Prisma.EmergencyRequestCreateNestedManyWithoutCustomerInput
+  cancelledRequests?: Prisma.EmergencyRequestCreateNestedManyWithoutCancelledByUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutCustomerInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  assignedByUser?: Prisma.DispatchAssignmentCreateNestedManyWithoutAssignedByUserInput
+  operatorApplication?: Prisma.OperatorApplicationCreateNestedOneWithoutUserInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationCreateNestedManyWithoutInvitedByUserInput
+}
+
+export type UserUncheckedCreateWithoutOperatorApplicationsReviewedInput = {
+  id?: string
+  name: string
+  phone: string
+  email?: string | null
+  passwordHash: string
+  emailVerified?: boolean
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  googleId?: string | null
+  authProvider?: $Enums.AuthProvider
+  needPasswordChange?: boolean
+  isDeleted?: boolean
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  operatorProfile?: Prisma.OperatorProfileUncheckedCreateNestedOneWithoutUserInput
+  patients?: Prisma.PatientUncheckedCreateNestedManyWithoutUserInput
+  emergencyRequests?: Prisma.EmergencyRequestUncheckedCreateNestedManyWithoutCustomerInput
+  cancelledRequests?: Prisma.EmergencyRequestUncheckedCreateNestedManyWithoutCancelledByUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutCustomerInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  assignedByUser?: Prisma.DispatchAssignmentUncheckedCreateNestedManyWithoutAssignedByUserInput
+  operatorApplication?: Prisma.OperatorApplicationUncheckedCreateNestedOneWithoutUserInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUncheckedCreateNestedManyWithoutInvitedByUserInput
+}
+
+export type UserCreateOrConnectWithoutOperatorApplicationsReviewedInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutOperatorApplicationsReviewedInput, Prisma.UserUncheckedCreateWithoutOperatorApplicationsReviewedInput>
+}
+
+export type UserCreateWithoutOperatorApplicationInput = {
+  id?: string
+  name: string
+  phone: string
+  email?: string | null
+  passwordHash: string
+  emailVerified?: boolean
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  googleId?: string | null
+  authProvider?: $Enums.AuthProvider
+  needPasswordChange?: boolean
+  isDeleted?: boolean
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  operatorProfile?: Prisma.OperatorProfileCreateNestedOneWithoutUserInput
+  patients?: Prisma.PatientCreateNestedManyWithoutUserInput
+  emergencyRequests?: Prisma.EmergencyRequestCreateNestedManyWithoutCustomerInput
+  cancelledRequests?: Prisma.EmergencyRequestCreateNestedManyWithoutCancelledByUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutCustomerInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  assignedByUser?: Prisma.DispatchAssignmentCreateNestedManyWithoutAssignedByUserInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationCreateNestedManyWithoutReviewedByUserInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationCreateNestedManyWithoutInvitedByUserInput
+}
+
+export type UserUncheckedCreateWithoutOperatorApplicationInput = {
+  id?: string
+  name: string
+  phone: string
+  email?: string | null
+  passwordHash: string
+  emailVerified?: boolean
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  googleId?: string | null
+  authProvider?: $Enums.AuthProvider
+  needPasswordChange?: boolean
+  isDeleted?: boolean
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  operatorProfile?: Prisma.OperatorProfileUncheckedCreateNestedOneWithoutUserInput
+  patients?: Prisma.PatientUncheckedCreateNestedManyWithoutUserInput
+  emergencyRequests?: Prisma.EmergencyRequestUncheckedCreateNestedManyWithoutCustomerInput
+  cancelledRequests?: Prisma.EmergencyRequestUncheckedCreateNestedManyWithoutCancelledByUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutCustomerInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  assignedByUser?: Prisma.DispatchAssignmentUncheckedCreateNestedManyWithoutAssignedByUserInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUncheckedCreateNestedManyWithoutReviewedByUserInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUncheckedCreateNestedManyWithoutInvitedByUserInput
+}
+
+export type UserCreateOrConnectWithoutOperatorApplicationInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutOperatorApplicationInput, Prisma.UserUncheckedCreateWithoutOperatorApplicationInput>
+}
+
+export type UserUpsertWithoutOperatorApplicationsReviewedInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutOperatorApplicationsReviewedInput, Prisma.UserUncheckedUpdateWithoutOperatorApplicationsReviewedInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutOperatorApplicationsReviewedInput, Prisma.UserUncheckedCreateWithoutOperatorApplicationsReviewedInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutOperatorApplicationsReviewedInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutOperatorApplicationsReviewedInput, Prisma.UserUncheckedUpdateWithoutOperatorApplicationsReviewedInput>
+}
+
+export type UserUpdateWithoutOperatorApplicationsReviewedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
+  needPasswordChange?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  operatorProfile?: Prisma.OperatorProfileUpdateOneWithoutUserNestedInput
+  patients?: Prisma.PatientUpdateManyWithoutUserNestedInput
+  emergencyRequests?: Prisma.EmergencyRequestUpdateManyWithoutCustomerNestedInput
+  cancelledRequests?: Prisma.EmergencyRequestUpdateManyWithoutCancelledByUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutCustomerNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  assignedByUser?: Prisma.DispatchAssignmentUpdateManyWithoutAssignedByUserNestedInput
+  operatorApplication?: Prisma.OperatorApplicationUpdateOneWithoutUserNestedInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUpdateManyWithoutInvitedByUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutOperatorApplicationsReviewedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
+  needPasswordChange?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  operatorProfile?: Prisma.OperatorProfileUncheckedUpdateOneWithoutUserNestedInput
+  patients?: Prisma.PatientUncheckedUpdateManyWithoutUserNestedInput
+  emergencyRequests?: Prisma.EmergencyRequestUncheckedUpdateManyWithoutCustomerNestedInput
+  cancelledRequests?: Prisma.EmergencyRequestUncheckedUpdateManyWithoutCancelledByUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutCustomerNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  assignedByUser?: Prisma.DispatchAssignmentUncheckedUpdateManyWithoutAssignedByUserNestedInput
+  operatorApplication?: Prisma.OperatorApplicationUncheckedUpdateOneWithoutUserNestedInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUncheckedUpdateManyWithoutInvitedByUserNestedInput
+}
+
+export type UserUpsertWithoutOperatorApplicationInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutOperatorApplicationInput, Prisma.UserUncheckedUpdateWithoutOperatorApplicationInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutOperatorApplicationInput, Prisma.UserUncheckedCreateWithoutOperatorApplicationInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutOperatorApplicationInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutOperatorApplicationInput, Prisma.UserUncheckedUpdateWithoutOperatorApplicationInput>
+}
+
+export type UserUpdateWithoutOperatorApplicationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
+  needPasswordChange?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  operatorProfile?: Prisma.OperatorProfileUpdateOneWithoutUserNestedInput
+  patients?: Prisma.PatientUpdateManyWithoutUserNestedInput
+  emergencyRequests?: Prisma.EmergencyRequestUpdateManyWithoutCustomerNestedInput
+  cancelledRequests?: Prisma.EmergencyRequestUpdateManyWithoutCancelledByUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutCustomerNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  assignedByUser?: Prisma.DispatchAssignmentUpdateManyWithoutAssignedByUserNestedInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUpdateManyWithoutReviewedByUserNestedInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUpdateManyWithoutInvitedByUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutOperatorApplicationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
+  needPasswordChange?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  operatorProfile?: Prisma.OperatorProfileUncheckedUpdateOneWithoutUserNestedInput
+  patients?: Prisma.PatientUncheckedUpdateManyWithoutUserNestedInput
+  emergencyRequests?: Prisma.EmergencyRequestUncheckedUpdateManyWithoutCustomerNestedInput
+  cancelledRequests?: Prisma.EmergencyRequestUncheckedUpdateManyWithoutCancelledByUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutCustomerNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  assignedByUser?: Prisma.DispatchAssignmentUncheckedUpdateManyWithoutAssignedByUserNestedInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUncheckedUpdateManyWithoutReviewedByUserNestedInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUncheckedUpdateManyWithoutInvitedByUserNestedInput
+}
+
+export type UserCreateWithoutOperatorInvitationsSentInput = {
+  id?: string
+  name: string
+  phone: string
+  email?: string | null
+  passwordHash: string
+  emailVerified?: boolean
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  googleId?: string | null
+  authProvider?: $Enums.AuthProvider
+  needPasswordChange?: boolean
+  isDeleted?: boolean
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  operatorProfile?: Prisma.OperatorProfileCreateNestedOneWithoutUserInput
+  patients?: Prisma.PatientCreateNestedManyWithoutUserInput
+  emergencyRequests?: Prisma.EmergencyRequestCreateNestedManyWithoutCustomerInput
+  cancelledRequests?: Prisma.EmergencyRequestCreateNestedManyWithoutCancelledByUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutCustomerInput
+  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
+  assignedByUser?: Prisma.DispatchAssignmentCreateNestedManyWithoutAssignedByUserInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationCreateNestedManyWithoutReviewedByUserInput
+  operatorApplication?: Prisma.OperatorApplicationCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutOperatorInvitationsSentInput = {
+  id?: string
+  name: string
+  phone: string
+  email?: string | null
+  passwordHash: string
+  emailVerified?: boolean
+  role?: $Enums.UserRole
+  status?: $Enums.UserStatus
+  googleId?: string | null
+  authProvider?: $Enums.AuthProvider
+  needPasswordChange?: boolean
+  isDeleted?: boolean
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  operatorProfile?: Prisma.OperatorProfileUncheckedCreateNestedOneWithoutUserInput
+  patients?: Prisma.PatientUncheckedCreateNestedManyWithoutUserInput
+  emergencyRequests?: Prisma.EmergencyRequestUncheckedCreateNestedManyWithoutCustomerInput
+  cancelledRequests?: Prisma.EmergencyRequestUncheckedCreateNestedManyWithoutCancelledByUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutCustomerInput
+  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
+  assignedByUser?: Prisma.DispatchAssignmentUncheckedCreateNestedManyWithoutAssignedByUserInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUncheckedCreateNestedManyWithoutReviewedByUserInput
+  operatorApplication?: Prisma.OperatorApplicationUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutOperatorInvitationsSentInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutOperatorInvitationsSentInput, Prisma.UserUncheckedCreateWithoutOperatorInvitationsSentInput>
+}
+
+export type UserUpsertWithoutOperatorInvitationsSentInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutOperatorInvitationsSentInput, Prisma.UserUncheckedUpdateWithoutOperatorInvitationsSentInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutOperatorInvitationsSentInput, Prisma.UserUncheckedCreateWithoutOperatorInvitationsSentInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutOperatorInvitationsSentInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutOperatorInvitationsSentInput, Prisma.UserUncheckedUpdateWithoutOperatorInvitationsSentInput>
+}
+
+export type UserUpdateWithoutOperatorInvitationsSentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
+  needPasswordChange?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  operatorProfile?: Prisma.OperatorProfileUpdateOneWithoutUserNestedInput
+  patients?: Prisma.PatientUpdateManyWithoutUserNestedInput
+  emergencyRequests?: Prisma.EmergencyRequestUpdateManyWithoutCustomerNestedInput
+  cancelledRequests?: Prisma.EmergencyRequestUpdateManyWithoutCancelledByUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutCustomerNestedInput
+  auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
+  assignedByUser?: Prisma.DispatchAssignmentUpdateManyWithoutAssignedByUserNestedInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUpdateManyWithoutReviewedByUserNestedInput
+  operatorApplication?: Prisma.OperatorApplicationUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutOperatorInvitationsSentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  googleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  authProvider?: Prisma.EnumAuthProviderFieldUpdateOperationsInput | $Enums.AuthProvider
+  needPasswordChange?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  operatorProfile?: Prisma.OperatorProfileUncheckedUpdateOneWithoutUserNestedInput
+  patients?: Prisma.PatientUncheckedUpdateManyWithoutUserNestedInput
+  emergencyRequests?: Prisma.EmergencyRequestUncheckedUpdateManyWithoutCustomerNestedInput
+  cancelledRequests?: Prisma.EmergencyRequestUncheckedUpdateManyWithoutCancelledByUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutCustomerNestedInput
+  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
+  assignedByUser?: Prisma.DispatchAssignmentUncheckedUpdateManyWithoutAssignedByUserNestedInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUncheckedUpdateManyWithoutReviewedByUserNestedInput
+  operatorApplication?: Prisma.OperatorApplicationUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutOperatorProfileInput = {
@@ -1324,6 +1835,9 @@ export type UserCreateWithoutOperatorProfileInput = {
   payments?: Prisma.PaymentCreateNestedManyWithoutCustomerInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   assignedByUser?: Prisma.DispatchAssignmentCreateNestedManyWithoutAssignedByUserInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationCreateNestedManyWithoutReviewedByUserInput
+  operatorApplication?: Prisma.OperatorApplicationCreateNestedOneWithoutUserInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationCreateNestedManyWithoutInvitedByUserInput
 }
 
 export type UserUncheckedCreateWithoutOperatorProfileInput = {
@@ -1349,6 +1863,9 @@ export type UserUncheckedCreateWithoutOperatorProfileInput = {
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutCustomerInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   assignedByUser?: Prisma.DispatchAssignmentUncheckedCreateNestedManyWithoutAssignedByUserInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUncheckedCreateNestedManyWithoutReviewedByUserInput
+  operatorApplication?: Prisma.OperatorApplicationUncheckedCreateNestedOneWithoutUserInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUncheckedCreateNestedManyWithoutInvitedByUserInput
 }
 
 export type UserCreateOrConnectWithoutOperatorProfileInput = {
@@ -1390,6 +1907,9 @@ export type UserUpdateWithoutOperatorProfileInput = {
   payments?: Prisma.PaymentUpdateManyWithoutCustomerNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   assignedByUser?: Prisma.DispatchAssignmentUpdateManyWithoutAssignedByUserNestedInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUpdateManyWithoutReviewedByUserNestedInput
+  operatorApplication?: Prisma.OperatorApplicationUpdateOneWithoutUserNestedInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUpdateManyWithoutInvitedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOperatorProfileInput = {
@@ -1415,6 +1935,9 @@ export type UserUncheckedUpdateWithoutOperatorProfileInput = {
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutCustomerNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   assignedByUser?: Prisma.DispatchAssignmentUncheckedUpdateManyWithoutAssignedByUserNestedInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUncheckedUpdateManyWithoutReviewedByUserNestedInput
+  operatorApplication?: Prisma.OperatorApplicationUncheckedUpdateOneWithoutUserNestedInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUncheckedUpdateManyWithoutInvitedByUserNestedInput
 }
 
 export type UserCreateWithoutPatientsInput = {
@@ -1440,6 +1963,9 @@ export type UserCreateWithoutPatientsInput = {
   payments?: Prisma.PaymentCreateNestedManyWithoutCustomerInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   assignedByUser?: Prisma.DispatchAssignmentCreateNestedManyWithoutAssignedByUserInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationCreateNestedManyWithoutReviewedByUserInput
+  operatorApplication?: Prisma.OperatorApplicationCreateNestedOneWithoutUserInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationCreateNestedManyWithoutInvitedByUserInput
 }
 
 export type UserUncheckedCreateWithoutPatientsInput = {
@@ -1465,6 +1991,9 @@ export type UserUncheckedCreateWithoutPatientsInput = {
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutCustomerInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   assignedByUser?: Prisma.DispatchAssignmentUncheckedCreateNestedManyWithoutAssignedByUserInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUncheckedCreateNestedManyWithoutReviewedByUserInput
+  operatorApplication?: Prisma.OperatorApplicationUncheckedCreateNestedOneWithoutUserInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUncheckedCreateNestedManyWithoutInvitedByUserInput
 }
 
 export type UserCreateOrConnectWithoutPatientsInput = {
@@ -1506,6 +2035,9 @@ export type UserUpdateWithoutPatientsInput = {
   payments?: Prisma.PaymentUpdateManyWithoutCustomerNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   assignedByUser?: Prisma.DispatchAssignmentUpdateManyWithoutAssignedByUserNestedInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUpdateManyWithoutReviewedByUserNestedInput
+  operatorApplication?: Prisma.OperatorApplicationUpdateOneWithoutUserNestedInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUpdateManyWithoutInvitedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPatientsInput = {
@@ -1531,6 +2063,9 @@ export type UserUncheckedUpdateWithoutPatientsInput = {
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutCustomerNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   assignedByUser?: Prisma.DispatchAssignmentUncheckedUpdateManyWithoutAssignedByUserNestedInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUncheckedUpdateManyWithoutReviewedByUserNestedInput
+  operatorApplication?: Prisma.OperatorApplicationUncheckedUpdateOneWithoutUserNestedInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUncheckedUpdateManyWithoutInvitedByUserNestedInput
 }
 
 export type UserCreateWithoutPaymentsInput = {
@@ -1556,6 +2091,9 @@ export type UserCreateWithoutPaymentsInput = {
   notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
   assignedByUser?: Prisma.DispatchAssignmentCreateNestedManyWithoutAssignedByUserInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationCreateNestedManyWithoutReviewedByUserInput
+  operatorApplication?: Prisma.OperatorApplicationCreateNestedOneWithoutUserInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationCreateNestedManyWithoutInvitedByUserInput
 }
 
 export type UserUncheckedCreateWithoutPaymentsInput = {
@@ -1581,6 +2119,9 @@ export type UserUncheckedCreateWithoutPaymentsInput = {
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
   assignedByUser?: Prisma.DispatchAssignmentUncheckedCreateNestedManyWithoutAssignedByUserInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUncheckedCreateNestedManyWithoutReviewedByUserInput
+  operatorApplication?: Prisma.OperatorApplicationUncheckedCreateNestedOneWithoutUserInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUncheckedCreateNestedManyWithoutInvitedByUserInput
 }
 
 export type UserCreateOrConnectWithoutPaymentsInput = {
@@ -1622,6 +2163,9 @@ export type UserUpdateWithoutPaymentsInput = {
   notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
   assignedByUser?: Prisma.DispatchAssignmentUpdateManyWithoutAssignedByUserNestedInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUpdateManyWithoutReviewedByUserNestedInput
+  operatorApplication?: Prisma.OperatorApplicationUpdateOneWithoutUserNestedInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUpdateManyWithoutInvitedByUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPaymentsInput = {
@@ -1647,6 +2191,9 @@ export type UserUncheckedUpdateWithoutPaymentsInput = {
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
   assignedByUser?: Prisma.DispatchAssignmentUncheckedUpdateManyWithoutAssignedByUserNestedInput
+  operatorApplicationsReviewed?: Prisma.OperatorApplicationUncheckedUpdateManyWithoutReviewedByUserNestedInput
+  operatorApplication?: Prisma.OperatorApplicationUncheckedUpdateOneWithoutUserNestedInput
+  operatorInvitationsSent?: Prisma.OperatorInvitationUncheckedUpdateManyWithoutInvitedByUserNestedInput
 }
 
 
@@ -1662,6 +2209,8 @@ export type UserCountOutputType = {
   payments: number
   auditLogs: number
   assignedByUser: number
+  operatorApplicationsReviewed: number
+  operatorInvitationsSent: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1672,6 +2221,8 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   payments?: boolean | UserCountOutputTypeCountPaymentsArgs
   auditLogs?: boolean | UserCountOutputTypeCountAuditLogsArgs
   assignedByUser?: boolean | UserCountOutputTypeCountAssignedByUserArgs
+  operatorApplicationsReviewed?: boolean | UserCountOutputTypeCountOperatorApplicationsReviewedArgs
+  operatorInvitationsSent?: boolean | UserCountOutputTypeCountOperatorInvitationsSentArgs
 }
 
 /**
@@ -1733,6 +2284,20 @@ export type UserCountOutputTypeCountAssignedByUserArgs<ExtArgs extends runtime.T
   where?: Prisma.DispatchAssignmentWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountOperatorApplicationsReviewedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OperatorApplicationWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountOperatorInvitationsSentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OperatorInvitationWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1758,6 +2323,9 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   payments?: boolean | Prisma.User$paymentsArgs<ExtArgs>
   auditLogs?: boolean | Prisma.User$auditLogsArgs<ExtArgs>
   assignedByUser?: boolean | Prisma.User$assignedByUserArgs<ExtArgs>
+  operatorApplicationsReviewed?: boolean | Prisma.User$operatorApplicationsReviewedArgs<ExtArgs>
+  operatorApplication?: boolean | Prisma.User$operatorApplicationArgs<ExtArgs>
+  operatorInvitationsSent?: boolean | Prisma.User$operatorInvitationsSentArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1825,6 +2393,9 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   payments?: boolean | Prisma.User$paymentsArgs<ExtArgs>
   auditLogs?: boolean | Prisma.User$auditLogsArgs<ExtArgs>
   assignedByUser?: boolean | Prisma.User$assignedByUserArgs<ExtArgs>
+  operatorApplicationsReviewed?: boolean | Prisma.User$operatorApplicationsReviewedArgs<ExtArgs>
+  operatorApplication?: boolean | Prisma.User$operatorApplicationArgs<ExtArgs>
+  operatorInvitationsSent?: boolean | Prisma.User$operatorInvitationsSentArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1841,6 +2412,9 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     payments: Prisma.$PaymentPayload<ExtArgs>[]
     auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
     assignedByUser: Prisma.$DispatchAssignmentPayload<ExtArgs>[]
+    operatorApplicationsReviewed: Prisma.$OperatorApplicationPayload<ExtArgs>[]
+    operatorApplication: Prisma.$OperatorApplicationPayload<ExtArgs> | null
+    operatorInvitationsSent: Prisma.$OperatorInvitationPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2260,6 +2834,9 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   payments<T extends Prisma.User$paymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   auditLogs<T extends Prisma.User$auditLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   assignedByUser<T extends Prisma.User$assignedByUserArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$assignedByUserArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DispatchAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  operatorApplicationsReviewed<T extends Prisma.User$operatorApplicationsReviewedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$operatorApplicationsReviewedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OperatorApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  operatorApplication<T extends Prisma.User$operatorApplicationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$operatorApplicationArgs<ExtArgs>>): Prisma.Prisma__OperatorApplicationClient<runtime.Types.Result.GetResult<Prisma.$OperatorApplicationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  operatorInvitationsSent<T extends Prisma.User$operatorInvitationsSentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$operatorInvitationsSentArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OperatorInvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2881,6 +3458,73 @@ export type User$assignedByUserArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.DispatchAssignmentScalarFieldEnum | Prisma.DispatchAssignmentScalarFieldEnum[]
+}
+
+/**
+ * User.operatorApplicationsReviewed
+ */
+export type User$operatorApplicationsReviewedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OperatorApplication
+   */
+  select?: Prisma.OperatorApplicationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the OperatorApplication
+   */
+  omit?: Prisma.OperatorApplicationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OperatorApplicationInclude<ExtArgs> | null
+  where?: Prisma.OperatorApplicationWhereInput
+  orderBy?: Prisma.OperatorApplicationOrderByWithRelationInput | Prisma.OperatorApplicationOrderByWithRelationInput[]
+  cursor?: Prisma.OperatorApplicationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.OperatorApplicationScalarFieldEnum | Prisma.OperatorApplicationScalarFieldEnum[]
+}
+
+/**
+ * User.operatorApplication
+ */
+export type User$operatorApplicationArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OperatorApplication
+   */
+  select?: Prisma.OperatorApplicationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the OperatorApplication
+   */
+  omit?: Prisma.OperatorApplicationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OperatorApplicationInclude<ExtArgs> | null
+  where?: Prisma.OperatorApplicationWhereInput
+}
+
+/**
+ * User.operatorInvitationsSent
+ */
+export type User$operatorInvitationsSentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OperatorInvitation
+   */
+  select?: Prisma.OperatorInvitationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the OperatorInvitation
+   */
+  omit?: Prisma.OperatorInvitationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OperatorInvitationInclude<ExtArgs> | null
+  where?: Prisma.OperatorInvitationWhereInput
+  orderBy?: Prisma.OperatorInvitationOrderByWithRelationInput | Prisma.OperatorInvitationOrderByWithRelationInput[]
+  cursor?: Prisma.OperatorInvitationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.OperatorInvitationScalarFieldEnum | Prisma.OperatorInvitationScalarFieldEnum[]
 }
 
 /**

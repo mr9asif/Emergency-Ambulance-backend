@@ -58,6 +58,8 @@ export const ModelName = {
   EmergencyRequest: 'EmergencyRequest',
   Hospital: 'Hospital',
   Notification: 'Notification',
+  OperatorApplication: 'OperatorApplication',
+  OperatorInvitation: 'OperatorInvitation',
   OperatorProfile: 'OperatorProfile',
   Patient: 'Patient',
   Payment: 'Payment',
@@ -198,6 +200,49 @@ export const NotificationScalarFieldEnum = {
 } as const
 
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const OperatorApplicationScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  email: 'email',
+  phone: 'phone',
+  operatorType: 'operatorType',
+  licenseNumber: 'licenseNumber',
+  employeeCode: 'employeeCode',
+  hospitalId: 'hospitalId',
+  emailVerified: 'emailVerified',
+  status: 'status',
+  rejectionReason: 'rejectionReason',
+  reviewedBy: 'reviewedBy',
+  reviewedAt: 'reviewedAt',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OperatorApplicationScalarFieldEnum = (typeof OperatorApplicationScalarFieldEnum)[keyof typeof OperatorApplicationScalarFieldEnum]
+
+
+export const OperatorInvitationScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  tokenHash: 'tokenHash',
+  expiresAt: 'expiresAt',
+  status: 'status',
+  operatorType: 'operatorType',
+  name: 'name',
+  phone: 'phone',
+  licenseNumber: 'licenseNumber',
+  employeeCode: 'employeeCode',
+  hospitalId: 'hospitalId',
+  invitedBy: 'invitedBy',
+  acceptedAt: 'acceptedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OperatorInvitationScalarFieldEnum = (typeof OperatorInvitationScalarFieldEnum)[keyof typeof OperatorInvitationScalarFieldEnum]
 
 
 export const OperatorProfileScalarFieldEnum = {

@@ -264,6 +264,8 @@ export type HospitalWhereInput = {
   ambulances?: Prisma.AmbulanceListRelationFilter
   emergencyRequests?: Prisma.EmergencyRequestListRelationFilter
   trips?: Prisma.TripListRelationFilter
+  operatorApplications?: Prisma.OperatorApplicationListRelationFilter
+  operatorInvitations?: Prisma.OperatorInvitationListRelationFilter
 }
 
 export type HospitalOrderByWithRelationInput = {
@@ -281,6 +283,8 @@ export type HospitalOrderByWithRelationInput = {
   ambulances?: Prisma.AmbulanceOrderByRelationAggregateInput
   emergencyRequests?: Prisma.EmergencyRequestOrderByRelationAggregateInput
   trips?: Prisma.TripOrderByRelationAggregateInput
+  operatorApplications?: Prisma.OperatorApplicationOrderByRelationAggregateInput
+  operatorInvitations?: Prisma.OperatorInvitationOrderByRelationAggregateInput
 }
 
 export type HospitalWhereUniqueInput = Prisma.AtLeast<{
@@ -301,6 +305,8 @@ export type HospitalWhereUniqueInput = Prisma.AtLeast<{
   ambulances?: Prisma.AmbulanceListRelationFilter
   emergencyRequests?: Prisma.EmergencyRequestListRelationFilter
   trips?: Prisma.TripListRelationFilter
+  operatorApplications?: Prisma.OperatorApplicationListRelationFilter
+  operatorInvitations?: Prisma.OperatorInvitationListRelationFilter
 }, "id">
 
 export type HospitalOrderByWithAggregationInput = {
@@ -352,6 +358,8 @@ export type HospitalCreateInput = {
   ambulances?: Prisma.AmbulanceCreateNestedManyWithoutBaseHospitalInput
   emergencyRequests?: Prisma.EmergencyRequestCreateNestedManyWithoutHospitalInput
   trips?: Prisma.TripCreateNestedManyWithoutHospitalInput
+  operatorApplications?: Prisma.OperatorApplicationCreateNestedManyWithoutHospitalInput
+  operatorInvitations?: Prisma.OperatorInvitationCreateNestedManyWithoutHospitalInput
 }
 
 export type HospitalUncheckedCreateInput = {
@@ -369,6 +377,8 @@ export type HospitalUncheckedCreateInput = {
   ambulances?: Prisma.AmbulanceUncheckedCreateNestedManyWithoutBaseHospitalInput
   emergencyRequests?: Prisma.EmergencyRequestUncheckedCreateNestedManyWithoutHospitalInput
   trips?: Prisma.TripUncheckedCreateNestedManyWithoutHospitalInput
+  operatorApplications?: Prisma.OperatorApplicationUncheckedCreateNestedManyWithoutHospitalInput
+  operatorInvitations?: Prisma.OperatorInvitationUncheckedCreateNestedManyWithoutHospitalInput
 }
 
 export type HospitalUpdateInput = {
@@ -386,6 +396,8 @@ export type HospitalUpdateInput = {
   ambulances?: Prisma.AmbulanceUpdateManyWithoutBaseHospitalNestedInput
   emergencyRequests?: Prisma.EmergencyRequestUpdateManyWithoutHospitalNestedInput
   trips?: Prisma.TripUpdateManyWithoutHospitalNestedInput
+  operatorApplications?: Prisma.OperatorApplicationUpdateManyWithoutHospitalNestedInput
+  operatorInvitations?: Prisma.OperatorInvitationUpdateManyWithoutHospitalNestedInput
 }
 
 export type HospitalUncheckedUpdateInput = {
@@ -403,6 +415,8 @@ export type HospitalUncheckedUpdateInput = {
   ambulances?: Prisma.AmbulanceUncheckedUpdateManyWithoutBaseHospitalNestedInput
   emergencyRequests?: Prisma.EmergencyRequestUncheckedUpdateManyWithoutHospitalNestedInput
   trips?: Prisma.TripUncheckedUpdateManyWithoutHospitalNestedInput
+  operatorApplications?: Prisma.OperatorApplicationUncheckedUpdateManyWithoutHospitalNestedInput
+  operatorInvitations?: Prisma.OperatorInvitationUncheckedUpdateManyWithoutHospitalNestedInput
 }
 
 export type HospitalCreateManyInput = {
@@ -539,6 +553,38 @@ export type BoolFieldUpdateOperationsInput = {
   set?: boolean
 }
 
+export type HospitalCreateNestedOneWithoutOperatorApplicationsInput = {
+  create?: Prisma.XOR<Prisma.HospitalCreateWithoutOperatorApplicationsInput, Prisma.HospitalUncheckedCreateWithoutOperatorApplicationsInput>
+  connectOrCreate?: Prisma.HospitalCreateOrConnectWithoutOperatorApplicationsInput
+  connect?: Prisma.HospitalWhereUniqueInput
+}
+
+export type HospitalUpdateOneWithoutOperatorApplicationsNestedInput = {
+  create?: Prisma.XOR<Prisma.HospitalCreateWithoutOperatorApplicationsInput, Prisma.HospitalUncheckedCreateWithoutOperatorApplicationsInput>
+  connectOrCreate?: Prisma.HospitalCreateOrConnectWithoutOperatorApplicationsInput
+  upsert?: Prisma.HospitalUpsertWithoutOperatorApplicationsInput
+  disconnect?: Prisma.HospitalWhereInput | boolean
+  delete?: Prisma.HospitalWhereInput | boolean
+  connect?: Prisma.HospitalWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.HospitalUpdateToOneWithWhereWithoutOperatorApplicationsInput, Prisma.HospitalUpdateWithoutOperatorApplicationsInput>, Prisma.HospitalUncheckedUpdateWithoutOperatorApplicationsInput>
+}
+
+export type HospitalCreateNestedOneWithoutOperatorInvitationsInput = {
+  create?: Prisma.XOR<Prisma.HospitalCreateWithoutOperatorInvitationsInput, Prisma.HospitalUncheckedCreateWithoutOperatorInvitationsInput>
+  connectOrCreate?: Prisma.HospitalCreateOrConnectWithoutOperatorInvitationsInput
+  connect?: Prisma.HospitalWhereUniqueInput
+}
+
+export type HospitalUpdateOneWithoutOperatorInvitationsNestedInput = {
+  create?: Prisma.XOR<Prisma.HospitalCreateWithoutOperatorInvitationsInput, Prisma.HospitalUncheckedCreateWithoutOperatorInvitationsInput>
+  connectOrCreate?: Prisma.HospitalCreateOrConnectWithoutOperatorInvitationsInput
+  upsert?: Prisma.HospitalUpsertWithoutOperatorInvitationsInput
+  disconnect?: Prisma.HospitalWhereInput | boolean
+  delete?: Prisma.HospitalWhereInput | boolean
+  connect?: Prisma.HospitalWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.HospitalUpdateToOneWithWhereWithoutOperatorInvitationsInput, Prisma.HospitalUpdateWithoutOperatorInvitationsInput>, Prisma.HospitalUncheckedUpdateWithoutOperatorInvitationsInput>
+}
+
 export type HospitalCreateNestedOneWithoutOperatorsInput = {
   create?: Prisma.XOR<Prisma.HospitalCreateWithoutOperatorsInput, Prisma.HospitalUncheckedCreateWithoutOperatorsInput>
   connectOrCreate?: Prisma.HospitalCreateOrConnectWithoutOperatorsInput
@@ -583,6 +629,8 @@ export type HospitalCreateWithoutAmbulancesInput = {
   operators?: Prisma.OperatorProfileCreateNestedManyWithoutHospitalInput
   emergencyRequests?: Prisma.EmergencyRequestCreateNestedManyWithoutHospitalInput
   trips?: Prisma.TripCreateNestedManyWithoutHospitalInput
+  operatorApplications?: Prisma.OperatorApplicationCreateNestedManyWithoutHospitalInput
+  operatorInvitations?: Prisma.OperatorInvitationCreateNestedManyWithoutHospitalInput
 }
 
 export type HospitalUncheckedCreateWithoutAmbulancesInput = {
@@ -599,6 +647,8 @@ export type HospitalUncheckedCreateWithoutAmbulancesInput = {
   operators?: Prisma.OperatorProfileUncheckedCreateNestedManyWithoutHospitalInput
   emergencyRequests?: Prisma.EmergencyRequestUncheckedCreateNestedManyWithoutHospitalInput
   trips?: Prisma.TripUncheckedCreateNestedManyWithoutHospitalInput
+  operatorApplications?: Prisma.OperatorApplicationUncheckedCreateNestedManyWithoutHospitalInput
+  operatorInvitations?: Prisma.OperatorInvitationUncheckedCreateNestedManyWithoutHospitalInput
 }
 
 export type HospitalCreateOrConnectWithoutAmbulancesInput = {
@@ -631,6 +681,8 @@ export type HospitalUpdateWithoutAmbulancesInput = {
   operators?: Prisma.OperatorProfileUpdateManyWithoutHospitalNestedInput
   emergencyRequests?: Prisma.EmergencyRequestUpdateManyWithoutHospitalNestedInput
   trips?: Prisma.TripUpdateManyWithoutHospitalNestedInput
+  operatorApplications?: Prisma.OperatorApplicationUpdateManyWithoutHospitalNestedInput
+  operatorInvitations?: Prisma.OperatorInvitationUpdateManyWithoutHospitalNestedInput
 }
 
 export type HospitalUncheckedUpdateWithoutAmbulancesInput = {
@@ -647,6 +699,8 @@ export type HospitalUncheckedUpdateWithoutAmbulancesInput = {
   operators?: Prisma.OperatorProfileUncheckedUpdateManyWithoutHospitalNestedInput
   emergencyRequests?: Prisma.EmergencyRequestUncheckedUpdateManyWithoutHospitalNestedInput
   trips?: Prisma.TripUncheckedUpdateManyWithoutHospitalNestedInput
+  operatorApplications?: Prisma.OperatorApplicationUncheckedUpdateManyWithoutHospitalNestedInput
+  operatorInvitations?: Prisma.OperatorInvitationUncheckedUpdateManyWithoutHospitalNestedInput
 }
 
 export type HospitalCreateWithoutEmergencyRequestsInput = {
@@ -663,6 +717,8 @@ export type HospitalCreateWithoutEmergencyRequestsInput = {
   operators?: Prisma.OperatorProfileCreateNestedManyWithoutHospitalInput
   ambulances?: Prisma.AmbulanceCreateNestedManyWithoutBaseHospitalInput
   trips?: Prisma.TripCreateNestedManyWithoutHospitalInput
+  operatorApplications?: Prisma.OperatorApplicationCreateNestedManyWithoutHospitalInput
+  operatorInvitations?: Prisma.OperatorInvitationCreateNestedManyWithoutHospitalInput
 }
 
 export type HospitalUncheckedCreateWithoutEmergencyRequestsInput = {
@@ -679,6 +735,8 @@ export type HospitalUncheckedCreateWithoutEmergencyRequestsInput = {
   operators?: Prisma.OperatorProfileUncheckedCreateNestedManyWithoutHospitalInput
   ambulances?: Prisma.AmbulanceUncheckedCreateNestedManyWithoutBaseHospitalInput
   trips?: Prisma.TripUncheckedCreateNestedManyWithoutHospitalInput
+  operatorApplications?: Prisma.OperatorApplicationUncheckedCreateNestedManyWithoutHospitalInput
+  operatorInvitations?: Prisma.OperatorInvitationUncheckedCreateNestedManyWithoutHospitalInput
 }
 
 export type HospitalCreateOrConnectWithoutEmergencyRequestsInput = {
@@ -711,6 +769,8 @@ export type HospitalUpdateWithoutEmergencyRequestsInput = {
   operators?: Prisma.OperatorProfileUpdateManyWithoutHospitalNestedInput
   ambulances?: Prisma.AmbulanceUpdateManyWithoutBaseHospitalNestedInput
   trips?: Prisma.TripUpdateManyWithoutHospitalNestedInput
+  operatorApplications?: Prisma.OperatorApplicationUpdateManyWithoutHospitalNestedInput
+  operatorInvitations?: Prisma.OperatorInvitationUpdateManyWithoutHospitalNestedInput
 }
 
 export type HospitalUncheckedUpdateWithoutEmergencyRequestsInput = {
@@ -727,6 +787,184 @@ export type HospitalUncheckedUpdateWithoutEmergencyRequestsInput = {
   operators?: Prisma.OperatorProfileUncheckedUpdateManyWithoutHospitalNestedInput
   ambulances?: Prisma.AmbulanceUncheckedUpdateManyWithoutBaseHospitalNestedInput
   trips?: Prisma.TripUncheckedUpdateManyWithoutHospitalNestedInput
+  operatorApplications?: Prisma.OperatorApplicationUncheckedUpdateManyWithoutHospitalNestedInput
+  operatorInvitations?: Prisma.OperatorInvitationUncheckedUpdateManyWithoutHospitalNestedInput
+}
+
+export type HospitalCreateWithoutOperatorApplicationsInput = {
+  id?: string
+  name: string
+  phone?: string | null
+  address: string
+  latitude: runtime.Decimal | runtime.DecimalJsLike | number | string
+  longitude: runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: boolean
+  hasEmergency?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  operators?: Prisma.OperatorProfileCreateNestedManyWithoutHospitalInput
+  ambulances?: Prisma.AmbulanceCreateNestedManyWithoutBaseHospitalInput
+  emergencyRequests?: Prisma.EmergencyRequestCreateNestedManyWithoutHospitalInput
+  trips?: Prisma.TripCreateNestedManyWithoutHospitalInput
+  operatorInvitations?: Prisma.OperatorInvitationCreateNestedManyWithoutHospitalInput
+}
+
+export type HospitalUncheckedCreateWithoutOperatorApplicationsInput = {
+  id?: string
+  name: string
+  phone?: string | null
+  address: string
+  latitude: runtime.Decimal | runtime.DecimalJsLike | number | string
+  longitude: runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: boolean
+  hasEmergency?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  operators?: Prisma.OperatorProfileUncheckedCreateNestedManyWithoutHospitalInput
+  ambulances?: Prisma.AmbulanceUncheckedCreateNestedManyWithoutBaseHospitalInput
+  emergencyRequests?: Prisma.EmergencyRequestUncheckedCreateNestedManyWithoutHospitalInput
+  trips?: Prisma.TripUncheckedCreateNestedManyWithoutHospitalInput
+  operatorInvitations?: Prisma.OperatorInvitationUncheckedCreateNestedManyWithoutHospitalInput
+}
+
+export type HospitalCreateOrConnectWithoutOperatorApplicationsInput = {
+  where: Prisma.HospitalWhereUniqueInput
+  create: Prisma.XOR<Prisma.HospitalCreateWithoutOperatorApplicationsInput, Prisma.HospitalUncheckedCreateWithoutOperatorApplicationsInput>
+}
+
+export type HospitalUpsertWithoutOperatorApplicationsInput = {
+  update: Prisma.XOR<Prisma.HospitalUpdateWithoutOperatorApplicationsInput, Prisma.HospitalUncheckedUpdateWithoutOperatorApplicationsInput>
+  create: Prisma.XOR<Prisma.HospitalCreateWithoutOperatorApplicationsInput, Prisma.HospitalUncheckedCreateWithoutOperatorApplicationsInput>
+  where?: Prisma.HospitalWhereInput
+}
+
+export type HospitalUpdateToOneWithWhereWithoutOperatorApplicationsInput = {
+  where?: Prisma.HospitalWhereInput
+  data: Prisma.XOR<Prisma.HospitalUpdateWithoutOperatorApplicationsInput, Prisma.HospitalUncheckedUpdateWithoutOperatorApplicationsInput>
+}
+
+export type HospitalUpdateWithoutOperatorApplicationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.StringFieldUpdateOperationsInput | string
+  latitude?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  longitude?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasEmergency?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  operators?: Prisma.OperatorProfileUpdateManyWithoutHospitalNestedInput
+  ambulances?: Prisma.AmbulanceUpdateManyWithoutBaseHospitalNestedInput
+  emergencyRequests?: Prisma.EmergencyRequestUpdateManyWithoutHospitalNestedInput
+  trips?: Prisma.TripUpdateManyWithoutHospitalNestedInput
+  operatorInvitations?: Prisma.OperatorInvitationUpdateManyWithoutHospitalNestedInput
+}
+
+export type HospitalUncheckedUpdateWithoutOperatorApplicationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.StringFieldUpdateOperationsInput | string
+  latitude?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  longitude?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasEmergency?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  operators?: Prisma.OperatorProfileUncheckedUpdateManyWithoutHospitalNestedInput
+  ambulances?: Prisma.AmbulanceUncheckedUpdateManyWithoutBaseHospitalNestedInput
+  emergencyRequests?: Prisma.EmergencyRequestUncheckedUpdateManyWithoutHospitalNestedInput
+  trips?: Prisma.TripUncheckedUpdateManyWithoutHospitalNestedInput
+  operatorInvitations?: Prisma.OperatorInvitationUncheckedUpdateManyWithoutHospitalNestedInput
+}
+
+export type HospitalCreateWithoutOperatorInvitationsInput = {
+  id?: string
+  name: string
+  phone?: string | null
+  address: string
+  latitude: runtime.Decimal | runtime.DecimalJsLike | number | string
+  longitude: runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: boolean
+  hasEmergency?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  operators?: Prisma.OperatorProfileCreateNestedManyWithoutHospitalInput
+  ambulances?: Prisma.AmbulanceCreateNestedManyWithoutBaseHospitalInput
+  emergencyRequests?: Prisma.EmergencyRequestCreateNestedManyWithoutHospitalInput
+  trips?: Prisma.TripCreateNestedManyWithoutHospitalInput
+  operatorApplications?: Prisma.OperatorApplicationCreateNestedManyWithoutHospitalInput
+}
+
+export type HospitalUncheckedCreateWithoutOperatorInvitationsInput = {
+  id?: string
+  name: string
+  phone?: string | null
+  address: string
+  latitude: runtime.Decimal | runtime.DecimalJsLike | number | string
+  longitude: runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: boolean
+  hasEmergency?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  operators?: Prisma.OperatorProfileUncheckedCreateNestedManyWithoutHospitalInput
+  ambulances?: Prisma.AmbulanceUncheckedCreateNestedManyWithoutBaseHospitalInput
+  emergencyRequests?: Prisma.EmergencyRequestUncheckedCreateNestedManyWithoutHospitalInput
+  trips?: Prisma.TripUncheckedCreateNestedManyWithoutHospitalInput
+  operatorApplications?: Prisma.OperatorApplicationUncheckedCreateNestedManyWithoutHospitalInput
+}
+
+export type HospitalCreateOrConnectWithoutOperatorInvitationsInput = {
+  where: Prisma.HospitalWhereUniqueInput
+  create: Prisma.XOR<Prisma.HospitalCreateWithoutOperatorInvitationsInput, Prisma.HospitalUncheckedCreateWithoutOperatorInvitationsInput>
+}
+
+export type HospitalUpsertWithoutOperatorInvitationsInput = {
+  update: Prisma.XOR<Prisma.HospitalUpdateWithoutOperatorInvitationsInput, Prisma.HospitalUncheckedUpdateWithoutOperatorInvitationsInput>
+  create: Prisma.XOR<Prisma.HospitalCreateWithoutOperatorInvitationsInput, Prisma.HospitalUncheckedCreateWithoutOperatorInvitationsInput>
+  where?: Prisma.HospitalWhereInput
+}
+
+export type HospitalUpdateToOneWithWhereWithoutOperatorInvitationsInput = {
+  where?: Prisma.HospitalWhereInput
+  data: Prisma.XOR<Prisma.HospitalUpdateWithoutOperatorInvitationsInput, Prisma.HospitalUncheckedUpdateWithoutOperatorInvitationsInput>
+}
+
+export type HospitalUpdateWithoutOperatorInvitationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.StringFieldUpdateOperationsInput | string
+  latitude?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  longitude?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasEmergency?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  operators?: Prisma.OperatorProfileUpdateManyWithoutHospitalNestedInput
+  ambulances?: Prisma.AmbulanceUpdateManyWithoutBaseHospitalNestedInput
+  emergencyRequests?: Prisma.EmergencyRequestUpdateManyWithoutHospitalNestedInput
+  trips?: Prisma.TripUpdateManyWithoutHospitalNestedInput
+  operatorApplications?: Prisma.OperatorApplicationUpdateManyWithoutHospitalNestedInput
+}
+
+export type HospitalUncheckedUpdateWithoutOperatorInvitationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.StringFieldUpdateOperationsInput | string
+  latitude?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  longitude?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  hasEmergency?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  operators?: Prisma.OperatorProfileUncheckedUpdateManyWithoutHospitalNestedInput
+  ambulances?: Prisma.AmbulanceUncheckedUpdateManyWithoutBaseHospitalNestedInput
+  emergencyRequests?: Prisma.EmergencyRequestUncheckedUpdateManyWithoutHospitalNestedInput
+  trips?: Prisma.TripUncheckedUpdateManyWithoutHospitalNestedInput
+  operatorApplications?: Prisma.OperatorApplicationUncheckedUpdateManyWithoutHospitalNestedInput
 }
 
 export type HospitalCreateWithoutOperatorsInput = {
@@ -743,6 +981,8 @@ export type HospitalCreateWithoutOperatorsInput = {
   ambulances?: Prisma.AmbulanceCreateNestedManyWithoutBaseHospitalInput
   emergencyRequests?: Prisma.EmergencyRequestCreateNestedManyWithoutHospitalInput
   trips?: Prisma.TripCreateNestedManyWithoutHospitalInput
+  operatorApplications?: Prisma.OperatorApplicationCreateNestedManyWithoutHospitalInput
+  operatorInvitations?: Prisma.OperatorInvitationCreateNestedManyWithoutHospitalInput
 }
 
 export type HospitalUncheckedCreateWithoutOperatorsInput = {
@@ -759,6 +999,8 @@ export type HospitalUncheckedCreateWithoutOperatorsInput = {
   ambulances?: Prisma.AmbulanceUncheckedCreateNestedManyWithoutBaseHospitalInput
   emergencyRequests?: Prisma.EmergencyRequestUncheckedCreateNestedManyWithoutHospitalInput
   trips?: Prisma.TripUncheckedCreateNestedManyWithoutHospitalInput
+  operatorApplications?: Prisma.OperatorApplicationUncheckedCreateNestedManyWithoutHospitalInput
+  operatorInvitations?: Prisma.OperatorInvitationUncheckedCreateNestedManyWithoutHospitalInput
 }
 
 export type HospitalCreateOrConnectWithoutOperatorsInput = {
@@ -791,6 +1033,8 @@ export type HospitalUpdateWithoutOperatorsInput = {
   ambulances?: Prisma.AmbulanceUpdateManyWithoutBaseHospitalNestedInput
   emergencyRequests?: Prisma.EmergencyRequestUpdateManyWithoutHospitalNestedInput
   trips?: Prisma.TripUpdateManyWithoutHospitalNestedInput
+  operatorApplications?: Prisma.OperatorApplicationUpdateManyWithoutHospitalNestedInput
+  operatorInvitations?: Prisma.OperatorInvitationUpdateManyWithoutHospitalNestedInput
 }
 
 export type HospitalUncheckedUpdateWithoutOperatorsInput = {
@@ -807,6 +1051,8 @@ export type HospitalUncheckedUpdateWithoutOperatorsInput = {
   ambulances?: Prisma.AmbulanceUncheckedUpdateManyWithoutBaseHospitalNestedInput
   emergencyRequests?: Prisma.EmergencyRequestUncheckedUpdateManyWithoutHospitalNestedInput
   trips?: Prisma.TripUncheckedUpdateManyWithoutHospitalNestedInput
+  operatorApplications?: Prisma.OperatorApplicationUncheckedUpdateManyWithoutHospitalNestedInput
+  operatorInvitations?: Prisma.OperatorInvitationUncheckedUpdateManyWithoutHospitalNestedInput
 }
 
 export type HospitalCreateWithoutTripsInput = {
@@ -823,6 +1069,8 @@ export type HospitalCreateWithoutTripsInput = {
   operators?: Prisma.OperatorProfileCreateNestedManyWithoutHospitalInput
   ambulances?: Prisma.AmbulanceCreateNestedManyWithoutBaseHospitalInput
   emergencyRequests?: Prisma.EmergencyRequestCreateNestedManyWithoutHospitalInput
+  operatorApplications?: Prisma.OperatorApplicationCreateNestedManyWithoutHospitalInput
+  operatorInvitations?: Prisma.OperatorInvitationCreateNestedManyWithoutHospitalInput
 }
 
 export type HospitalUncheckedCreateWithoutTripsInput = {
@@ -839,6 +1087,8 @@ export type HospitalUncheckedCreateWithoutTripsInput = {
   operators?: Prisma.OperatorProfileUncheckedCreateNestedManyWithoutHospitalInput
   ambulances?: Prisma.AmbulanceUncheckedCreateNestedManyWithoutBaseHospitalInput
   emergencyRequests?: Prisma.EmergencyRequestUncheckedCreateNestedManyWithoutHospitalInput
+  operatorApplications?: Prisma.OperatorApplicationUncheckedCreateNestedManyWithoutHospitalInput
+  operatorInvitations?: Prisma.OperatorInvitationUncheckedCreateNestedManyWithoutHospitalInput
 }
 
 export type HospitalCreateOrConnectWithoutTripsInput = {
@@ -871,6 +1121,8 @@ export type HospitalUpdateWithoutTripsInput = {
   operators?: Prisma.OperatorProfileUpdateManyWithoutHospitalNestedInput
   ambulances?: Prisma.AmbulanceUpdateManyWithoutBaseHospitalNestedInput
   emergencyRequests?: Prisma.EmergencyRequestUpdateManyWithoutHospitalNestedInput
+  operatorApplications?: Prisma.OperatorApplicationUpdateManyWithoutHospitalNestedInput
+  operatorInvitations?: Prisma.OperatorInvitationUpdateManyWithoutHospitalNestedInput
 }
 
 export type HospitalUncheckedUpdateWithoutTripsInput = {
@@ -887,6 +1139,8 @@ export type HospitalUncheckedUpdateWithoutTripsInput = {
   operators?: Prisma.OperatorProfileUncheckedUpdateManyWithoutHospitalNestedInput
   ambulances?: Prisma.AmbulanceUncheckedUpdateManyWithoutBaseHospitalNestedInput
   emergencyRequests?: Prisma.EmergencyRequestUncheckedUpdateManyWithoutHospitalNestedInput
+  operatorApplications?: Prisma.OperatorApplicationUncheckedUpdateManyWithoutHospitalNestedInput
+  operatorInvitations?: Prisma.OperatorInvitationUncheckedUpdateManyWithoutHospitalNestedInput
 }
 
 
@@ -899,6 +1153,8 @@ export type HospitalCountOutputType = {
   ambulances: number
   emergencyRequests: number
   trips: number
+  operatorApplications: number
+  operatorInvitations: number
 }
 
 export type HospitalCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -906,6 +1162,8 @@ export type HospitalCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensio
   ambulances?: boolean | HospitalCountOutputTypeCountAmbulancesArgs
   emergencyRequests?: boolean | HospitalCountOutputTypeCountEmergencyRequestsArgs
   trips?: boolean | HospitalCountOutputTypeCountTripsArgs
+  operatorApplications?: boolean | HospitalCountOutputTypeCountOperatorApplicationsArgs
+  operatorInvitations?: boolean | HospitalCountOutputTypeCountOperatorInvitationsArgs
 }
 
 /**
@@ -946,6 +1204,20 @@ export type HospitalCountOutputTypeCountTripsArgs<ExtArgs extends runtime.Types.
   where?: Prisma.TripWhereInput
 }
 
+/**
+ * HospitalCountOutputType without action
+ */
+export type HospitalCountOutputTypeCountOperatorApplicationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OperatorApplicationWhereInput
+}
+
+/**
+ * HospitalCountOutputType without action
+ */
+export type HospitalCountOutputTypeCountOperatorInvitationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OperatorInvitationWhereInput
+}
+
 
 export type HospitalSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -962,6 +1234,8 @@ export type HospitalSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   ambulances?: boolean | Prisma.Hospital$ambulancesArgs<ExtArgs>
   emergencyRequests?: boolean | Prisma.Hospital$emergencyRequestsArgs<ExtArgs>
   trips?: boolean | Prisma.Hospital$tripsArgs<ExtArgs>
+  operatorApplications?: boolean | Prisma.Hospital$operatorApplicationsArgs<ExtArgs>
+  operatorInvitations?: boolean | Prisma.Hospital$operatorInvitationsArgs<ExtArgs>
   _count?: boolean | Prisma.HospitalCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["hospital"]>
 
@@ -1010,6 +1284,8 @@ export type HospitalInclude<ExtArgs extends runtime.Types.Extensions.InternalArg
   ambulances?: boolean | Prisma.Hospital$ambulancesArgs<ExtArgs>
   emergencyRequests?: boolean | Prisma.Hospital$emergencyRequestsArgs<ExtArgs>
   trips?: boolean | Prisma.Hospital$tripsArgs<ExtArgs>
+  operatorApplications?: boolean | Prisma.Hospital$operatorApplicationsArgs<ExtArgs>
+  operatorInvitations?: boolean | Prisma.Hospital$operatorInvitationsArgs<ExtArgs>
   _count?: boolean | Prisma.HospitalCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type HospitalIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1022,6 +1298,8 @@ export type $HospitalPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     ambulances: Prisma.$AmbulancePayload<ExtArgs>[]
     emergencyRequests: Prisma.$EmergencyRequestPayload<ExtArgs>[]
     trips: Prisma.$TripPayload<ExtArgs>[]
+    operatorApplications: Prisma.$OperatorApplicationPayload<ExtArgs>[]
+    operatorInvitations: Prisma.$OperatorInvitationPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1432,6 +1710,8 @@ export interface Prisma__HospitalClient<T, Null = never, ExtArgs extends runtime
   ambulances<T extends Prisma.Hospital$ambulancesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Hospital$ambulancesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AmbulancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   emergencyRequests<T extends Prisma.Hospital$emergencyRequestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Hospital$emergencyRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmergencyRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   trips<T extends Prisma.Hospital$tripsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Hospital$tripsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TripPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  operatorApplications<T extends Prisma.Hospital$operatorApplicationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Hospital$operatorApplicationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OperatorApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  operatorInvitations<T extends Prisma.Hospital$operatorInvitationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Hospital$operatorInvitationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OperatorInvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1957,6 +2237,54 @@ export type Hospital$tripsArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.TripScalarFieldEnum | Prisma.TripScalarFieldEnum[]
+}
+
+/**
+ * Hospital.operatorApplications
+ */
+export type Hospital$operatorApplicationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OperatorApplication
+   */
+  select?: Prisma.OperatorApplicationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the OperatorApplication
+   */
+  omit?: Prisma.OperatorApplicationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OperatorApplicationInclude<ExtArgs> | null
+  where?: Prisma.OperatorApplicationWhereInput
+  orderBy?: Prisma.OperatorApplicationOrderByWithRelationInput | Prisma.OperatorApplicationOrderByWithRelationInput[]
+  cursor?: Prisma.OperatorApplicationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.OperatorApplicationScalarFieldEnum | Prisma.OperatorApplicationScalarFieldEnum[]
+}
+
+/**
+ * Hospital.operatorInvitations
+ */
+export type Hospital$operatorInvitationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OperatorInvitation
+   */
+  select?: Prisma.OperatorInvitationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the OperatorInvitation
+   */
+  omit?: Prisma.OperatorInvitationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OperatorInvitationInclude<ExtArgs> | null
+  where?: Prisma.OperatorInvitationWhereInput
+  orderBy?: Prisma.OperatorInvitationOrderByWithRelationInput | Prisma.OperatorInvitationOrderByWithRelationInput[]
+  cursor?: Prisma.OperatorInvitationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.OperatorInvitationScalarFieldEnum | Prisma.OperatorInvitationScalarFieldEnum[]
 }
 
 /**

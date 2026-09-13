@@ -53,6 +53,16 @@ export type Hospital = Prisma.HospitalModel
  */
 export type Notification = Prisma.NotificationModel
 /**
+ * Model OperatorApplication
+ * 
+ */
+export type OperatorApplication = Prisma.OperatorApplicationModel
+/**
+ * Model OperatorInvitation
+ * 
+ */
+export type OperatorInvitation = Prisma.OperatorInvitationModel
+/**
  * Model OperatorProfile
  * 
  */

@@ -8,10 +8,12 @@ model Hospital {
   isActive     Boolean @default(true) @map("is_active")
   hasEmergency Boolean @default(true) @map("has_emergency")
 
-  operators         OperatorProfile[]
-  ambulances        Ambulance[]
-  emergencyRequests EmergencyRequest[]
-  trips             Trip[]
+  operators            OperatorProfile[]
+  ambulances           Ambulance[]
+  emergencyRequests    EmergencyRequest[]
+  trips                Trip[]
+  operatorApplications OperatorApplication[]
+  operatorInvitations  OperatorInvitation[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

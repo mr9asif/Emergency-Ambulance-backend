@@ -450,6 +450,13 @@ export type EnumOperatorTypeFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumOperatorTypeFilter<$PrismaModel> | $Enums.OperatorType
 }
 
+export type EnumOperatorApplicationStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.OperatorApplicationStatus | Prisma.EnumOperatorApplicationStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.OperatorApplicationStatus[] | Prisma.ListEnumOperatorApplicationStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OperatorApplicationStatus[] | Prisma.ListEnumOperatorApplicationStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOperatorApplicationStatusFilter<$PrismaModel> | $Enums.OperatorApplicationStatus
+}
+
 export type EnumOperatorTypeWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.OperatorType | Prisma.EnumOperatorTypeFieldRefInput<$PrismaModel>
   in?: $Enums.OperatorType[] | Prisma.ListEnumOperatorTypeFieldRefInput<$PrismaModel>
@@ -458,6 +465,33 @@ export type EnumOperatorTypeWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumOperatorTypeFilter<$PrismaModel>
   _max?: Prisma.NestedEnumOperatorTypeFilter<$PrismaModel>
+}
+
+export type EnumOperatorApplicationStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.OperatorApplicationStatus | Prisma.EnumOperatorApplicationStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.OperatorApplicationStatus[] | Prisma.ListEnumOperatorApplicationStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OperatorApplicationStatus[] | Prisma.ListEnumOperatorApplicationStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOperatorApplicationStatusWithAggregatesFilter<$PrismaModel> | $Enums.OperatorApplicationStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumOperatorApplicationStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumOperatorApplicationStatusFilter<$PrismaModel>
+}
+
+export type EnumOperatorInvitationStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.OperatorInvitationStatus | Prisma.EnumOperatorInvitationStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.OperatorInvitationStatus[] | Prisma.ListEnumOperatorInvitationStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OperatorInvitationStatus[] | Prisma.ListEnumOperatorInvitationStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOperatorInvitationStatusFilter<$PrismaModel> | $Enums.OperatorInvitationStatus
+}
+
+export type EnumOperatorInvitationStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.OperatorInvitationStatus | Prisma.EnumOperatorInvitationStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.OperatorInvitationStatus[] | Prisma.ListEnumOperatorInvitationStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OperatorInvitationStatus[] | Prisma.ListEnumOperatorInvitationStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOperatorInvitationStatusWithAggregatesFilter<$PrismaModel> | $Enums.OperatorInvitationStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumOperatorInvitationStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumOperatorInvitationStatusFilter<$PrismaModel>
 }
 
 export type EnumGenderNullableFilter<$PrismaModel = never> = {
@@ -1014,6 +1048,13 @@ export type NestedEnumOperatorTypeFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumOperatorTypeFilter<$PrismaModel> | $Enums.OperatorType
 }
 
+export type NestedEnumOperatorApplicationStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.OperatorApplicationStatus | Prisma.EnumOperatorApplicationStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.OperatorApplicationStatus[] | Prisma.ListEnumOperatorApplicationStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OperatorApplicationStatus[] | Prisma.ListEnumOperatorApplicationStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOperatorApplicationStatusFilter<$PrismaModel> | $Enums.OperatorApplicationStatus
+}
+
 export type NestedEnumOperatorTypeWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.OperatorType | Prisma.EnumOperatorTypeFieldRefInput<$PrismaModel>
   in?: $Enums.OperatorType[] | Prisma.ListEnumOperatorTypeFieldRefInput<$PrismaModel>
@@ -1022,6 +1063,33 @@ export type NestedEnumOperatorTypeWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumOperatorTypeFilter<$PrismaModel>
   _max?: Prisma.NestedEnumOperatorTypeFilter<$PrismaModel>
+}
+
+export type NestedEnumOperatorApplicationStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.OperatorApplicationStatus | Prisma.EnumOperatorApplicationStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.OperatorApplicationStatus[] | Prisma.ListEnumOperatorApplicationStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OperatorApplicationStatus[] | Prisma.ListEnumOperatorApplicationStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOperatorApplicationStatusWithAggregatesFilter<$PrismaModel> | $Enums.OperatorApplicationStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumOperatorApplicationStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumOperatorApplicationStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumOperatorInvitationStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.OperatorInvitationStatus | Prisma.EnumOperatorInvitationStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.OperatorInvitationStatus[] | Prisma.ListEnumOperatorInvitationStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OperatorInvitationStatus[] | Prisma.ListEnumOperatorInvitationStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOperatorInvitationStatusFilter<$PrismaModel> | $Enums.OperatorInvitationStatus
+}
+
+export type NestedEnumOperatorInvitationStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.OperatorInvitationStatus | Prisma.EnumOperatorInvitationStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.OperatorInvitationStatus[] | Prisma.ListEnumOperatorInvitationStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.OperatorInvitationStatus[] | Prisma.ListEnumOperatorInvitationStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumOperatorInvitationStatusWithAggregatesFilter<$PrismaModel> | $Enums.OperatorInvitationStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumOperatorInvitationStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumOperatorInvitationStatusFilter<$PrismaModel>
 }
 
 export type NestedEnumGenderNullableFilter<$PrismaModel = never> = {

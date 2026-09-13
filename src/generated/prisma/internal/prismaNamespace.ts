@@ -404,6 +404,8 @@ export const ModelName = {
   EmergencyRequest: 'EmergencyRequest',
   Hospital: 'Hospital',
   Notification: 'Notification',
+  OperatorApplication: 'OperatorApplication',
+  OperatorInvitation: 'OperatorInvitation',
   OperatorProfile: 'OperatorProfile',
   Patient: 'Patient',
   Payment: 'Payment',
@@ -425,7 +427,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "ambulanceLocation" | "ambulance" | "auditLog" | "dispatchAssignment" | "emergencyRequest" | "hospital" | "notification" | "operatorProfile" | "patient" | "payment" | "pricingRule" | "trip" | "user"
+    modelProps: "ambulanceLocation" | "ambulance" | "auditLog" | "dispatchAssignment" | "emergencyRequest" | "hospital" | "notification" | "operatorApplication" | "operatorInvitation" | "operatorProfile" | "patient" | "payment" | "pricingRule" | "trip" | "user"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -944,6 +946,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.NotificationCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.NotificationCountAggregateOutputType> | number
+        }
+      }
+    }
+    OperatorApplication: {
+      payload: Prisma.$OperatorApplicationPayload<ExtArgs>
+      fields: Prisma.OperatorApplicationFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.OperatorApplicationFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperatorApplicationPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.OperatorApplicationFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperatorApplicationPayload>
+        }
+        findFirst: {
+          args: Prisma.OperatorApplicationFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperatorApplicationPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.OperatorApplicationFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperatorApplicationPayload>
+        }
+        findMany: {
+          args: Prisma.OperatorApplicationFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperatorApplicationPayload>[]
+        }
+        create: {
+          args: Prisma.OperatorApplicationCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperatorApplicationPayload>
+        }
+        createMany: {
+          args: Prisma.OperatorApplicationCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.OperatorApplicationCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperatorApplicationPayload>[]
+        }
+        delete: {
+          args: Prisma.OperatorApplicationDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperatorApplicationPayload>
+        }
+        update: {
+          args: Prisma.OperatorApplicationUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperatorApplicationPayload>
+        }
+        deleteMany: {
+          args: Prisma.OperatorApplicationDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.OperatorApplicationUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.OperatorApplicationUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperatorApplicationPayload>[]
+        }
+        upsert: {
+          args: Prisma.OperatorApplicationUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperatorApplicationPayload>
+        }
+        aggregate: {
+          args: Prisma.OperatorApplicationAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateOperatorApplication>
+        }
+        groupBy: {
+          args: Prisma.OperatorApplicationGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OperatorApplicationGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.OperatorApplicationCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OperatorApplicationCountAggregateOutputType> | number
+        }
+      }
+    }
+    OperatorInvitation: {
+      payload: Prisma.$OperatorInvitationPayload<ExtArgs>
+      fields: Prisma.OperatorInvitationFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.OperatorInvitationFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperatorInvitationPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.OperatorInvitationFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperatorInvitationPayload>
+        }
+        findFirst: {
+          args: Prisma.OperatorInvitationFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperatorInvitationPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.OperatorInvitationFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperatorInvitationPayload>
+        }
+        findMany: {
+          args: Prisma.OperatorInvitationFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperatorInvitationPayload>[]
+        }
+        create: {
+          args: Prisma.OperatorInvitationCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperatorInvitationPayload>
+        }
+        createMany: {
+          args: Prisma.OperatorInvitationCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.OperatorInvitationCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperatorInvitationPayload>[]
+        }
+        delete: {
+          args: Prisma.OperatorInvitationDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperatorInvitationPayload>
+        }
+        update: {
+          args: Prisma.OperatorInvitationUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperatorInvitationPayload>
+        }
+        deleteMany: {
+          args: Prisma.OperatorInvitationDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.OperatorInvitationUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.OperatorInvitationUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperatorInvitationPayload>[]
+        }
+        upsert: {
+          args: Prisma.OperatorInvitationUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OperatorInvitationPayload>
+        }
+        aggregate: {
+          args: Prisma.OperatorInvitationAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateOperatorInvitation>
+        }
+        groupBy: {
+          args: Prisma.OperatorInvitationGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OperatorInvitationGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.OperatorInvitationCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OperatorInvitationCountAggregateOutputType> | number
         }
       }
     }
@@ -1548,6 +1698,49 @@ export const NotificationScalarFieldEnum = {
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
 
 
+export const OperatorApplicationScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  email: 'email',
+  phone: 'phone',
+  operatorType: 'operatorType',
+  licenseNumber: 'licenseNumber',
+  employeeCode: 'employeeCode',
+  hospitalId: 'hospitalId',
+  emailVerified: 'emailVerified',
+  status: 'status',
+  rejectionReason: 'rejectionReason',
+  reviewedBy: 'reviewedBy',
+  reviewedAt: 'reviewedAt',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OperatorApplicationScalarFieldEnum = (typeof OperatorApplicationScalarFieldEnum)[keyof typeof OperatorApplicationScalarFieldEnum]
+
+
+export const OperatorInvitationScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  tokenHash: 'tokenHash',
+  expiresAt: 'expiresAt',
+  status: 'status',
+  operatorType: 'operatorType',
+  name: 'name',
+  phone: 'phone',
+  licenseNumber: 'licenseNumber',
+  employeeCode: 'employeeCode',
+  hospitalId: 'hospitalId',
+  invitedBy: 'invitedBy',
+  acceptedAt: 'acceptedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OperatorInvitationScalarFieldEnum = (typeof OperatorInvitationScalarFieldEnum)[keyof typeof OperatorInvitationScalarFieldEnum]
+
+
 export const OperatorProfileScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -1896,6 +2089,34 @@ export type ListEnumOperatorTypeFieldRefInput<$PrismaModel> = FieldRefInputType<
 
 
 /**
+ * Reference to a field of type 'OperatorApplicationStatus'
+ */
+export type EnumOperatorApplicationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OperatorApplicationStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'OperatorApplicationStatus[]'
+ */
+export type ListEnumOperatorApplicationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OperatorApplicationStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'OperatorInvitationStatus'
+ */
+export type EnumOperatorInvitationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OperatorInvitationStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'OperatorInvitationStatus[]'
+ */
+export type ListEnumOperatorInvitationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OperatorInvitationStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'Gender'
  */
 export type EnumGenderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Gender'>
@@ -2178,6 +2399,8 @@ export type GlobalOmitConfig = {
   emergencyRequest?: Prisma.EmergencyRequestOmit
   hospital?: Prisma.HospitalOmit
   notification?: Prisma.NotificationOmit
+  operatorApplication?: Prisma.OperatorApplicationOmit
+  operatorInvitation?: Prisma.OperatorInvitationOmit
   operatorProfile?: Prisma.OperatorProfileOmit
   patient?: Prisma.PatientOmit
   payment?: Prisma.PaymentOmit

@@ -1,0 +1,52 @@
+enum OperatorApplicationStatus {
+    PENDING
+    APPROVED
+    REJECTED
+}
+
+enum OperatorInvitationStatus {
+    PENDING
+    USED
+    EXPIRED
+    CANCELLED
+}
+
+model OperatorApplication {
+    id String @id @default(uuid()) @db.Uuid
+
+    name  String @db.VarChar(100)
+    email String @unique @db.VarChar(255)
+    phone String @unique @db.VarChar(20)
+
+    operatorType OperatorType @map("operator_type")
+
+    licenseNumber String? @map("license_number") @db.VarChar(100)
+    employeeCode  String? @map("employee_code") @db.VarChar(100)
+
+    hospitalId String? @map("hospital_id") @db.Uuid
+
+    emailVerified Boolean @default(false) @map("email_verified")
+
+    status OperatorApplicationStatus @default(PENDING)
+
+    rejectionReason String? @map("rejection_reason") @db.Text
+
+    reviewedBy String?   @map("reviewed_by") @db.Uuid
+    reviewedAt DateTime?
+
+    userId String? @unique @map("user_id") @db.Uuid
+
+    hospital Hospital? @relation(fields: [hospitalId], references: [id], onDelete: SetNull)
+
+    reviewedByUser User? @relation("OperatorApplicationReviewer", fields: [reviewedBy], references: [id], onDelete: SetNull)
+
+    user User? @relation("OperatorApplicationUser", fields: [userId], references: [id], onDelete: SetNull)
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@index([status])
+    @@index([operatorType])
+    @@index([reviewedBy])
+    @@map("operator_applications")
+}

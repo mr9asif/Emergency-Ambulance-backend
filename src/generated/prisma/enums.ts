@@ -103,6 +103,25 @@ export const NotificationType = {
 export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]
 
 
+export const OperatorApplicationStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+} as const
+
+export type OperatorApplicationStatus = (typeof OperatorApplicationStatus)[keyof typeof OperatorApplicationStatus]
+
+
+export const OperatorInvitationStatus = {
+  PENDING: 'PENDING',
+  USED: 'USED',
+  EXPIRED: 'EXPIRED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type OperatorInvitationStatus = (typeof OperatorInvitationStatus)[keyof typeof OperatorInvitationStatus]
+
+
 export const OperatorType = {
   DRIVER: 'DRIVER',
   DISPATCHER: 'DISPATCHER',
