@@ -154,6 +154,29 @@ const verifyOperatorApplicationEmail = async (
   // 7. Delete OTP
   await otpUtils.deleteOtp(otpKey);
 
+  // 7. Render application-under-review email
+  const templatePath = path.join(
+    process.cwd(),
+    "src/modules/template/operator-application-verify.ejs",
+  );
+
+  const templateData = {
+    name: updatedApplication.name,
+    email: updatedApplication.email,
+    operatorType: updatedApplication.operatorType,
+    appName: "Emergency-Ambulance",
+  };
+
+  const html = await ejs.renderFile(templatePath, templateData);
+
+  // 8. Send under-review email
+  await transporter.sendMail({
+    from: config.smtp_sender,
+    to: updatedApplication.email,
+    subject: "Your operator application is under review",
+    html,
+  });
+
   return {
     id: updatedApplication.id,
     email: updatedApplication.email,
