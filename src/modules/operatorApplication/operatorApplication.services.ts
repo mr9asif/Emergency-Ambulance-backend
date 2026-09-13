@@ -1,20 +1,18 @@
+import ejs from "ejs";
 import httpStatus from "http-status";
+import path from "path";
 
+import config from "../../config/index.js";
 import { AppError } from "../../error/AppError.js";
 import { transporter } from "../../lib/nodemailer.js";
 import { prisma } from "../../lib/prisma.js";
-
-import config from "../../config/index.js";
-
-import ejs from "ejs";
-import path from "path";
+import { reddisClient } from "../../lib/reddis.js";
+import { otpUtils } from "../../utils/otp.js";
 
 import {
   ICreateOperatorApplication,
   IVerifyOperatorApplicationEmail,
 } from "./operatorApplication.interface.js";
-
-import { otpUtils } from "../../utils/otp.js";
 
 const createOperatorApplication = async (
   payload: ICreateOperatorApplication,
@@ -49,35 +47,49 @@ const createOperatorApplication = async (
     );
   }
 
-  // 3. Create operator application
-  const application = await prisma.operatorApplication.create({
-    data: {
-      name: payload.name,
-      email,
-      phone: payload.phone,
-      operatorType: payload.operatorType,
-      emailVerified: false,
-      status: "PENDING",
-    },
-  });
+  // 3. Driver must provide license number
+  if (payload.operatorType === "DRIVER" && !payload.licenseNumber) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "License number is required for driver",
+    );
+  }
 
   // 4. Generate OTP
   const otp = otpUtils.generateOtp();
 
-  // 5. Redis key
+  // 5. Redis keys
   const otpKey = `verify-operator-application=${email}`;
+
+  const applicationDataKey = `operator-application-data=${email}`;
 
   // 6. Save OTP in Redis
   await otpUtils.setOtp(otpKey, otp, otpUtils.OTP_EXPIRATION_SECONDS);
 
-  // 7. Email template
+  // 7. Save ALL application data in Redis
+  const applicationData: ICreateOperatorApplication = {
+    name: payload.name,
+    email,
+    phone: payload.phone,
+    operatorType: payload.operatorType,
+    licenseNumber: payload.licenseNumber,
+  };
+
+  await reddisClient.set(applicationDataKey, JSON.stringify(applicationData), {
+    expiration: {
+      type: "EX",
+      value: otpUtils.OTP_EXPIRATION_SECONDS,
+    },
+  });
+
+  // 8. Email template
   const templatePath = path.join(
     process.cwd(),
     "src/modules/template/verify-email.ejs",
   );
 
   const templateData = {
-    name: application.name,
+    name: payload.name,
     email,
     otp,
     expiryTime: otpUtils.OTP_EXPIRATION_SECONDS / 60,
@@ -86,7 +98,7 @@ const createOperatorApplication = async (
 
   const html = await ejs.renderFile(templatePath, templateData);
 
-  // 8. Send verification email
+  // 9. Send verification email
   await transporter.sendMail({
     from: config.smtp_sender,
     to: email,
@@ -94,96 +106,117 @@ const createOperatorApplication = async (
     html,
   });
 
-  // 9. Return application information
+  // 10. Return temporary information
   return {
-    id: application.id,
-    name: application.name,
-    email: application.email,
-    operatorType: application.operatorType,
-    status: application.status,
-    emailVerified: application.emailVerified,
+    name: payload.name,
+    email,
+    phone: payload.phone,
+    operatorType: payload.operatorType,
+    licenseNumber: payload.licenseNumber,
+    message: "Application submitted successfully. Please verify your email.",
   };
 };
-// verify otp
+
 const verifyOperatorApplicationEmail = async (
   payload: IVerifyOperatorApplicationEmail,
 ) => {
   const email = payload.email.trim().toLowerCase();
 
-  // 1. Find application
-  const application = await prisma.operatorApplication.findUnique({
-    where: {
-      email,
-    },
-  });
-
-  if (!application) {
-    throw new AppError(httpStatus.NOT_FOUND, "Operator application not found");
-  }
-
-  // 2. Already verified?
-  if (application.emailVerified) {
-    throw new AppError(httpStatus.BAD_REQUEST, "Email is already verified");
-  }
-
-  // 3. Redis OTP key
+  // 1. Redis keys
   const otpKey = `verify-operator-application=${email}`;
 
-  // 4. Get OTP
+  const applicationDataKey = `operator-application-data=${email}`;
+
+  // 2. Get OTP
   const savedOtp = await otpUtils.getOtp(otpKey);
 
   if (!savedOtp) {
     throw new AppError(httpStatus.BAD_REQUEST, "OTP expired or not found");
   }
 
-  // 5. Compare OTP
+  // 3. Compare OTP
   if (payload.otp !== savedOtp) {
     throw new AppError(httpStatus.BAD_REQUEST, "OTP doesn't match. Try again.");
   }
 
-  // 6. Update application
-  const updatedApplication = await prisma.operatorApplication.update({
+  // 4. Get application data from Redis
+  const applicationDataValue = await reddisClient.get(applicationDataKey);
+
+  if (!applicationDataValue) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Application data expired. Please submit the application again.",
+    );
+  }
+
+  const applicationData: ICreateOperatorApplication =
+    JSON.parse(applicationDataValue);
+
+  // 5. Double-check existing application
+  const existingApplication = await prisma.operatorApplication.findUnique({
     where: {
-      id: application.id,
+      email,
     },
+  });
+
+  if (existingApplication) {
+    throw new AppError(
+      httpStatus.CONFLICT,
+      "An operator application with this email already exists",
+    );
+  }
+
+  // 6. Create application in database
+  const application = await prisma.operatorApplication.create({
     data: {
+      name: applicationData.name,
+      email: applicationData.email,
+      phone: applicationData.phone,
+      operatorType: applicationData.operatorType,
+      licenseNumber: applicationData.licenseNumber,
       emailVerified: true,
     },
   });
 
-  // 7. Delete OTP
+  // 7. Delete Redis data
   await otpUtils.deleteOtp(otpKey);
+  await reddisClient.del(applicationDataKey);
 
-  // 7. Render application-under-review email
+  // 8. Render under-review email
   const templatePath = path.join(
     process.cwd(),
     "src/modules/template/operator-application-verify.ejs",
   );
 
   const templateData = {
-    name: updatedApplication.name,
-    email: updatedApplication.email,
-    operatorType: updatedApplication.operatorType,
+    name: application.name,
+    email: application.email,
+    operatorType: application.operatorType,
     appName: "Emergency-Ambulance",
   };
 
   const html = await ejs.renderFile(templatePath, templateData);
 
-  // 8. Send under-review email
+  // 9. Send under-review email
   await transporter.sendMail({
     from: config.smtp_sender,
-    to: updatedApplication.email,
+    to: application.email,
     subject: "Your operator application is under review",
     html,
   });
 
+  // 10. Return response
   return {
-    id: updatedApplication.id,
-    email: updatedApplication.email,
-    emailVerified: updatedApplication.emailVerified,
-    status: updatedApplication.status,
+    id: application.id,
+    name: application.name,
+    email: application.email,
+    phone: application.phone,
+    operatorType: application.operatorType,
+    licenseNumber: application.licenseNumber,
+    emailVerified: application.emailVerified,
+    status: application.status,
     message:
-      "Your application is now under review. We will contact you after the admin review.",
+      "Your email has been verified successfully. Your application is now under review.",
   };
 };
 

@@ -14,3 +14,12 @@ export interface IVerifyOperatorApplicationEmail {
   email: string;
   otp: string;
 }
+
+export interface IApproveOperatorApplication {
+  licenseNumber?: string;
+  employeeCode?: string;
+}
+
+export interface IRejectOperatorApplication {
+  rejectionReason: string;
+}
