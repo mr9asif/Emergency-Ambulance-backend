@@ -5,6 +5,7 @@ import { ambulanceRouter } from "./modules/ambulance/ambulance.route.js";
 import { authRouter } from "./modules/auth/auth.route.js";
 import { hospitalRouter } from "./modules/hospital/hospital.route.js";
 import { operatorRouter } from "./modules/operator/operator.route.js";
+import { operatorApplicationRouter } from "./modules/operatorApplication/operatorApplication.route.js";
 
 const app = express();
 
@@ -16,5 +17,6 @@ app.use("/api/auth", authRouter);
 app.use("/api/hospital", hospitalRouter);
 app.use("/api/ambulance", ambulanceRouter);
 app.use("/api/operator", operatorRouter);
+app.use("/api/operatorApplication", operatorApplicationRouter);
 
 export default app;
