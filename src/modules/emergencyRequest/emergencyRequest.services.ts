@@ -77,6 +77,61 @@ const createEmergencyRequest = async (
   return emergencyRequest;
 };
 
+const getPendingEmergencyRequests = async (userId: string) => {
+  // 1. Verify dispatcher
+  const dispatcher = await prisma.operatorProfile.findFirst({
+    where: {
+      userId,
+      operatorType: "DISPATCHER",
+    },
+  });
+
+  if (!dispatcher) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "Only dispatchers can access pending emergency requests",
+    );
+  }
+
+  // 2. Get pending requests
+  const emergencyRequests = await prisma.emergencyRequest.findMany({
+    where: {
+      status: "PENDING",
+    },
+
+    include: {
+      patient: true,
+
+      customer: {
+        select: {
+          id: true,
+          name: true,
+          phone: true,
+          email: true,
+        },
+      },
+    },
+
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+
+  // 3. Sort by emergency priority
+  const priorityOrder = {
+    CRITICAL: 1,
+    HIGH: 2,
+    MEDIUM: 3,
+    LOW: 4,
+  };
+
+  emergencyRequests.sort(
+    (a, b) => priorityOrder[a.priority] - priorityOrder[b.priority],
+  );
+
+  return emergencyRequests;
+};
 export const emergencyRequestService = {
   createEmergencyRequest,
+  getPendingEmergencyRequests,
 };

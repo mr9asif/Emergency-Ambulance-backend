@@ -22,4 +22,10 @@ router.post(
   emergencyRequestController.createEmergencyRequest,
 );
 
+router.get(
+  "/pending",
+  auth(UserRole.OPERATOR),
+  emergencyRequestController.getPendingEmergencyRequests,
+);
+
 export const emergencyRequestRouter = router;
