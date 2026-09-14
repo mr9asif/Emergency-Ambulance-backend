@@ -70,11 +70,14 @@ const approveOperatorApplication = async (
   payload: IApproveOperatorApplication,
 ) => {
   // 1. Find application
+
   const application = await prisma.operatorApplication.findUnique({
     where: {
       id: applicationId,
     },
   });
+
+  console.log("applicaton", application);
 
   if (!application) {
     throw new AppError(httpStatus.NOT_FOUND, "Operator application not found");
