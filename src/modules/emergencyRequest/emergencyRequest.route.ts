@@ -28,4 +28,15 @@ router.get(
   emergencyRequestController.getPendingEmergencyRequests,
 );
 
+router.get(
+  "/available-drivers",
+  auth(UserRole.OPERATOR),
+  emergencyRequestController.getAvailableDrivers,
+);
+
+router.get(
+  "/available-ambulances",
+  auth(UserRole.OPERATOR),
+  emergencyRequestController.getAvailableAmbulances,
+);
 export const emergencyRequestRouter = router;

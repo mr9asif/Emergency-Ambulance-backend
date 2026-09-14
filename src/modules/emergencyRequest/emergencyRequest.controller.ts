@@ -48,7 +48,42 @@ const getPendingEmergencyRequests = catchAsync(
     });
   },
 );
+
+const getAvailableDrivers = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.user?.userId;
+
+  const result = await emergencyRequestService.getAvailableDrivers(
+    userId as string,
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Available drivers retrieved successfully",
+    data: result,
+  });
+});
+
+const getAvailableAmbulances = catchAsync(
+  async (req: Request, res: Response) => {
+    const userId = req.user?.userId;
+
+    const result = await emergencyRequestService.getAvailableAmbulances(
+      userId as string,
+    );
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Available ambulances retrieved successfully",
+      data: result,
+    });
+  },
+);
+
 export const emergencyRequestController = {
   createEmergencyRequest,
   getPendingEmergencyRequests,
+  getAvailableDrivers,
+  getAvailableAmbulances,
 };

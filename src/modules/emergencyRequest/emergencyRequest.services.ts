@@ -131,7 +131,104 @@ const getPendingEmergencyRequests = async (userId: string) => {
 
   return emergencyRequests;
 };
+
+// get available driver
+const getAvailableDrivers = async (userId: string) => {
+  // Verify dispatcher
+  const dispatcher = await prisma.operatorProfile.findFirst({
+    where: {
+      userId,
+      operatorType: "DISPATCHER",
+    },
+  });
+
+  if (!dispatcher) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "Only dispatchers can access available drivers",
+    );
+  }
+
+  const drivers = await prisma.operatorProfile.findMany({
+    where: {
+      operatorType: "DRIVER",
+      isAvailable: true,
+
+      user: {
+        status: "ACTIVE",
+        isDeleted: false,
+      },
+    },
+
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          phone: true,
+          email: true,
+          status: true,
+        },
+      },
+
+      hospital: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return drivers;
+};
+
+// available ambulance chek
+const getAvailableAmbulances = async (userId: string) => {
+  // Verify dispatcher
+  const dispatcher = await prisma.operatorProfile.findFirst({
+    where: {
+      userId,
+      operatorType: "DISPATCHER",
+    },
+  });
+
+  if (!dispatcher) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "Only dispatchers can access available ambulances",
+    );
+  }
+
+  const ambulances = await prisma.ambulance.findMany({
+    where: {
+      status: "AVAILABLE",
+    },
+
+    include: {
+      baseHospital: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return ambulances;
+};
+
 export const emergencyRequestService = {
   createEmergencyRequest,
   getPendingEmergencyRequests,
+  getAvailableDrivers,
+  getAvailableAmbulances,
 };
