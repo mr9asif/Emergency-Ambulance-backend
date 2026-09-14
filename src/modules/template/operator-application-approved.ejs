@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Application Approved</title>
+  </head>
+
+  <body>
+    <h2>Hello <%= name %>,</h2>
+
+    <p>Congratulations!</p>
+
+    <p>
+      Your application to become an
+      <strong><%= operatorType %></strong>
+      operator for <%= appName %> has been approved.
+    </p>
+
+    <p>
+      Your operator account has not been activated yet. Please set your password
+      using the secure invitation link below.
+    </p>
+
+    <p>
+      <a href="<%= invitationLink %>"> Set Your Password </a>
+    </p>
+
+    <p>This invitation link will expire in 24 hours.</p>
+
+    <p>If you did not apply for this position, please ignore this email.</p>
+
+    <p>
+      Regards,<br />
+      <%= appName %> Team
+    </p>
+  </body>
+</html>

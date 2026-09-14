@@ -10,7 +10,9 @@ import { reddisClient } from "../../lib/reddis.js";
 import { otpUtils } from "../../utils/otp.js";
 
 import {
+  IApproveOperatorApplication,
   ICreateOperatorApplication,
+  IRejectOperatorApplication,
   IVerifyOperatorApplicationEmail,
 } from "./operatorApplication.interface.js";
 
@@ -220,7 +222,104 @@ const verifyOperatorApplicationEmail = async (
   };
 };
 
+const approveOperatorApplication = async (
+  applicationId: string,
+  adminId: string,
+  payload: IApproveOperatorApplication,
+) => {
+  // 1. Find application
+  const application = await prisma.operatorApplication.findUnique({
+    where: {
+      id: applicationId,
+    },
+  });
+
+  if (!application) {
+    throw new AppError(httpStatus.NOT_FOUND, "Operator application not found");
+  }
+
+  // 2. Check email verification
+  if (!application.emailVerified) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Applicant email is not verified",
+    );
+  }
+
+  // 3. Check application status
+  if (application.status !== "PENDING") {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      `Application is already ${application.status.toLowerCase()}`,
+    );
+  }
+
+  // 4. Driver must have license number
+  if (application.operatorType === "DRIVER" && !application.licenseNumber) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Driver license number is missing",
+    );
+  }
+
+  // 5. Update application
+  const updatedApplication = await prisma.operatorApplication.update({
+    where: {
+      id: applicationId,
+    },
+    data: {
+      status: "APPROVED",
+      employeeCode: payload.employeeCode,
+      reviewedBy: adminId,
+      reviewedAt: new Date(),
+    },
+  });
+
+  return updatedApplication;
+};
+
+const rejectOperatorApplication = async (
+  applicationId: string,
+  adminId: string,
+  payload: IRejectOperatorApplication,
+) => {
+  // 1. Find application
+  const application = await prisma.operatorApplication.findUnique({
+    where: {
+      id: applicationId,
+    },
+  });
+
+  if (!application) {
+    throw new AppError(httpStatus.NOT_FOUND, "Operator application not found");
+  }
+
+  // 2. Check application status
+  if (application.status !== "PENDING") {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      `Application is already ${application.status.toLowerCase()}`,
+    );
+  }
+
+  // 3. Update application
+  const updatedApplication = await prisma.operatorApplication.update({
+    where: {
+      id: applicationId,
+    },
+    data: {
+      status: "REJECTED",
+      rejectionReason: payload.rejectionReason,
+      reviewedBy: adminId,
+      reviewedAt: new Date(),
+    },
+  });
+
+  return updatedApplication;
+};
 export const operatorApplicationService = {
   createOperatorApplication,
   verifyOperatorApplicationEmail,
+  approveOperatorApplication,
+  rejectOperatorApplication,
 };

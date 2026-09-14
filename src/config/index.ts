@@ -29,4 +29,5 @@ export default {
   cloudinary_name: process.env.CLOUDINARY_APP_NAME!,
   cloudinary_api_key: process.env.CLOUDINARY_API_KEY!,
   cloudinary_secret_key: process.env.CLOUDINARY_SECRET_KEY!,
+  operator_invitaion_url: process.env.OPERATOR_INVITAION_URL!,
 };

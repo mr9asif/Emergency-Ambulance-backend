@@ -36,7 +36,43 @@ const verifyOperatorApplicationEmail = catchAsync(
   },
 );
 
+const approveOperatorApplication = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await operatorApplicationService.approveOperatorApplication(
+      req.params.id as string,
+      req.user!.userId,
+      req.body,
+    );
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Operator application approved successfully",
+      data: result,
+    });
+  },
+);
+
+const rejectOperatorApplication = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await operatorApplicationService.rejectOperatorApplication(
+      req.params.id as string,
+      req.user!.userId,
+      req.body,
+    );
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Operator application rejected successfully",
+      data: result,
+    });
+  },
+);
+
 export const operatorApplicationController = {
   createOperatorApplication,
   verifyOperatorApplicationEmail,
+  approveOperatorApplication,
+  rejectOperatorApplication,
 };

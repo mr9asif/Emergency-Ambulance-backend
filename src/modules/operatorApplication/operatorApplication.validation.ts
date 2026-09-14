@@ -36,13 +36,6 @@ const verifyOperatorApplicationEmailSchema = z.object({
 });
 
 const approveOperatorApplicationSchema = z.object({
-  licenseNumber: z
-    .string()
-    .trim()
-    .min(3, "License number must be at least 3 characters")
-    .max(100, "License number cannot exceed 100 characters")
-    .optional(),
-
   employeeCode: z
     .string()
     .trim()
