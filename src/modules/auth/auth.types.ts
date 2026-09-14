@@ -21,3 +21,8 @@ export interface IRequestUser {
   name: string;
   role: UserRole;
 }
+
+export interface ISetOperatorPassword {
+  password: string;
+  confirmPassword: string;
+}

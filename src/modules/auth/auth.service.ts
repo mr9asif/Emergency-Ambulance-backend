@@ -1,18 +1,22 @@
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 import ejs from "ejs";
+import httpsStatus from "http-status";
 import { JwtPayload, SignOptions } from "jsonwebtoken";
 import path from "path";
 import config from "../../config/index.js";
+import { AppError } from "../../error/AppError.js";
 import { UserStatus } from "../../generated/prisma/enums.js";
 import { transporter } from "../../lib/nodemailer.js";
 import { prisma } from "../../lib/prisma.js";
 import { reddisClient } from "../../lib/reddis.js";
+import { invitationUtils } from "../../utils/invitation.js";
 import { jwtUtils } from "../../utils/jwt.js";
 import {
   ILoginUserPayload,
   IRegisterPayload,
   IRequestUser,
+  ISetOperatorPassword,
   IVerifyEmailPayload,
 } from "./auth.types.js";
 
@@ -304,10 +308,98 @@ const getMe = async (user: IRequestUser) => {
   return isUserExists;
 };
 
+const setOperatorPassword = async (
+  token: string,
+  payload: ISetOperatorPassword,
+) => {
+  // 1. Hash token received from URL
+  const tokenHash = invitationUtils.hashInvitationToken(token);
+
+  // 2. Find invitation
+  const invitation = await prisma.operatorInvitation.findUnique({
+    where: {
+      tokenHash,
+    },
+  });
+
+  // 3. Invalid token
+  if (!invitation) {
+    throw new AppError(httpsStatus.NOT_FOUND, "Invalid invitation token");
+  }
+
+  // 4. Check invitation status
+  if (invitation.status !== "PENDING") {
+    throw new AppError(
+      httpsStatus.BAD_REQUEST,
+      "Invitation is no longer valid",
+    );
+  }
+
+  // 5. Check expiration
+  if (invitation.expiresAt < new Date()) {
+    throw new AppError(httpsStatus.GONE, "Invitation link has expired");
+  }
+
+  // 6. Hash password
+  const hashedPassword = await bcrypt.hash(
+    payload.password,
+    Number(config.bcrypt_salt_rounds),
+  );
+
+  // 7. Create operator account
+  const result = await prisma.$transaction(async (tx) => {
+    const user = await tx.user.create({
+      data: {
+        name: invitation.name,
+        email: invitation.email,
+        phone: invitation.phone,
+        passwordHash: hashedPassword,
+        role: "OPERATOR",
+        emailVerified: true,
+
+        operatorProfile: {
+          create: {
+            employeeCode: invitation.employeeCode,
+            operatorType: invitation.operatorType,
+            licenseNumber: invitation.licenseNumber,
+          },
+        },
+      },
+
+      include: {
+        operatorProfile: true,
+      },
+    });
+
+    await tx.operatorInvitation.update({
+      where: {
+        id: invitation.id,
+      },
+      data: {
+        status: "USED",
+        acceptedAt: new Date(),
+      },
+    });
+
+    return user;
+  });
+
+  // 9. Don't return password
+  return {
+    id: result.id,
+    name: result.name,
+    email: result.email,
+    phone: result.phone,
+    role: result.role,
+    employeeCode: result.operatorProfile?.employeeCode,
+  };
+};
+
 export const authService = {
   registerUser,
   verifyRegisterPatiend,
   loginUser,
   refreshToken,
   getMe,
+  setOperatorPassword,
 };

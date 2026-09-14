@@ -58,10 +58,25 @@ const PatientEmailVerifyZodSchema = z.object({
   otp: z.string().length(6),
 });
 
-export const UserValidation = {
+const setOperatorPasswordSchema = z
+  .object({
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .max(128, "Password must not exceed 128 characters"),
+
+    confirmPassword: z.string().min(1, "Confirm password is required"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+export const authValidation = {
   registerSchema,
   LoginZodSchema,
   ForgotPasswordZodSchema,
   ResetPasswordZodSchema,
   PatientEmailVerifyZodSchema,
+  setOperatorPasswordSchema,
 };

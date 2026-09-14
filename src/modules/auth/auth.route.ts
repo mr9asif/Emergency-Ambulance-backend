@@ -3,23 +3,23 @@ import { UserRole } from "../../generated/prisma/enums.js";
 import { auth } from "../../middleware/checkAuth.js";
 import { validateRequest } from "../../middleware/validateRequest.js";
 import { authController } from "./auth.controller.js";
-import { UserValidation } from "./auth.validation.js";
+import { authValidation } from "./auth.validation.js";
 
 const router = Router();
 
 router.post(
   "/register",
-  validateRequest(UserValidation.registerSchema),
+  validateRequest(authValidation.registerSchema),
   authController.registerUser,
 );
 router.post(
   "/verify-email",
-  validateRequest(UserValidation.PatientEmailVerifyZodSchema),
+  validateRequest(authValidation.PatientEmailVerifyZodSchema),
   authController.verifyUserEmail,
 );
 router.post(
   "/login",
-  validateRequest(UserValidation.LoginZodSchema),
+  validateRequest(authValidation.LoginZodSchema),
   authController.loginUser,
 );
 router.post("/refresh-token", authController.refreshToken);
@@ -28,6 +28,12 @@ router.get(
   auth(UserRole.ADMIN, UserRole.ADMIN, UserRole.OPERATOR, UserRole.CUSTOMER),
   // validateRequest
   authController.getMe,
+);
+
+router.post(
+  "/set-password",
+  validateRequest(authValidation.setOperatorPasswordSchema),
+  authController.setOperatorPassword,
 );
 
 export const authRouter = router;

@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import httpsStatus from "http-status";
+import { AppError } from "../../error/AppError.js";
 import { catchAsync } from "../../utils/catchAsync.js";
 import sendResponse from "../../utils/sendResponse.js";
 import { authService } from "./auth.service.js";
@@ -128,10 +129,31 @@ const getMe = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const setOperatorPassword = catchAsync(async (req, res) => {
+  // Token comes from URL query
+  const { token } = req.query;
+
+  // Validate token
+  if (!token || typeof token !== "string") {
+    throw new AppError(httpsStatus.BAD_REQUEST, "Invitation token is required");
+  }
+
+  // Password + confirmPassword come from body
+  const result = await authService.setOperatorPassword(token, req.body);
+
+  sendResponse(res, {
+    statusCode: httpsStatus.OK,
+    success: true,
+    message: "Password set successfully. You can now login.",
+    data: result,
+  });
+});
+
 export const authController = {
   registerUser,
   verifyUserEmail,
   loginUser,
   refreshToken,
   getMe,
+  setOperatorPassword,
 };
