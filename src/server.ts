@@ -1,7 +1,6 @@
 import app from "./app.js";
 import { prisma } from "./lib/prisma.js";
 import { reddisClient } from "./lib/reddis.js";
-import seedDemoOperators from "./utils/demo.operator.seed.js";
 import { seedSuperAdmin } from "./utils/seed.js";
 
 const port = 5000;
@@ -13,7 +12,7 @@ const main = async () => {
     await reddisClient.connect();
     console.log("reddis connect successfully!");
     await seedSuperAdmin();
-    await seedDemoOperators();
+    // await seedDemoOperators();
 
     app.listen(port, () => {
       console.log("server running on port", port);

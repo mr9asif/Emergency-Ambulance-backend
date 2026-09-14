@@ -4,6 +4,7 @@ import express from "express";
 import { adminRouter } from "./modules/admin/admin.route.js";
 import { ambulanceRouter } from "./modules/ambulance/ambulance.route.js";
 import { authRouter } from "./modules/auth/auth.route.js";
+import { emergencyRequestRouter } from "./modules/emergencyRequest/emergencyRequest.route.js";
 import { hospitalRouter } from "./modules/hospital/hospital.route.js";
 import { operatorRouter } from "./modules/operator/operator.route.js";
 import { operatorApplicationRouter } from "./modules/operatorApplication/operatorApplication.route.js";
@@ -22,5 +23,6 @@ app.use("/api/operator", operatorRouter);
 app.use("/api/operatorApplication", operatorApplicationRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/patient", patientRouter);
+app.use("/api/emergencyRequest", emergencyRequestRouter);
 
 export default app;
