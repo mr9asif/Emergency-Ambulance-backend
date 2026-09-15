@@ -433,7 +433,7 @@ const assignEmergencyRequest = async (
         offeredAt: new Date(),
 
         // Give driver limited time to respond
-        expiresAt: new Date(Date.now() + 60 * 1000),
+        expiresAt: new Date(Date.now() + 5 * 60 * 1000),
       },
 
       include: {
