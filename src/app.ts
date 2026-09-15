@@ -10,6 +10,7 @@ import { hospitalRouter } from "./modules/hospital/hospital.route.js";
 import { operatorRouter } from "./modules/operator/operator.route.js";
 import { operatorApplicationRouter } from "./modules/operatorApplication/operatorApplication.route.js";
 import { patientRouter } from "./modules/patient/patient.route.js";
+import { tripRoute } from "./modules/trip/trip.route.js";
 
 const app = express();
 
@@ -26,5 +27,6 @@ app.use("/api/admin", adminRouter);
 app.use("/api/patient", patientRouter);
 app.use("/api/emergencyRequest", emergencyRequestRouter);
 app.use("/api/dispatch-assignments", dispatchAssignmentRouter);
+app.use("/api/trip", tripRoute);
 
 export default app;

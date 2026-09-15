@@ -2,6 +2,7 @@ import httpStatus from "http-status";
 
 import { AppError } from "../../error/AppError.js";
 import { prisma } from "../../lib/prisma.js";
+import { tripService } from "../trip/trip.services.js";
 import { IRejectDispatchAssignment } from "./dispatchAssignment.interface.js";
 
 // ============================================
@@ -218,7 +219,31 @@ const acceptDispatchAssignment = async (
       );
     }
 
-    // 7. Atomically make driver unavailable
+    // 7. Find emergency request
+    const emergencyRequest = await tx.emergencyRequest.findUnique({
+      where: {
+        id: assignment.emergencyRequestId,
+      },
+      select: {
+        id: true,
+        hospitalId: true,
+        status: true,
+      },
+    });
+
+    if (!emergencyRequest) {
+      throw new AppError(httpStatus.NOT_FOUND, "Emergency request not found");
+    }
+
+    // 8. Hospital must exist
+    if (!emergencyRequest.hospitalId) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        "No hospital has been assigned to this emergency request",
+      );
+    }
+
+    // 9. Atomically make driver unavailable
     const driverUpdate = await tx.operatorProfile.updateMany({
       where: {
         id: driver.id,
@@ -233,7 +258,7 @@ const acceptDispatchAssignment = async (
       throw new AppError(httpStatus.CONFLICT, "Driver is no longer available");
     }
 
-    // 8. Atomically make ambulance busy
+    // 10. Atomically make ambulance busy
     const ambulanceUpdate = await tx.ambulance.updateMany({
       where: {
         id: assignment.ambulanceId,
@@ -251,8 +276,8 @@ const acceptDispatchAssignment = async (
       );
     }
 
-    // 9. Accept assignment
-    const updatedAssignment = await tx.dispatchAssignment.update({
+    // 11. Accept assignment
+    await tx.dispatchAssignment.update({
       where: {
         id: assignmentId,
       },
@@ -260,7 +285,41 @@ const acceptDispatchAssignment = async (
         status: "ACCEPTED",
         respondedAt: new Date(),
       },
+    });
 
+    // 12. Generate trip number
+    const tripNumber = await tripService.generateTripNumber(tx);
+
+    // 13. Create trip
+    const trip = await tx.trip.create({
+      data: {
+        tripNumber,
+        emergencyRequestId: assignment.emergencyRequestId,
+        dispatchAssignmentId: assignment.id,
+        driverId: assignment.driverId,
+        ambulanceId: assignment.ambulanceId,
+        hospitalId: emergencyRequest.hospitalId,
+        status: "NOT_STARTED",
+      },
+    });
+
+    // 14. Update emergency request
+    await tx.emergencyRequest.update({
+      where: {
+        id: assignment.emergencyRequestId,
+      },
+      data: {
+        status: "ASSIGNED",
+      },
+    });
+
+    // 15. Fetch fresh assignment data
+    // This ensures the response contains the updated
+    // emergency status: ASSIGNED
+    const updatedAssignment = await tx.dispatchAssignment.findUnique({
+      where: {
+        id: assignmentId,
+      },
       include: {
         driver: {
           include: {
@@ -286,22 +345,21 @@ const acceptDispatchAssignment = async (
       },
     });
 
-    // 10. Update emergency request
-    await tx.emergencyRequest.update({
-      where: {
-        id: assignment.emergencyRequestId,
-      },
-      data: {
-        status: "ASSIGNED",
-      },
-    });
+    if (!updatedAssignment) {
+      throw new AppError(
+        httpStatus.NOT_FOUND,
+        "Updated dispatch assignment not found",
+      );
+    }
 
-    return updatedAssignment;
+    return {
+      assignment: updatedAssignment,
+      trip,
+    };
   });
 
   return result;
 };
-
 // ============================================
 // REJECT DISPATCH ASSIGNMENT - DRIVER
 // ============================================
