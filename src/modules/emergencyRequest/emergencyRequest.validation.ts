@@ -31,3 +31,9 @@ export const createEmergencyRequestSchema = z.object({
     .max(2000, "Notes must not exceed 2000 characters")
     .optional(),
 });
+
+export const assignEmergencyRequestSchema = z.object({
+  hospitalId: z.string().uuid("Invalid hospital ID"),
+  ambulanceId: z.string().uuid("Invalid ambulance ID"),
+  driverId: z.string().uuid("Invalid driver ID"),
+});

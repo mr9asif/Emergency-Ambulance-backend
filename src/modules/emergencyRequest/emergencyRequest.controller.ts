@@ -81,9 +81,43 @@ const getAvailableAmbulances = catchAsync(
   },
 );
 
+const getNearbyHospitals = catchAsync(async (req: Request, res: Response) => {
+  const result = await emergencyRequestService.getNearbyHospitals(
+    req.params.emergencyRequestId as string,
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Nearby hospitals retrieved successfully",
+    data: result,
+  });
+});
+
+const assignEmergencyRequest = catchAsync(
+  async (req: Request, res: Response) => {
+    const dispatcherId = req.user?.userId;
+
+    const result = await emergencyRequestService.assignEmergencyRequest(
+      dispatcherId as string,
+      req.params.emergencyRequestId as string,
+      req.body,
+    );
+
+    sendResponse(res, {
+      statusCode: httpStatus.CREATED,
+      success: true,
+      message: "Emergency assignment created successfully",
+      data: result,
+    });
+  },
+);
+
 export const emergencyRequestController = {
   createEmergencyRequest,
   getPendingEmergencyRequests,
   getAvailableDrivers,
   getAvailableAmbulances,
+  getNearbyHospitals,
+  assignEmergencyRequest,
 };

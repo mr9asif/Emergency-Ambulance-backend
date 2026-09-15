@@ -10,3 +10,9 @@ export interface ICreateEmergencyRequest {
   requiredTime: string;
   notes?: string;
 }
+
+export interface IAssignEmergencyRequest {
+  hospitalId: string;
+  ambulanceId: string;
+  driverId: string;
+}

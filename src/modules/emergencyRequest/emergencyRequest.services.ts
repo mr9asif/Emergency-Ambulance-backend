@@ -2,7 +2,10 @@ import httpStatus from "http-status";
 
 import { AppError } from "../../error/AppError.js";
 import { prisma } from "../../lib/prisma.js";
-import { ICreateEmergencyRequest } from "./emergencyRequest.interface.js";
+import {
+  IAssignEmergencyRequest,
+  ICreateEmergencyRequest,
+} from "./emergencyRequest.interface.js";
 
 const generateRequestNumber = async (): Promise<string> => {
   const date = new Date();
@@ -226,9 +229,251 @@ const getAvailableAmbulances = async (userId: string) => {
   return ambulances;
 };
 
+// find nearest hospital
+const calculateDistanceKm = (
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number,
+) => {
+  const earthRadiusKm = 6371;
+
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) ** 2;
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return earthRadiusKm * c;
+};
+
+const getNearbyHospitals = async (emergencyRequestId: string) => {
+  // 1. Get emergency request
+  const emergencyRequest = await prisma.emergencyRequest.findUnique({
+    where: {
+      id: emergencyRequestId,
+    },
+    select: {
+      id: true,
+      requestNumber: true,
+      pickupAddress: true,
+      pickupLatitude: true,
+      pickupLongitude: true,
+      emergencyType: true,
+      priority: true,
+      status: true,
+    },
+  });
+
+  if (!emergencyRequest) {
+    throw new AppError(httpStatus.NOT_FOUND, "Emergency request not found");
+  }
+
+  // 2. Get active emergency-capable hospitals
+  const hospitals = await prisma.hospital.findMany({
+    where: {
+      isActive: true,
+      hasEmergency: true,
+    },
+    select: {
+      id: true,
+      name: true,
+      phone: true,
+      address: true,
+      latitude: true,
+      longitude: true,
+    },
+  });
+
+  // 3. Calculate distance from patient to every hospital
+  const hospitalsWithDistance = hospitals.map((hospital) => {
+    const distance = calculateDistanceKm(
+      Number(emergencyRequest.pickupLatitude),
+      Number(emergencyRequest.pickupLongitude),
+      Number(hospital.latitude),
+      Number(hospital.longitude),
+    );
+
+    return {
+      ...hospital,
+      distanceFromPickupKm: Number(distance.toFixed(2)),
+    };
+  });
+
+  // 4. Nearest hospital first
+  hospitalsWithDistance.sort(
+    (a, b) => a.distanceFromPickupKm - b.distanceFromPickupKm,
+  );
+
+  return {
+    emergencyRequest,
+    hospitals: hospitalsWithDistance,
+  };
+};
+
+// assignmet task
+const assignEmergencyRequest = async (
+  dispatcherId: string,
+  emergencyRequestId: string,
+  payload: IAssignEmergencyRequest,
+) => {
+  // 1. Verify dispatcher
+  const dispatcher = await prisma.operatorProfile.findFirst({
+    where: {
+      userId: dispatcherId,
+      operatorType: "DISPATCHER",
+    },
+  });
+
+  if (!dispatcher) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "Only dispatchers can assign emergency requests",
+    );
+  }
+
+  const assignment = await prisma.$transaction(async (tx) => {
+    // 2. Get emergency request
+    const emergencyRequest = await tx.emergencyRequest.findUnique({
+      where: {
+        id: emergencyRequestId,
+      },
+    });
+
+    if (!emergencyRequest) {
+      throw new AppError(httpStatus.NOT_FOUND, "Emergency request not found");
+    }
+
+    // 3. Request must still be pending
+    if (emergencyRequest.status !== "PENDING") {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        "This emergency request is no longer pending",
+      );
+    }
+
+    // 4. Verify hospital
+    const hospital = await tx.hospital.findFirst({
+      where: {
+        id: payload.hospitalId,
+        isActive: true,
+        hasEmergency: true,
+      },
+    });
+
+    if (!hospital) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        "Selected hospital is not available for emergency service",
+      );
+    }
+
+    // 5. Verify ambulance
+    const ambulance = await tx.ambulance.findFirst({
+      where: {
+        id: payload.ambulanceId,
+        status: "AVAILABLE",
+        baseHospitalId: payload.hospitalId,
+      },
+    });
+
+    if (!ambulance) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        "Selected ambulance is not available or does not belong to the selected hospital",
+      );
+    }
+
+    // 6. Verify driver
+    const driver = await tx.operatorProfile.findFirst({
+      where: {
+        id: payload.driverId,
+        operatorType: "DRIVER",
+        isAvailable: true,
+        user: {
+          status: "ACTIVE",
+          isDeleted: false,
+        },
+      },
+    });
+
+    if (!driver) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        "Selected driver is not available",
+      );
+    }
+
+    // 7. Create assignment offer
+    const dispatchAssignment = await tx.dispatchAssignment.create({
+      data: {
+        emergencyRequestId,
+        driverId: payload.driverId,
+        ambulanceId: payload.ambulanceId,
+        assignedBy: dispatcherId,
+
+        assignmentMethod: "MANUAL",
+        status: "OFFERED",
+
+        offeredAt: new Date(),
+
+        // Give driver limited time to respond
+        expiresAt: new Date(Date.now() + 60 * 1000),
+      },
+
+      include: {
+        driver: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                phone: true,
+                email: true,
+              },
+            },
+          },
+        },
+
+        ambulance: true,
+
+        emergencyRequest: {
+          include: {
+            patient: true,
+            hospital: true,
+          },
+        },
+      },
+    });
+
+    // 8. Move emergency request into dispatching
+    await tx.emergencyRequest.update({
+      where: {
+        id: emergencyRequestId,
+      },
+      data: {
+        hospitalId: payload.hospitalId,
+        status: "DISPATCHING",
+      },
+    });
+
+    return dispatchAssignment;
+  });
+
+  return assignment;
+};
+
 export const emergencyRequestService = {
   createEmergencyRequest,
   getPendingEmergencyRequests,
   getAvailableDrivers,
   getAvailableAmbulances,
+
+  getNearbyHospitals,
+  assignEmergencyRequest,
 };
