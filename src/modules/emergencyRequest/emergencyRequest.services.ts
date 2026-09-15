@@ -409,6 +409,16 @@ const assignEmergencyRequest = async (
       );
     }
 
+    // 8. Move emergency request into dispatching
+    await tx.emergencyRequest.update({
+      where: {
+        id: emergencyRequestId,
+      },
+      data: {
+        hospitalId: payload.hospitalId,
+        status: "DISPATCHING",
+      },
+    });
     // 7. Create assignment offer
     const dispatchAssignment = await tx.dispatchAssignment.create({
       data: {
@@ -448,17 +458,6 @@ const assignEmergencyRequest = async (
             hospital: true,
           },
         },
-      },
-    });
-
-    // 8. Move emergency request into dispatching
-    await tx.emergencyRequest.update({
-      where: {
-        id: emergencyRequestId,
-      },
-      data: {
-        hospitalId: payload.hospitalId,
-        status: "DISPATCHING",
       },
     });
 
