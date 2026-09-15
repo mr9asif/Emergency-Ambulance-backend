@@ -39,7 +39,25 @@ const arriveAtPickup = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const confirmPickup = catchAsync(async (req: Request, res: Response) => {
+  const customerUserId = req.user?.userId;
+  const { tripId } = req.params;
+
+  const result = await tripService.confirmPickup(
+    customerUserId as string,
+    tripId as string,
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Patient pickup confirmed successfully",
+    data: result,
+  });
+});
+
 export const tripController = {
   startTrip,
   arriveAtPickup,
+  confirmPickup,
 };

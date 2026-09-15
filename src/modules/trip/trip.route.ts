@@ -18,4 +18,10 @@ router.patch(
   tripController.arriveAtPickup,
 );
 
+router.patch(
+  "/:tripId/confirm-pickup",
+  auth(UserRole.CUSTOMER),
+  tripController.confirmPickup,
+);
+
 export const tripRoute = router;

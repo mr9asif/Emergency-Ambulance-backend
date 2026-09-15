@@ -266,8 +266,130 @@ const arriveAtPickup = async (driverUserId: string, tripId: string) => {
   return result;
 };
 
+const confirmPickup = async (customerUserId: string, tripId: string) => {
+  const result = await prisma.$transaction(async (tx) => {
+    // 1. Verify active customer
+    const customer = await tx.user.findFirst({
+      where: {
+        id: customerUserId,
+        role: "CUSTOMER",
+        status: "ACTIVE",
+        isDeleted: false,
+      },
+    });
+
+    if (!customer) {
+      throw new AppError(
+        httpStatus.FORBIDDEN,
+        "Only active customers can confirm patient pickup",
+      );
+    }
+
+    // 2. Find trip
+    const trip = await tx.trip.findUnique({
+      where: {
+        id: tripId,
+      },
+      include: {
+        emergencyRequest: {
+          select: {
+            id: true,
+            customerId: true,
+            status: true,
+          },
+        },
+      },
+    });
+
+    if (!trip) {
+      throw new AppError(httpStatus.NOT_FOUND, "Trip not found");
+    }
+
+    // 3. Make sure this trip belongs to this customer
+    if (trip.emergencyRequest.customerId !== customerUserId) {
+      throw new AppError(
+        httpStatus.FORBIDDEN,
+        "This trip does not belong to you",
+      );
+    }
+
+    // 4. Trip must be in progress
+    if (trip.status !== "IN_PROGRESS") {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        "Trip is not currently in progress",
+      );
+    }
+
+    // 5. Emergency request must be at pickup
+    if (trip.emergencyRequest.status !== "ARRIVED_AT_PICKUP") {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        "Ambulance has not arrived at the pickup location",
+      );
+    }
+
+    // 6. Update emergency request
+    await tx.trip.update({
+      where: {
+        id: tripId,
+      },
+      data: {
+        pickedUpAt: new Date(),
+      },
+    });
+
+    await tx.emergencyRequest.update({
+      where: {
+        id: trip.emergencyRequestId,
+      },
+      data: {
+        status: "PATIENT_PICKED_UP",
+      },
+    });
+
+    // 7. Fetch fresh trip
+    const freshTrip = await tx.trip.findUnique({
+      where: {
+        id: tripId,
+      },
+      include: {
+        emergencyRequest: {
+          include: {
+            patient: true,
+            hospital: true,
+          },
+        },
+        ambulance: true,
+        driver: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                phone: true,
+                email: true,
+              },
+            },
+          },
+        },
+        dispatchAssignment: true,
+      },
+    });
+
+    if (!freshTrip) {
+      throw new AppError(httpStatus.NOT_FOUND, "Updated trip not found");
+    }
+
+    return freshTrip;
+  });
+
+  return result;
+};
+
 export const tripService = {
   generateTripNumber,
   startTrip,
   arriveAtPickup,
+  confirmPickup,
 };
