@@ -12,4 +12,10 @@ router.patch(
   tripController.startTrip,
 );
 
+router.patch(
+  "/:tripId/arrive-pickup",
+  auth(UserRole.OPERATOR),
+  tripController.arriveAtPickup,
+);
+
 export const tripRoute = router;

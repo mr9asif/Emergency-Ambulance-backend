@@ -22,6 +22,24 @@ const startTrip = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const arriveAtPickup = catchAsync(async (req: Request, res: Response) => {
+  const driverUserId = req.user?.userId;
+  const { tripId } = req.params;
+
+  const result = await tripService.arriveAtPickup(
+    driverUserId as string,
+    tripId as string,
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Driver arrived at pickup location",
+    data: result,
+  });
+});
+
 export const tripController = {
   startTrip,
+  arriveAtPickup,
 };
