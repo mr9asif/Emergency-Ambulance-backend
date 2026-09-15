@@ -24,4 +24,10 @@ router.patch(
   tripController.confirmPickup,
 );
 
+router.patch(
+  "/:tripId/start-hospital",
+  auth(UserRole.OPERATOR),
+  tripController.startHospitalJourney,
+);
+
 export const tripRoute = router;

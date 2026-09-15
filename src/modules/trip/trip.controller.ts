@@ -56,8 +56,26 @@ const confirmPickup = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const startHospitalJourney = catchAsync(async (req: Request, res: Response) => {
+  const driverUserId = req.user?.userId;
+  const { tripId } = req.params;
+
+  const result = await tripService.startHospitalJourney(
+    driverUserId as string,
+    tripId as string,
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Hospital journey started successfully",
+    data: result,
+  });
+});
+
 export const tripController = {
   startTrip,
   arriveAtPickup,
   confirmPickup,
+  startHospitalJourney,
 };

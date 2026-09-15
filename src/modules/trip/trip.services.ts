@@ -387,9 +387,132 @@ const confirmPickup = async (customerUserId: string, tripId: string) => {
   return result;
 };
 
+const startHospitalJourney = async (driverUserId: string, tripId: string) => {
+  const result = await prisma.$transaction(async (tx) => {
+    // 1. Find active driver
+    const driver = await tx.operatorProfile.findFirst({
+      where: {
+        userId: driverUserId,
+        operatorType: "DRIVER",
+        user: {
+          status: "ACTIVE",
+          isDeleted: false,
+        },
+      },
+    });
+
+    if (!driver) {
+      throw new AppError(
+        httpStatus.FORBIDDEN,
+        "Only active drivers can start the hospital journey",
+      );
+    }
+
+    // 2. Find trip
+    const trip = await tx.trip.findUnique({
+      where: {
+        id: tripId,
+      },
+      include: {
+        emergencyRequest: {
+          select: {
+            id: true,
+            hospitalId: true,
+            status: true,
+          },
+        },
+      },
+    });
+
+    if (!trip) {
+      throw new AppError(httpStatus.NOT_FOUND, "Trip not found");
+    }
+
+    // 3. Make sure this trip belongs to this driver
+    if (trip.driverId !== driver.id) {
+      throw new AppError(
+        httpStatus.FORBIDDEN,
+        "This trip does not belong to you",
+      );
+    }
+
+    // 4. Trip must be in progress
+    if (trip.status !== "IN_PROGRESS") {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        "Trip is not currently in progress",
+      );
+    }
+
+    // 5. Patient must already be picked up
+    if (trip.emergencyRequest.status !== "PATIENT_PICKED_UP") {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        "Patient has not been picked up yet",
+      );
+    }
+
+    // 6. Hospital must be assigned
+    if (!trip.emergencyRequest.hospitalId) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        "No hospital has been assigned to this emergency request",
+      );
+    }
+
+    // 7. Update emergency request status
+    await tx.emergencyRequest.update({
+      where: {
+        id: trip.emergencyRequestId,
+      },
+      data: {
+        status: "EN_ROUTE_TO_HOSPITAL",
+      },
+    });
+
+    // 8. Fetch fresh trip
+    const freshTrip = await tx.trip.findUnique({
+      where: {
+        id: tripId,
+      },
+      include: {
+        emergencyRequest: {
+          include: {
+            patient: true,
+            hospital: true,
+          },
+        },
+        ambulance: true,
+        driver: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                phone: true,
+                email: true,
+              },
+            },
+          },
+        },
+        dispatchAssignment: true,
+      },
+    });
+
+    if (!freshTrip) {
+      throw new AppError(httpStatus.NOT_FOUND, "Updated trip not found");
+    }
+
+    return freshTrip;
+  });
+
+  return result;
+};
+
 export const tripService = {
   generateTripNumber,
   startTrip,
   arriveAtPickup,
   confirmPickup,
+  startHospitalJourney,
 };
