@@ -30,4 +30,10 @@ router.patch(
   tripController.startHospitalJourney,
 );
 
+router.patch(
+  "/:tripId/arrive-hospital",
+  auth(UserRole.OPERATOR),
+  tripController.arriveAtHospital,
+);
+
 export const tripRoute = router;
