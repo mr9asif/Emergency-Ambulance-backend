@@ -2,6 +2,7 @@ import httpStatus from "http-status";
 import { AppError } from "../../error/AppError.js";
 import { Prisma } from "../../generated/prisma/client.js";
 import { prisma } from "../../lib/prisma.js";
+import { calculateDistanceKm, calculateFare } from "./fare.utils.js";
 
 const generateTripNumber = async (
   tx: Prisma.TransactionClient,
@@ -541,6 +542,20 @@ const arriveAtHospital = async (driverUserId: string, tripId: string) => {
             id: true,
             hospitalId: true,
             status: true,
+
+            // Pickup location
+            pickupLatitude: true,
+            pickupLongitude: true,
+
+            // Hospital information
+            hospital: {
+              select: {
+                id: true,
+                name: true,
+                latitude: true,
+                longitude: true,
+              },
+            },
           },
         },
       },
@@ -582,17 +597,35 @@ const arriveAtHospital = async (driverUserId: string, tripId: string) => {
       );
     }
 
-    // 7. Update trip arrival time
+    // 7. Hospital relation must exist
+    if (!trip.emergencyRequest.hospital) {
+      throw new AppError(httpStatus.NOT_FOUND, "Assigned hospital not found");
+    }
+
+    // 8. Calculate pickup → hospital distance
+    const distanceKm = calculateDistanceKm(
+      Number(trip.emergencyRequest.pickupLatitude),
+      Number(trip.emergencyRequest.pickupLongitude),
+      Number(trip.emergencyRequest.hospital.latitude),
+      Number(trip.emergencyRequest.hospital.longitude),
+    );
+
+    // 9. Calculate fare
+    const fareAmount = calculateFare(distanceKm);
+
+    // 10. Update trip arrival time + distance + fare
     await tx.trip.update({
       where: {
         id: tripId,
       },
       data: {
         arrivedAtHospitalAt: new Date(),
+        distanceKm,
+        fareAmount,
       },
     });
 
-    // 8. Update emergency request status
+    // 11. Update emergency request status
     await tx.emergencyRequest.update({
       where: {
         id: trip.emergencyRequestId,
@@ -602,7 +635,7 @@ const arriveAtHospital = async (driverUserId: string, tripId: string) => {
       },
     });
 
-    // 9. Fetch fresh trip
+    // 12. Fetch fresh trip
     const freshTrip = await tx.trip.findUnique({
       where: {
         id: tripId,
@@ -614,7 +647,9 @@ const arriveAtHospital = async (driverUserId: string, tripId: string) => {
             hospital: true,
           },
         },
+
         ambulance: true,
+
         driver: {
           include: {
             user: {
@@ -627,6 +662,7 @@ const arriveAtHospital = async (driverUserId: string, tripId: string) => {
             },
           },
         },
+
         dispatchAssignment: true,
       },
     });

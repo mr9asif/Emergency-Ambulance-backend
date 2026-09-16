@@ -1,0 +1,65 @@
+import config from "../../config/index.js";
+import {
+  ISSLCommerzPaymentRequest,
+  ISSLCommerzPaymentResponse,
+} from "./payment.interface.js";
+
+const getSslcommerzInitUrl = () => {
+  if (config.sslcommerz_is_sandbox) {
+    return "https://sandbox-gw.sslcommerz.com/gwprocess/v4/api.php";
+  }
+
+  return "https://securepay.sslcommerz.com/gwprocess/v4/api.php";
+};
+
+const initiatePayment = async (
+  payload: ISSLCommerzPaymentRequest,
+): Promise<ISSLCommerzPaymentResponse> => {
+  const formData = new URLSearchParams();
+
+  formData.append("store_id", config.sslcommerz_store_id);
+  formData.append("store_passwd", config.sslcommerz_store_password);
+
+  formData.append("total_amount", payload.total_amount.toFixed(2));
+
+  formData.append("currency", payload.currency);
+  formData.append("tran_id", payload.tran_id);
+
+  formData.append("success_url", payload.success_url);
+  formData.append("fail_url", payload.fail_url);
+  formData.append("cancel_url", payload.cancel_url);
+  formData.append("ipn_url", payload.ipn_url);
+
+  formData.append("cus_name", payload.cus_name);
+  formData.append("cus_email", payload.cus_email);
+  formData.append("cus_add1", payload.cus_add1);
+  formData.append("cus_city", payload.cus_city);
+  formData.append("cus_postcode", payload.cus_postcode);
+  formData.append("cus_country", payload.cus_country);
+  formData.append("cus_phone", payload.cus_phone);
+
+  formData.append("shipping_method", payload.shipping_method);
+  formData.append("product_name", payload.product_name);
+  formData.append("product_category", payload.product_category);
+  formData.append("product_profile", payload.product_profile);
+
+  const response = await fetch(getSslcommerzInitUrl(), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: formData.toString(),
+  });
+
+  if (!response.ok) {
+    throw new Error(`SSLCOMMERZ request failed with status ${response.status}`);
+  }
+
+  const data = (await response.json()) as ISSLCommerzPaymentResponse;
+
+  return data;
+};
+
+export const sslcommerzService = {
+  initiatePayment,
+};
