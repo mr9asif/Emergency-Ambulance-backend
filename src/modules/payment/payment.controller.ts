@@ -3,6 +3,7 @@ import httpStatus from "http-status";
 
 import { catchAsync } from "../../utils/catchAsync.js";
 import sendResponse from "../../utils/sendResponse.js";
+
 import { paymentService } from "./payment.services.js";
 
 const createPayment = catchAsync(async (req: Request, res: Response) => {
@@ -21,6 +22,82 @@ const createPayment = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// ==========================================
+// SSLCOMMERZ SUCCESS CALLBACK
+// ==========================================
+
+const paymentSuccess = catchAsync(async (req: Request, res: Response) => {
+  console.log("========== SSLCOMMERZ SUCCESS CALLBACK ==========");
+  console.log("BODY:", req.body);
+
+  const result = await paymentService.handlePaymentSuccess(req.body);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Payment verified successfully",
+    data: result,
+  });
+});
+
+// ==========================================
+// SSLCOMMERZ FAIL CALLBACK
+// ==========================================
+
+const paymentFail = catchAsync(async (req: Request, res: Response) => {
+  console.log("========== SSLCOMMERZ FAIL CALLBACK ==========");
+  console.log("BODY:", req.body);
+
+  const result = await paymentService.handlePaymentFail(req.body);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Payment failure processed",
+    data: result,
+  });
+});
+
+// ==========================================
+// SSLCOMMERZ CANCEL CALLBACK
+// ==========================================
+
+const paymentCancel = catchAsync(async (req: Request, res: Response) => {
+  console.log("========== SSLCOMMERZ CANCEL CALLBACK ==========");
+  console.log("BODY:", req.body);
+
+  const result = await paymentService.handlePaymentCancel(req.body);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Payment cancellation processed",
+    data: result,
+  });
+});
+
+// ==========================================
+// SSLCOMMERZ IPN
+// ==========================================
+
+const paymentIPN = catchAsync(async (req: Request, res: Response) => {
+  console.log("========== SSLCOMMERZ IPN CALLBACK ==========");
+  console.log("BODY:", req.body);
+
+  const result = await paymentService.handlePaymentIPN(req.body);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "IPN processed successfully",
+    data: result,
+  });
+});
+
 export const paymentController = {
   createPayment,
+  paymentSuccess,
+  paymentFail,
+  paymentCancel,
+  paymentIPN,
 };

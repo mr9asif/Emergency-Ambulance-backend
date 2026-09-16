@@ -1,7 +1,9 @@
 import config from "../../config/index.js";
+
 import {
   ISSLCommerzPaymentRequest,
   ISSLCommerzPaymentResponse,
+  ISSLCommerzValidationResponse,
 } from "./payment.interface.js";
 
 const getSslcommerzInitUrl = () => {
@@ -11,6 +13,18 @@ const getSslcommerzInitUrl = () => {
 
   return "https://securepay.sslcommerz.com/gwprocess/v4/api.php";
 };
+
+const getSslcommerzValidationUrl = () => {
+  if (config.sslcommerz_is_sandbox) {
+    return "https://sandbox.sslcommerz.com/validator/api/validationserverAPI.php";
+  }
+
+  return "https://securepay.sslcommerz.com/validator/api/validationserverAPI.php";
+};
+
+// ======================================================
+// 1. INITIATE PAYMENT
+// ======================================================
 
 const initiatePayment = async (
   payload: ISSLCommerzPaymentRequest,
@@ -39,8 +53,11 @@ const initiatePayment = async (
   formData.append("cus_phone", payload.cus_phone);
 
   formData.append("shipping_method", payload.shipping_method);
+
   formData.append("product_name", payload.product_name);
+
   formData.append("product_category", payload.product_category);
+
   formData.append("product_profile", payload.product_profile);
 
   const response = await fetch(getSslcommerzInitUrl(), {
@@ -54,8 +71,11 @@ const initiatePayment = async (
   const responseText = await response.text();
 
   console.log("========== SSLCOMMERZ HTTP RESPONSE ==========");
+
   console.log("HTTP STATUS:", response.status);
+
   console.log("RESPONSE:", responseText);
+
   console.log("===============================================");
 
   if (!response.ok) {
@@ -73,10 +93,67 @@ const initiatePayment = async (
   }
 
   return data;
+};
+
+// ======================================================
+// 2. VALIDATE PAYMENT
+// ======================================================
+
+const validatePayment = async (
+  valId: string,
+): Promise<ISSLCommerzValidationResponse> => {
+  const formData = new URLSearchParams();
+
+  formData.append("val_id", valId);
+
+  formData.append("store_id", config.sslcommerz_store_id);
+
+  formData.append("store_passwd", config.sslcommerz_store_password);
+
+  formData.append("format", "json");
+
+  const response = await fetch(getSslcommerzValidationUrl(), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: formData.toString(),
+  });
+
+  const responseText = await response.text();
+
+  console.log("========== SSLCOMMERZ VALIDATION ==========");
+
+  console.log("HTTP STATUS:", response.status);
+
+  console.log("VALIDATION RESPONSE:", responseText);
+
+  console.log("============================================");
+
+  if (!response.ok) {
+    throw new Error(
+      `SSLCOMMERZ validation request failed with HTTP status ${response.status}: ${responseText}`,
+    );
+  }
+
+  let data: ISSLCommerzValidationResponse;
+
+  try {
+    data = JSON.parse(responseText) as ISSLCommerzValidationResponse;
+  } catch {
+    throw new Error(
+      `Invalid JSON validation response from SSLCOMMERZ: ${responseText}`,
+    );
+  }
 
   return data;
 };
 
+// ======================================================
+// EXPORT
+// ======================================================
+
 export const sslcommerzService = {
   initiatePayment,
+  validatePayment,
 };

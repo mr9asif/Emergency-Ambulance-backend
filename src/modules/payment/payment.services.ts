@@ -1,15 +1,20 @@
 import httpStatus from "http-status";
 
 import {
+  EmergencyRequestStatus,
   PaymentGateway,
   PaymentStatus,
+  TripStatus,
 } from "../../generated/prisma/client.js";
 
 import config from "../../config/index.js";
 import { AppError } from "../../error/AppError.js";
 import { prisma } from "../../lib/prisma.js";
 
-import { ICreatePaymentPayload } from "./payment.interface.js";
+import {
+  ICreatePaymentPayload,
+  ISSLCommerzCallbackPayload,
+} from "./payment.interface.js";
 import { sslcommerzService } from "./sslCommerz.js";
 
 const generatePaymentNumber = async (
@@ -275,6 +280,244 @@ const createPayment = async (
   }
 };
 
+// handle payment success
+const handlePaymentSuccess = async (payload: ISSLCommerzCallbackPayload) => {
+  // 1. Check transaction ID
+  if (!payload.tran_id) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Transaction ID is missing");
+  }
+
+  // 2. Check validation ID
+  if (!payload.val_id) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Validation ID is missing");
+  }
+
+  // 3. Find our payment
+  const payment = await prisma.payment.findUnique({
+    where: {
+      paymentNumber: payload.tran_id,
+    },
+    include: {
+      trip: {
+        include: {
+          emergencyRequest: true,
+        },
+      },
+    },
+  });
+
+  if (!payment) {
+    throw new AppError(httpStatus.NOT_FOUND, "Payment not found");
+  }
+
+  // 4. Don't process an already successful payment again
+  if (payment.status === PaymentStatus.SUCCESS) {
+    return payment;
+  }
+
+  // 5. Validate transaction with SSLCOMMERZ
+  const validationResponse = await sslcommerzService.validatePayment(
+    payload.val_id,
+  );
+
+  console.log("========== SSLCOMMERZ VALIDATION ==========");
+  console.log(validationResponse);
+  console.log("============================================");
+
+  // 6. Gateway must say VALID
+  if (
+    validationResponse.status !== "VALID" &&
+    validationResponse.status !== "VALIDATED"
+  ) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "SSLCOMMERZ payment validation failed",
+    );
+  }
+
+  // 7. Transaction ID must match
+  if (validationResponse.tran_id !== payment.paymentNumber) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Transaction ID does not match");
+  }
+
+  // 8. Amount must match
+  const gatewayAmount = Number(validationResponse.amount);
+
+  const paymentAmount = Number(payment.amount);
+
+  if (Number.isNaN(gatewayAmount) || gatewayAmount !== paymentAmount) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Payment amount does not match");
+  }
+
+  // 9. Currency must match
+  if (validationResponse.currency !== payment.currency) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Payment currency does not match",
+    );
+  }
+
+  // 10. Update everything atomically
+  const result = await prisma.$transaction(async (tx) => {
+    const updatedPayment = await tx.payment.update({
+      where: {
+        id: payment.id,
+      },
+      data: {
+        status: PaymentStatus.SUCCESS,
+        transactionId:
+          validationResponse.bank_tran_id ||
+          payload.bank_tran_id ||
+          validationResponse.tran_id ||
+          null,
+        gatewayReference: validationResponse.val_id || payload.val_id || null,
+        paidAt: new Date(),
+        failureReason: null,
+      },
+    });
+
+    // Complete trip
+    await tx.trip.update({
+      where: {
+        id: payment.tripId,
+      },
+      data: {
+        status: TripStatus.COMPLETED,
+        completedAt: new Date(),
+      },
+    });
+
+    // Complete emergency request
+    await tx.emergencyRequest.update({
+      where: {
+        id: payment.trip.emergencyRequestId,
+      },
+      data: {
+        status: EmergencyRequestStatus.COMPLETED,
+      },
+    });
+
+    // Release ambulance
+    await tx.ambulance.update({
+      where: {
+        id: payment.trip.ambulanceId,
+      },
+      data: {
+        status: "AVAILABLE",
+      },
+    });
+
+    // Release driver
+    await tx.operatorProfile.update({
+      where: {
+        id: payment.trip.driverId,
+      },
+      data: {
+        isAvailable: true,
+      },
+    });
+
+    return updatedPayment;
+  });
+
+  return result;
+};
+
+// failed payment
+const handlePaymentFail = async (payload: ISSLCommerzCallbackPayload) => {
+  if (!payload.tran_id) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Transaction ID is missing");
+  }
+
+  const payment = await prisma.payment.findUnique({
+    where: {
+      paymentNumber: payload.tran_id,
+    },
+  });
+
+  if (!payment) {
+    throw new AppError(httpStatus.NOT_FOUND, "Payment not found");
+  }
+
+  // Never change a successful payment to FAILED
+  if (payment.status === PaymentStatus.SUCCESS) {
+    return payment;
+  }
+
+  const updatedPayment = await prisma.payment.update({
+    where: {
+      id: payment.id,
+    },
+    data: {
+      status: PaymentStatus.FAILED,
+      failureReason:
+        payload.failedreason || payload.error || "Payment failed at SSLCOMMERZ",
+    },
+  });
+
+  return updatedPayment;
+};
+
+// cencel payment
+const handlePaymentCancel = async (payload: ISSLCommerzCallbackPayload) => {
+  if (!payload.tran_id) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Transaction ID is missing");
+  }
+
+  const payment = await prisma.payment.findUnique({
+    where: {
+      paymentNumber: payload.tran_id,
+    },
+  });
+
+  if (!payment) {
+    throw new AppError(httpStatus.NOT_FOUND, "Payment not found");
+  }
+
+  // Never change a successful payment to CANCELLED
+  if (payment.status === PaymentStatus.SUCCESS) {
+    return payment;
+  }
+
+  const updatedPayment = await prisma.payment.update({
+    where: {
+      id: payment.id,
+    },
+    data: {
+      status: PaymentStatus.CANCELLED,
+      failureReason: "Payment cancelled by customer",
+    },
+  });
+
+  return updatedPayment;
+};
+
+const handlePaymentIPN = async (payload: ISSLCommerzCallbackPayload) => {
+  console.log("========== SSLCOMMERZ IPN ==========");
+  console.log("IPN BODY:", payload);
+  console.log("=====================================");
+
+  switch (payload.status) {
+    case "VALID":
+      return handlePaymentSuccess(payload);
+
+    case "FAILED":
+      return handlePaymentFail(payload);
+
+    case "CANCELLED":
+      return handlePaymentCancel(payload);
+
+    default:
+      console.log(`Unhandled SSLCOMMERZ IPN status: ${payload.status}`);
+
+      return payload;
+  }
+};
+
 export const paymentService = {
   createPayment,
+  handlePaymentSuccess,
+  handlePaymentFail,
+  handlePaymentCancel,
+  handlePaymentIPN,
 };

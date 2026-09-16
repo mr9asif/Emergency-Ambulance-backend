@@ -34,3 +34,42 @@ export interface ISSLCommerzPaymentResponse {
   GatewayPageURL?: string;
   redirectGatewayURL?: string;
 }
+
+export interface ISSLCommerzCallbackPayload {
+  tran_id?: string;
+  val_id?: string;
+  amount?: string;
+  currency?: string;
+  status?: string;
+  bank_tran_id?: string;
+  card_type?: string;
+}
+
+export interface ISSLCommerzCallbackPayload {
+  tran_id?: string;
+  val_id?: string;
+  amount?: string;
+  currency?: string;
+  status?: string;
+  bank_tran_id?: string;
+  card_type?: string;
+  store_amount?: string;
+  risk_title?: string;
+  risk_level?: string;
+  failedreason?: string;
+  error?: string;
+}
+
+export interface ISSLCommerzValidationResponse {
+  status?: string;
+  tran_date?: string;
+  tran_id?: string;
+  val_id?: string;
+  amount?: string;
+  store_amount?: string;
+  currency?: string;
+  bank_tran_id?: string;
+  card_type?: string;
+  risk_title?: string;
+  risk_level?: string;
+}
