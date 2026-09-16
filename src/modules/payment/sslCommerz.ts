@@ -51,11 +51,28 @@ const initiatePayment = async (
     body: formData.toString(),
   });
 
+  const responseText = await response.text();
+
+  console.log("========== SSLCOMMERZ HTTP RESPONSE ==========");
+  console.log("HTTP STATUS:", response.status);
+  console.log("RESPONSE:", responseText);
+  console.log("===============================================");
+
   if (!response.ok) {
-    throw new Error(`SSLCOMMERZ request failed with status ${response.status}`);
+    throw new Error(
+      `SSLCOMMERZ request failed with HTTP status ${response.status}: ${responseText}`,
+    );
   }
 
-  const data = (await response.json()) as ISSLCommerzPaymentResponse;
+  let data: ISSLCommerzPaymentResponse;
+
+  try {
+    data = JSON.parse(responseText) as ISSLCommerzPaymentResponse;
+  } catch {
+    throw new Error(`Invalid JSON response from SSLCOMMERZ: ${responseText}`);
+  }
+
+  return data;
 
   return data;
 };

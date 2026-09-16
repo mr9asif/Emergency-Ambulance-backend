@@ -8,6 +8,7 @@ import {
 import config from "../../config/index.js";
 import { AppError } from "../../error/AppError.js";
 import { prisma } from "../../lib/prisma.js";
+
 import { ICreatePaymentPayload } from "./payment.interface.js";
 import { sslcommerzService } from "./sslCommerz.js";
 
@@ -101,45 +102,80 @@ const createPayment = async (
     );
   }
 
-  // 6. Make sure payment doesn't already exist
+  // 6. Check if payment already exists for this trip
   const existingPayment = await prisma.payment.findUnique({
     where: {
       tripId: trip.id,
     },
   });
 
-  if (existingPayment) {
+  // Payment already completed
+  if (existingPayment?.status === PaymentStatus.SUCCESS) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      "Payment has already been created for this trip",
+      "Payment has already been completed for this trip",
     );
   }
 
-  // 7. Generate our own payment number
+  // Payment is currently being processed
+  if (
+    existingPayment &&
+    (existingPayment.status === PaymentStatus.PENDING ||
+      existingPayment.status === PaymentStatus.PROCESSING)
+  ) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Payment is already being processed for this trip",
+    );
+  }
+
+  // 7. Generate a new payment number
+  // This is also used when retrying a failed/cancelled payment.
   const paymentNumber = await prisma.$transaction(async (tx) => {
     return generatePaymentNumber(tx);
   });
 
-  // 8. Create payment in PENDING state
-  const payment = await prisma.payment.create({
-    data: {
-      paymentNumber,
-      tripId: trip.id,
-      customerId,
+  let payment;
 
-      amount: trip.fareAmount,
-      currency: "BDT",
-
-      gateway: PaymentGateway.SSLCOMMERZ,
-      status: PaymentStatus.PENDING,
-    },
-  });
+  // 8. Create a new payment OR reuse the failed/cancelled payment
+  if (existingPayment) {
+    // Previous payment was FAILED or CANCELLED.
+    // Reuse the same Payment row because tripId is unique.
+    payment = await prisma.payment.update({
+      where: {
+        id: existingPayment.id,
+      },
+      data: {
+        paymentNumber,
+        amount: trip.fareAmount,
+        currency: "BDT",
+        gateway: PaymentGateway.SSLCOMMERZ,
+        status: PaymentStatus.PENDING,
+        failureReason: "",
+      },
+    });
+  } else {
+    // First payment attempt
+    payment = await prisma.payment.create({
+      data: {
+        paymentNumber,
+        tripId: trip.id,
+        customerId,
+        amount: trip.fareAmount,
+        currency: "BDT",
+        gateway: PaymentGateway.SSLCOMMERZ,
+        status: PaymentStatus.PENDING,
+      },
+    });
+  }
 
   try {
     // 9. Prepare SSLCOMMERZ request
     const sslcommerzResponse = await sslcommerzService.initiatePayment({
       total_amount: Number(trip.fareAmount),
       currency: "BDT",
+
+      // SSLCOMMERZ transaction ID
       tran_id: payment.paymentNumber,
 
       success_url: config.sslcommerz_success_url,
@@ -148,19 +184,27 @@ const createPayment = async (
       ipn_url: config.sslcommerz_ipn_url,
 
       cus_name: trip.emergencyRequest.customer.name,
+
       cus_email: trip.emergencyRequest.customer.email || "customer@example.com",
 
       cus_add1: trip.emergencyRequest.pickupAddress,
-      cus_city: "Dhaka",
-      cus_postcode: "1000",
+
+      // Temporary test values
+      cus_city: "Rangpur",
+      cus_postcode: "5400",
       cus_country: "Bangladesh",
+
       cus_phone: trip.emergencyRequest.customer.phone,
 
       shipping_method: "NO",
+
       product_name: "Emergency Ambulance Service",
       product_category: "Ambulance",
       product_profile: "general",
     });
+
+    // Debug: see the actual SSLCOMMERZ response
+    console.log("SSLCOMMERZ RESPONSE:", sslcommerzResponse);
 
     // 10. Check SSLCOMMERZ response
     if (
@@ -203,7 +247,10 @@ const createPayment = async (
       gatewayPageUrl: sslcommerzResponse.GatewayPageURL,
     };
   } catch (error) {
-    // Don't overwrite our own AppError
+    console.error("========== PAYMENT ERROR ==========");
+    console.error(error);
+    console.error("===================================");
+
     if (error instanceof AppError) {
       throw error;
     }

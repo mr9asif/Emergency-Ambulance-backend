@@ -285,6 +285,7 @@ export const PaymentScalarFieldEnum = {
   amount: 'amount',
   currency: 'currency',
   gateway: 'gateway',
+  sessionKey: 'sessionKey',
   transactionId: 'transactionId',
   gatewayReference: 'gatewayReference',
   status: 'status',
