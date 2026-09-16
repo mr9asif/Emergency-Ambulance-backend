@@ -5,6 +5,7 @@ import {
   PaymentGateway,
   PaymentStatus,
   TripStatus,
+  UserRole,
 } from "../../generated/prisma/client.js";
 
 import config from "../../config/index.js";
@@ -589,15 +590,45 @@ const getCustomerPaymentHistory = async (customerId: string) => {
 // GET SINGLE PAYMENT / RECEIPT DETAILS
 // ==========================================
 
+// ==========================================
+// GET SINGLE PAYMENT DETAILS
+// CUSTOMER + DRIVER
+// ==========================================
+
 const getCustomerPaymentDetails = async (
-  customerId: string,
+  userId: string,
+  role: UserRole,
   paymentId: string,
 ) => {
   const payment = await prisma.payment.findFirst({
     where: {
       id: paymentId,
-      customerId,
+
+      OR: [
+        // Customer can see their own payment
+        ...(role === UserRole.CUSTOMER
+          ? [
+              {
+                customerId: userId,
+              },
+            ]
+          : []),
+
+        // Driver can see payment for trips they drove
+        ...(role === UserRole.OPERATOR
+          ? [
+              {
+                trip: {
+                  driver: {
+                    userId,
+                  },
+                },
+              },
+            ]
+          : []),
+      ],
     },
+
     include: {
       trip: {
         include: {
@@ -607,7 +638,9 @@ const getCustomerPaymentDetails = async (
               hospital: true,
             },
           },
+
           ambulance: true,
+
           driver: {
             include: {
               user: true,
@@ -619,7 +652,10 @@ const getCustomerPaymentDetails = async (
   });
 
   if (!payment) {
-    throw new AppError(httpStatus.NOT_FOUND, "Payment not found");
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      "Payment not found or you are not allowed to access this payment",
+    );
   }
 
   return payment;
@@ -629,15 +665,45 @@ const getCustomerPaymentDetails = async (
 // CUSTOMER PAYMENT RECEIPT
 // ==========================================
 
+// ==========================================
+// PAYMENT RECEIPT
+// CUSTOMER + DRIVER
+// ==========================================
+
 const getCustomerPaymentReceipt = async (
-  customerId: string,
+  userId: string,
+  role: UserRole,
   paymentId: string,
 ) => {
   const payment = await prisma.payment.findFirst({
     where: {
       id: paymentId,
-      customerId,
+
+      OR: [
+        // Customer can see their own payment
+        ...(role === UserRole.CUSTOMER
+          ? [
+              {
+                customerId: userId,
+              },
+            ]
+          : []),
+
+        // Driver can see payment for trips they drove
+        ...(role === UserRole.OPERATOR
+          ? [
+              {
+                trip: {
+                  driver: {
+                    userId,
+                  },
+                },
+              },
+            ]
+          : []),
+      ],
     },
+
     include: {
       trip: {
         include: {
@@ -647,7 +713,9 @@ const getCustomerPaymentReceipt = async (
               hospital: true,
             },
           },
+
           ambulance: true,
+
           driver: {
             include: {
               user: true,
@@ -659,7 +727,10 @@ const getCustomerPaymentReceipt = async (
   });
 
   if (!payment) {
-    throw new AppError(httpStatus.NOT_FOUND, "Payment not found");
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      "Payment not found or you are not allowed to access this payment",
+    );
   }
 
   if (payment.status !== PaymentStatus.SUCCESS) {
@@ -669,7 +740,6 @@ const getCustomerPaymentReceipt = async (
     );
   }
 
-  // Hospital is required for a completed ambulance trip
   if (!payment.trip.emergencyRequest.hospital) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
@@ -712,6 +782,73 @@ const getCustomerPaymentReceipt = async (
     },
   };
 };
+// ==========================================
+// DRIVER PAYMENT HISTORY
+// ==========================================
+
+const getDriverPaymentHistory = async (userId: string) => {
+  const payments = await prisma.payment.findMany({
+    where: {
+      trip: {
+        driver: {
+          userId,
+        },
+      },
+    },
+
+    orderBy: {
+      paidAt: "desc",
+    },
+
+    include: {
+      trip: {
+        select: {
+          id: true,
+          tripNumber: true,
+          status: true,
+          startedAt: true,
+          pickedUpAt: true,
+          arrivedAtHospitalAt: true,
+          completedAt: true,
+          distanceKm: true,
+          fareAmount: true,
+
+          emergencyRequest: {
+            select: {
+              id: true,
+              pickupAddress: true,
+
+              patient: {
+                select: {
+                  name: true,
+                  phone: true,
+                },
+              },
+
+              hospital: {
+                select: {
+                  id: true,
+                  name: true,
+                  address: true,
+                },
+              },
+            },
+          },
+
+          ambulance: {
+            select: {
+              id: true,
+              registrationNumber: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return payments;
+};
+
 export const paymentService = {
   createPayment,
   handlePaymentSuccess,
@@ -721,4 +858,5 @@ export const paymentService = {
   getCustomerPaymentHistory,
   getCustomerPaymentDetails,
   getCustomerPaymentReceipt,
+  getDriverPaymentHistory,
 };

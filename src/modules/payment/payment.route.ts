@@ -29,20 +29,26 @@ router.get(
 );
 
 router.get(
+  "/driver-history",
+  auth(UserRole.OPERATOR),
+  paymentController.getDriverPaymentHistory,
+);
+
+router.get(
   "/:paymentId/receipt/pdf",
-  auth(UserRole.CUSTOMER),
+  auth(UserRole.CUSTOMER, UserRole.OPERATOR),
   paymentController.downloadPaymentReceiptPDF,
 );
 
 router.get(
   "/:paymentId/receipt",
-  auth(UserRole.CUSTOMER),
+  auth(UserRole.CUSTOMER, UserRole.OPERATOR),
   paymentController.getCustomerPaymentReceipt,
 );
 
 router.get(
   "/:paymentId",
-  auth(UserRole.CUSTOMER),
+  auth(UserRole.CUSTOMER, UserRole.OPERATOR),
   paymentController.getCustomerPaymentDetails,
 );
 

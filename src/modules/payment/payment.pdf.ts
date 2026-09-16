@@ -1,22 +1,41 @@
 import { Response } from "express";
+import httpStatus from "http-status";
 import PDFDocument from "pdfkit";
 
-import httpStatus from "http-status";
 import { AppError } from "../../error/AppError.js";
-import { PaymentStatus } from "../../generated/prisma/client.js";
+import { PaymentStatus, UserRole } from "../../generated/prisma/client.js";
 import { prisma } from "../../lib/prisma.js";
 
 const generatePaymentReceiptPDF = async (
-  customerId: string,
+  userId: string,
+  role: UserRole,
   paymentId: string,
   res: Response,
 ) => {
-  // 1. Find payment belonging to this customer
+  // 1. Find payment and authorize the user
   const payment = await prisma.payment.findFirst({
     where: {
       id: paymentId,
-      customerId,
+
+      OR: [
+        // Customer can access their own payment
+        ...(role === UserRole.CUSTOMER ? [{ customerId: userId }] : []),
+
+        // Driver can access payment for trips they drove
+        ...(role === UserRole.OPERATOR
+          ? [
+              {
+                trip: {
+                  driver: {
+                    userId,
+                  },
+                },
+              },
+            ]
+          : []),
+      ],
     },
+
     include: {
       trip: {
         include: {
@@ -26,7 +45,9 @@ const generatePaymentReceiptPDF = async (
               hospital: true,
             },
           },
+
           ambulance: true,
+
           driver: {
             include: {
               user: true,
@@ -37,11 +58,12 @@ const generatePaymentReceiptPDF = async (
     },
   });
 
+  // 2. Payment not found / user is not authorized
   if (!payment) {
     throw new AppError(httpStatus.NOT_FOUND, "Payment not found");
   }
 
-  // 2. Receipt only for successful payments
+  // 3. Receipt only for successful payments
   if (payment.status !== PaymentStatus.SUCCESS) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
@@ -49,7 +71,7 @@ const generatePaymentReceiptPDF = async (
     );
   }
 
-  // 3. Hospital is required
+  // 4. Hospital is required
   if (!payment.trip.emergencyRequest.hospital) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
@@ -57,7 +79,7 @@ const generatePaymentReceiptPDF = async (
     );
   }
 
-  // 4. Tell browser this is a PDF
+  // 5. Tell browser this is a PDF
   res.setHeader("Content-Type", "application/pdf");
 
   res.setHeader(
@@ -65,7 +87,7 @@ const generatePaymentReceiptPDF = async (
     `attachment; filename="receipt-${payment.paymentNumber}.pdf"`,
   );
 
-  // 5. Create PDF
+  // 6. Create PDF
   const doc = new PDFDocument({
     size: "A4",
     margin: 50,
@@ -103,12 +125,15 @@ const generatePaymentReceiptPDF = async (
   doc.fontSize(11).font("Helvetica");
 
   doc.text(`Payment Number: ${payment.paymentNumber}`);
+
   doc.text(`Payment Status: ${payment.status}`);
+
   doc.text(
     `Paid At: ${
       payment.paidAt ? new Date(payment.paidAt).toLocaleString() : "N/A"
     }`,
   );
+
   doc.text(`Payment Gateway: ${payment.gateway}`);
 
   doc.moveDown();

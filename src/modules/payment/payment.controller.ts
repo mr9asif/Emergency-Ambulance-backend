@@ -4,6 +4,7 @@ import httpStatus from "http-status";
 import { catchAsync } from "../../utils/catchAsync.js";
 import sendResponse from "../../utils/sendResponse.js";
 
+import { UserRole } from "../../generated/prisma/enums.js";
 import { paymentPdfService } from "./payment.pdf.js";
 import { paymentService } from "./payment.services.js";
 
@@ -122,11 +123,13 @@ const getCustomerPaymentHistory = catchAsync(
 
 const getCustomerPaymentDetails = catchAsync(
   async (req: Request, res: Response) => {
-    const customerId = req.user?.userId;
+    const userId = req.user?.userId;
+    const role = req.user?.role;
     const paymentId = req.params.paymentId as string;
 
     const result = await paymentService.getCustomerPaymentDetails(
-      customerId as string,
+      userId as string,
+      role as UserRole,
       paymentId,
     );
 
@@ -139,17 +142,15 @@ const getCustomerPaymentDetails = catchAsync(
   },
 );
 
-// ==========================================
-// CUSTOMER PAYMENT RECEIPT
-// ==========================================
-
 const getCustomerPaymentReceipt = catchAsync(
   async (req: Request, res: Response) => {
-    const customerId = req.user?.userId;
+    const userId = req.user?.userId;
+    const role = req.user?.role;
     const paymentId = req.params.paymentId as string;
 
     const result = await paymentService.getCustomerPaymentReceipt(
-      customerId as string,
+      userId as string,
+      role as UserRole,
       paymentId,
     );
 
@@ -168,14 +169,36 @@ const getCustomerPaymentReceipt = catchAsync(
 
 const downloadPaymentReceiptPDF = catchAsync(
   async (req: Request, res: Response) => {
-    const customerId = req.user?.userId;
+    const userId = req.user?.userId;
+    const role = req.user?.role;
     const paymentId = req.params.paymentId as string;
 
     await paymentPdfService.generatePaymentReceiptPDF(
-      customerId as string,
+      userId as string,
+      role as UserRole,
       paymentId,
       res,
     );
+  },
+);
+// ==========================================
+// DRIVER PAYMENT HISTORY
+// ==========================================
+
+const getDriverPaymentHistory = catchAsync(
+  async (req: Request, res: Response) => {
+    const userId = req.user?.userId;
+
+    const result = await paymentService.getDriverPaymentHistory(
+      userId as string,
+    );
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Driver payment history retrieved successfully",
+      data: result,
+    });
   },
 );
 
@@ -189,4 +212,5 @@ export const paymentController = {
   getCustomerPaymentDetails,
   getCustomerPaymentReceipt,
   downloadPaymentReceiptPDF,
+  getDriverPaymentHistory,
 };
