@@ -585,6 +585,133 @@ const getCustomerPaymentHistory = async (customerId: string) => {
   return payments;
 };
 
+// ==========================================
+// GET SINGLE PAYMENT / RECEIPT DETAILS
+// ==========================================
+
+const getCustomerPaymentDetails = async (
+  customerId: string,
+  paymentId: string,
+) => {
+  const payment = await prisma.payment.findFirst({
+    where: {
+      id: paymentId,
+      customerId,
+    },
+    include: {
+      trip: {
+        include: {
+          emergencyRequest: {
+            include: {
+              patient: true,
+              hospital: true,
+            },
+          },
+          ambulance: true,
+          driver: {
+            include: {
+              user: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!payment) {
+    throw new AppError(httpStatus.NOT_FOUND, "Payment not found");
+  }
+
+  return payment;
+};
+
+// ==========================================
+// CUSTOMER PAYMENT RECEIPT
+// ==========================================
+
+const getCustomerPaymentReceipt = async (
+  customerId: string,
+  paymentId: string,
+) => {
+  const payment = await prisma.payment.findFirst({
+    where: {
+      id: paymentId,
+      customerId,
+    },
+    include: {
+      trip: {
+        include: {
+          emergencyRequest: {
+            include: {
+              patient: true,
+              hospital: true,
+            },
+          },
+          ambulance: true,
+          driver: {
+            include: {
+              user: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!payment) {
+    throw new AppError(httpStatus.NOT_FOUND, "Payment not found");
+  }
+
+  if (payment.status !== PaymentStatus.SUCCESS) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Receipt is only available for successful payments",
+    );
+  }
+
+  // Hospital is required for a completed ambulance trip
+  if (!payment.trip.emergencyRequest.hospital) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Hospital information is not available for this trip",
+    );
+  }
+
+  return {
+    receipt: {
+      paymentNumber: payment.paymentNumber,
+      status: payment.status,
+      paidAt: payment.paidAt,
+      amount: payment.amount,
+      currency: payment.currency,
+    },
+
+    patient: {
+      name: payment.trip.emergencyRequest.patient.name,
+      phone: payment.trip.emergencyRequest.patient.phone,
+    },
+
+    driver: {
+      name: payment.trip.driver.user.name,
+      phone: payment.trip.driver.user.phone,
+    },
+
+    ambulance: {
+      registrationNumber: payment.trip.ambulance.registrationNumber,
+    },
+
+    trip: {
+      tripNumber: payment.trip.tripNumber,
+      distanceKm: payment.trip.distanceKm,
+      pickupAddress: payment.trip.emergencyRequest.pickupAddress,
+    },
+
+    hospital: {
+      name: payment.trip.emergencyRequest.hospital.name,
+      address: payment.trip.emergencyRequest.hospital.address,
+    },
+  };
+};
 export const paymentService = {
   createPayment,
   handlePaymentSuccess,
@@ -592,4 +719,6 @@ export const paymentService = {
   handlePaymentCancel,
   handlePaymentIPN,
   getCustomerPaymentHistory,
+  getCustomerPaymentDetails,
+  getCustomerPaymentReceipt,
 };

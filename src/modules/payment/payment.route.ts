@@ -28,6 +28,18 @@ router.get(
   paymentController.getCustomerPaymentHistory,
 );
 
+router.get(
+  "/:paymentId/receipt",
+  auth(UserRole.CUSTOMER),
+  paymentController.getCustomerPaymentReceipt,
+);
+
+router.get(
+  "/:paymentId",
+  auth(UserRole.CUSTOMER),
+  paymentController.getCustomerPaymentDetails,
+);
+
 router.post(
   "/:tripId",
   auth(UserRole.CUSTOMER),

@@ -115,6 +115,52 @@ const getCustomerPaymentHistory = catchAsync(
   },
 );
 
+// ==========================================
+// GET SINGLE PAYMENT DETAILS
+// ==========================================
+
+const getCustomerPaymentDetails = catchAsync(
+  async (req: Request, res: Response) => {
+    const customerId = req.user?.userId;
+    const paymentId = req.params.paymentId as string;
+
+    const result = await paymentService.getCustomerPaymentDetails(
+      customerId as string,
+      paymentId,
+    );
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Payment details retrieved successfully",
+      data: result,
+    });
+  },
+);
+
+// ==========================================
+// CUSTOMER PAYMENT RECEIPT
+// ==========================================
+
+const getCustomerPaymentReceipt = catchAsync(
+  async (req: Request, res: Response) => {
+    const customerId = req.user?.userId;
+    const paymentId = req.params.paymentId as string;
+
+    const result = await paymentService.getCustomerPaymentReceipt(
+      customerId as string,
+      paymentId,
+    );
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Payment receipt retrieved successfully",
+      data: result,
+    });
+  },
+);
+
 export const paymentController = {
   createPayment,
   paymentSuccess,
@@ -122,4 +168,6 @@ export const paymentController = {
   paymentCancel,
   paymentIPN,
   getCustomerPaymentHistory,
+  getCustomerPaymentDetails,
+  getCustomerPaymentReceipt,
 };
