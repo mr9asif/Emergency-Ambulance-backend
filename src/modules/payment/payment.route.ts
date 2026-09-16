@@ -29,6 +29,12 @@ router.get(
 );
 
 router.get(
+  "/:paymentId/receipt/pdf",
+  auth(UserRole.CUSTOMER),
+  paymentController.downloadPaymentReceiptPDF,
+);
+
+router.get(
   "/:paymentId/receipt",
   auth(UserRole.CUSTOMER),
   paymentController.getCustomerPaymentReceipt,

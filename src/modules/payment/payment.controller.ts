@@ -4,6 +4,7 @@ import httpStatus from "http-status";
 import { catchAsync } from "../../utils/catchAsync.js";
 import sendResponse from "../../utils/sendResponse.js";
 
+import { paymentPdfService } from "./payment.pdf.js";
 import { paymentService } from "./payment.services.js";
 
 const createPayment = catchAsync(async (req: Request, res: Response) => {
@@ -161,6 +162,23 @@ const getCustomerPaymentReceipt = catchAsync(
   },
 );
 
+// ==========================================
+// DOWNLOAD PAYMENT RECEIPT PDF
+// ==========================================
+
+const downloadPaymentReceiptPDF = catchAsync(
+  async (req: Request, res: Response) => {
+    const customerId = req.user?.userId;
+    const paymentId = req.params.paymentId as string;
+
+    await paymentPdfService.generatePaymentReceiptPDF(
+      customerId as string,
+      paymentId,
+      res,
+    );
+  },
+);
+
 export const paymentController = {
   createPayment,
   paymentSuccess,
@@ -170,4 +188,5 @@ export const paymentController = {
   getCustomerPaymentHistory,
   getCustomerPaymentDetails,
   getCustomerPaymentReceipt,
+  downloadPaymentReceiptPDF,
 };
