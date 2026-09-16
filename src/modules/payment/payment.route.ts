@@ -22,6 +22,11 @@ router.post("/ipn", paymentController.paymentIPN);
 // CREATE PAYMENT
 // Requires CUSTOMER authentication
 // ==========================================
+router.get(
+  "/history",
+  auth(UserRole.CUSTOMER),
+  paymentController.getCustomerPaymentHistory,
+);
 
 router.post(
   "/:tripId",

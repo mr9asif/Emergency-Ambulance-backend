@@ -514,10 +514,82 @@ const handlePaymentIPN = async (payload: ISSLCommerzCallbackPayload) => {
   }
 };
 
+// ==========================================
+// CUSTOMER PAYMENT HISTORY
+// ==========================================
+
+const getCustomerPaymentHistory = async (customerId: string) => {
+  const payments = await prisma.payment.findMany({
+    where: {
+      customerId,
+    },
+    orderBy: {
+      paidAt: "desc",
+    },
+    include: {
+      trip: {
+        select: {
+          id: true,
+          tripNumber: true,
+          status: true,
+          startedAt: true,
+          pickedUpAt: true,
+          arrivedAtHospitalAt: true,
+          completedAt: true,
+          distanceKm: true,
+          fareAmount: true,
+
+          emergencyRequest: {
+            select: {
+              id: true,
+              pickupAddress: true,
+              patient: {
+                select: {
+                  name: true,
+                  phone: true,
+                },
+              },
+              hospital: {
+                select: {
+                  id: true,
+                  name: true,
+                  address: true,
+                },
+              },
+            },
+          },
+
+          ambulance: {
+            select: {
+              id: true,
+              registrationNumber: true,
+            },
+          },
+
+          driver: {
+            select: {
+              id: true,
+              user: {
+                select: {
+                  name: true,
+                  phone: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return payments;
+};
+
 export const paymentService = {
   createPayment,
   handlePaymentSuccess,
   handlePaymentFail,
   handlePaymentCancel,
   handlePaymentIPN,
+  getCustomerPaymentHistory,
 };
