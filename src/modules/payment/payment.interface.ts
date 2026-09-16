@@ -1,3 +1,8 @@
+export interface ICreatePaymentPayload {
+  tripId: string;
+  customerId: string;
+}
+
 export interface ISSLCommerzPaymentRequest {
   total_amount: number;
   currency: string;
@@ -28,6 +33,4 @@ export interface ISSLCommerzPaymentResponse {
   sessionkey?: string;
   GatewayPageURL?: string;
   redirectGatewayURL?: string;
-  storeBanner?: string;
-  storeLogo?: string;
 }

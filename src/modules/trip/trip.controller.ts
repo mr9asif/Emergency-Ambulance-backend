@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import httpStatus from "http-status";
 
+import { UserRole } from "../../generated/prisma/enums.js";
 import { catchAsync } from "../../utils/catchAsync.js";
 import sendResponse from "../../utils/sendResponse.js";
 import { tripService } from "./trip.services.js";
@@ -90,10 +91,60 @@ const arriveAtHospital = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getMyTrips = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.user?.userId;
+  const role = req.user?.role;
+
+  const result = await tripService.getMyTrips(
+    userId as string,
+    role as UserRole,
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "My trips retrieved successfully",
+    data: result,
+  });
+});
+
+const getTripById = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.user?.userId;
+  const role = req.user?.role;
+
+  const result = await tripService.getTripById(
+    userId as string,
+    role as UserRole,
+    req.params.tripId as string,
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Trip retrieved successfully",
+    data: result,
+  });
+});
+
+const getAllTrips = catchAsync(async (req: Request, res: Response) => {
+  const result = await tripService.getAllTrips();
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "All trips retrieved successfully",
+    data: result,
+  });
+});
+
 export const tripController = {
   startTrip,
   arriveAtPickup,
   confirmPickup,
   startHospitalJourney,
   arriveAtHospital,
+
+  getMyTrips,
+  getTripById,
+  getAllTrips,
 };

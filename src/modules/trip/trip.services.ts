@@ -1,6 +1,6 @@
 import httpStatus from "http-status";
 import { AppError } from "../../error/AppError.js";
-import { Prisma } from "../../generated/prisma/client.js";
+import { Prisma, UserRole } from "../../generated/prisma/client.js";
 import { prisma } from "../../lib/prisma.js";
 import { calculateDistanceKm, calculateFare } from "./fare.utils.js";
 
@@ -677,6 +677,233 @@ const arriveAtHospital = async (driverUserId: string, tripId: string) => {
   return result;
 };
 
+// get trip
+const getMyTrips = async (userId: string, role: UserRole) => {
+  if (role === UserRole.CUSTOMER) {
+    return prisma.trip.findMany({
+      where: {
+        emergencyRequest: {
+          customerId: userId,
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        emergencyRequest: {
+          include: {
+            patient: true,
+            hospital: true,
+          },
+        },
+        ambulance: true,
+        driver: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                phone: true,
+                email: true,
+              },
+            },
+          },
+        },
+        payment: true,
+      },
+    });
+  }
+
+  if (role === UserRole.OPERATOR) {
+    const driver = await prisma.operatorProfile.findFirst({
+      where: {
+        userId,
+        operatorType: "DRIVER",
+      },
+    });
+
+    if (!driver) {
+      throw new AppError(
+        httpStatus.FORBIDDEN,
+        "Only drivers can view their assigned trips",
+      );
+    }
+
+    return prisma.trip.findMany({
+      where: {
+        driverId: driver.id,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        emergencyRequest: {
+          include: {
+            patient: true,
+            hospital: true,
+            customer: {
+              select: {
+                id: true,
+                name: true,
+                phone: true,
+                email: true,
+              },
+            },
+          },
+        },
+        ambulance: true,
+        driver: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                phone: true,
+                email: true,
+              },
+            },
+          },
+        },
+        payment: true,
+      },
+    });
+  }
+
+  throw new AppError(
+    httpStatus.FORBIDDEN,
+    "You are not allowed to view these trips",
+  );
+};
+
+// get single trip
+const getTripById = async (userId: string, role: UserRole, tripId: string) => {
+  const trip = await prisma.trip.findUnique({
+    where: {
+      id: tripId,
+    },
+    include: {
+      emergencyRequest: {
+        include: {
+          patient: true,
+          hospital: true,
+          customer: {
+            select: {
+              id: true,
+              name: true,
+              phone: true,
+              email: true,
+            },
+          },
+        },
+      },
+
+      ambulance: true,
+
+      driver: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              phone: true,
+              email: true,
+            },
+          },
+        },
+      },
+
+      dispatchAssignment: true,
+
+      payment: true,
+    },
+  });
+
+  if (!trip) {
+    throw new AppError(httpStatus.NOT_FOUND, "Trip not found");
+  }
+
+  // Customer can only see their own trip
+  if (role === UserRole.CUSTOMER) {
+    if (trip.emergencyRequest.customerId !== userId) {
+      throw new AppError(
+        httpStatus.FORBIDDEN,
+        "You are not allowed to view this trip",
+      );
+    }
+  }
+
+  // Driver can only see trips assigned to them
+  if (role === UserRole.OPERATOR) {
+    const driver = await prisma.operatorProfile.findFirst({
+      where: {
+        userId,
+        operatorType: "DRIVER",
+      },
+    });
+
+    if (!driver) {
+      throw new AppError(
+        httpStatus.FORBIDDEN,
+        "Only drivers can view assigned trips",
+      );
+    }
+
+    if (trip.driverId !== driver.id) {
+      throw new AppError(
+        httpStatus.FORBIDDEN,
+        "This trip is not assigned to you",
+      );
+    }
+  }
+
+  return trip;
+};
+
+// get all trip by dispatch
+const getAllTrips = async () => {
+  return prisma.trip.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+
+    include: {
+      emergencyRequest: {
+        include: {
+          patient: true,
+          hospital: true,
+          customer: {
+            select: {
+              id: true,
+              name: true,
+              phone: true,
+              email: true,
+            },
+          },
+        },
+      },
+
+      ambulance: true,
+
+      driver: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              phone: true,
+              email: true,
+            },
+          },
+        },
+      },
+
+      dispatchAssignment: true,
+
+      payment: true,
+    },
+  });
+};
+
 export const tripService = {
   generateTripNumber,
   startTrip,
@@ -684,4 +911,7 @@ export const tripService = {
   confirmPickup,
   startHospitalJourney,
   arriveAtHospital,
+  getMyTrips,
+  getTripById,
+  getAllTrips,
 };

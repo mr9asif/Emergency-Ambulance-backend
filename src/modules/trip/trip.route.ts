@@ -36,4 +36,21 @@ router.patch(
   tripController.arriveAtHospital,
 );
 
+router.get(
+  "/my-trips",
+  auth(UserRole.CUSTOMER, UserRole.OPERATOR),
+  tripController.getMyTrips,
+);
+
+router.get(
+  "/:tripId",
+  auth(UserRole.CUSTOMER, UserRole.OPERATOR),
+  tripController.getTripById,
+);
+
+router.get(
+  "/",
+  auth(UserRole.OPERATOR, UserRole.ADMIN),
+  tripController.getAllTrips,
+);
 export const tripRoute = router;
