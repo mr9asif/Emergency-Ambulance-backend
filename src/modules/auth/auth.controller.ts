@@ -149,6 +149,33 @@ const setOperatorPassword = catchAsync(async (req, res) => {
   });
 });
 
+const forgotPassword = catchAsync(async (req: Request, res: Response) => {
+  const { email } = req.body;
+
+  await authService.forgotPassword(email);
+
+  sendResponse(res, {
+    statusCode: httpsStatus.OK,
+    success: true,
+    message:
+      "If an account exists with this email, a password reset OTP has been sent.",
+    data: null,
+  });
+});
+
+const resetPassword = catchAsync(async (req: Request, res: Response) => {
+  const { email, otp, newPassword } = req.body;
+
+  await authService.resetPassword(email, otp, newPassword);
+
+  sendResponse(res, {
+    statusCode: httpsStatus.OK,
+    success: true,
+    message: "Password reset successfully. You can now login.",
+    data: null,
+  });
+});
+
 export const authController = {
   registerUser,
   verifyUserEmail,
@@ -156,4 +183,6 @@ export const authController = {
   refreshToken,
   getMe,
   setOperatorPassword,
+  forgotPassword,
+  resetPassword,
 };

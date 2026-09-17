@@ -22,6 +22,19 @@ router.post(
   validateRequest(authValidation.LoginZodSchema),
   authController.loginUser,
 );
+
+router.post(
+  "/forgot-password",
+  validateRequest(authValidation.ForgotPasswordZodSchema),
+  authController.forgotPassword,
+);
+
+router.post(
+  "/reset-password",
+  validateRequest(authValidation.ResetPasswordZodSchema),
+  authController.resetPassword,
+);
+
 router.post("/refresh-token", authController.refreshToken);
 router.get(
   "/me",

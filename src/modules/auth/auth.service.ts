@@ -12,6 +12,7 @@ import { prisma } from "../../lib/prisma.js";
 import { reddisClient } from "../../lib/reddis.js";
 import { invitationUtils } from "../../utils/invitation.js";
 import { jwtUtils } from "../../utils/jwt.js";
+import { otpUtils } from "../../utils/otp.js";
 import {
   ILoginUserPayload,
   IRegisterPayload,
@@ -395,6 +396,156 @@ const setOperatorPassword = async (
   };
 };
 
+// forget passwod
+const forgotPassword = async (email: string) => {
+  const normalizedEmail = email.trim().toLowerCase();
+
+  const user = await prisma.user.findUnique({
+    where: {
+      email: normalizedEmail,
+    },
+  });
+
+  // Don't reveal whether the email exists
+  if (!user) {
+    return;
+  }
+
+  if (user.isDeleted) {
+    return;
+  }
+
+  if (user.status === UserStatus.BLOCKED) {
+    return;
+  }
+
+  // Generate OTP
+  const otp = otpUtils.generateOtp();
+
+  // Redis key
+  const otpKey = `forgot-password-otp=${normalizedEmail}`;
+
+  // Store OTP for 5 minutes
+  await otpUtils.setOtp(otpKey, otp, otpUtils.OTP_EXPIRATION_SECONDS);
+
+  // Email template
+  const templatePath = path.join(
+    process.cwd(),
+    "src/modules/template/forget-password.ejs",
+  );
+
+  const templateData = {
+    name: user.name,
+    email: normalizedEmail,
+    otp,
+    expiryTime: otpUtils.OTP_EXPIRATION_SECONDS / 60,
+    appName: "Emergency-Ambulance",
+  };
+
+  const html = await ejs.renderFile(templatePath, templateData);
+
+  await transporter.sendMail({
+    from: config.smtp_sender,
+    to: normalizedEmail,
+    subject: "Reset your Emergency Ambulance password",
+    html,
+  });
+};
+
+// reset pass`
+const resetPassword = async (
+  email: string,
+  otp: string,
+  newPassword: string,
+) => {
+  // 1. Normalize email
+  const normalizedEmail = email.trim().toLowerCase();
+
+  // 2. Find user
+  const user = await prisma.user.findUnique({
+    where: {
+      email: normalizedEmail,
+    },
+  });
+
+  if (!user) {
+    throw new AppError(httpsStatus.NOT_FOUND, "Invalid email or OTP");
+  }
+
+  // 3. Check deleted account
+  if (user.isDeleted) {
+    throw new AppError(
+      httpsStatus.BAD_REQUEST,
+      "This account is no longer available",
+    );
+  }
+
+  // 4. Check blocked account
+  if (user.status === UserStatus.BLOCKED) {
+    throw new AppError(httpsStatus.FORBIDDEN, "Your account is blocked");
+  }
+
+  // 5. Redis OTP key
+  const otpKey = `forgot-password-otp=${normalizedEmail}`;
+
+  // 6. Get OTP from Redis
+  const storedOtp = await otpUtils.getOtp(otpKey);
+
+  // 7. Check OTP exists / expired
+  if (!storedOtp) {
+    throw new AppError(
+      httpsStatus.BAD_REQUEST,
+      "OTP has expired or is invalid",
+    );
+  }
+
+  // 8. Compare OTP
+  if (storedOtp !== otp) {
+    throw new AppError(httpsStatus.BAD_REQUEST, "Invalid OTP");
+  }
+
+  // 9. Hash new password
+  const hashedPassword = await bcrypt.hash(
+    newPassword,
+    Number(config.bcrypt_salt_rounds),
+  );
+
+  // 10. Update password
+  await prisma.user.update({
+    where: {
+      id: user.id,
+    },
+    data: {
+      passwordHash: hashedPassword,
+    },
+  });
+
+  // 11. Delete OTP so it cannot be reused
+  await otpUtils.deleteOtp(otpKey);
+
+  // 12. Prepare password changed email
+  const templatePath = path.join(
+    process.cwd(),
+    "src/modules/template/password-changed.ejs",
+  );
+
+  const templateData = {
+    name: user.name,
+    email: normalizedEmail,
+    appName: "Emergency-Ambulance",
+  };
+
+  // 13. Render email template
+  const html = await ejs.renderFile(templatePath, templateData);
+
+  // 14. Send confirmation email
+  await transporter.sendMail({
+    from: config.smtp_sender,
+    to: normalizedEmail,
+    subject: "Your password has been changed",
+    html,
+  });
+};
 export const authService = {
   registerUser,
   verifyRegisterPatiend,
@@ -402,4 +553,6 @@ export const authService = {
   refreshToken,
   getMe,
   setOperatorPassword,
+  forgotPassword,
+  resetPassword,
 };
