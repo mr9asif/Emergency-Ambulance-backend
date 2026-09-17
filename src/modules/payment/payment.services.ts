@@ -12,6 +12,7 @@ import config from "../../config/index.js";
 import { AppError } from "../../error/AppError.js";
 import { prisma } from "../../lib/prisma.js";
 
+import { getIO } from "../../socket/socket.js";
 import {
   ICreatePaymentPayload,
   ISSLCommerzCallbackPayload,
@@ -282,6 +283,8 @@ const createPayment = async (
 };
 
 // handle payment success
+// handle payment success
+
 const handlePaymentSuccess = async (payload: ISSLCommerzCallbackPayload) => {
   // 1. Check transaction ID
   if (!payload.tran_id) {
@@ -298,6 +301,7 @@ const handlePaymentSuccess = async (payload: ISSLCommerzCallbackPayload) => {
     where: {
       paymentNumber: payload.tran_id,
     },
+
     include: {
       trip: {
         include: {
@@ -322,7 +326,9 @@ const handlePaymentSuccess = async (payload: ISSLCommerzCallbackPayload) => {
   );
 
   console.log("========== SSLCOMMERZ VALIDATION ==========");
+
   console.log(validationResponse);
+
   console.log("============================================");
 
   // 6. Gateway must say VALID
@@ -358,21 +364,29 @@ const handlePaymentSuccess = async (payload: ISSLCommerzCallbackPayload) => {
     );
   }
 
-  // 10. Update everything atomically
+  // ==========================================
+  // 10. UPDATE DATABASE ATOMICALLY
+  // ==========================================
+
   const result = await prisma.$transaction(async (tx) => {
     const updatedPayment = await tx.payment.update({
       where: {
         id: payment.id,
       },
+
       data: {
         status: PaymentStatus.SUCCESS,
+
         transactionId:
           validationResponse.bank_tran_id ||
           payload.bank_tran_id ||
           validationResponse.tran_id ||
           null,
+
         gatewayReference: validationResponse.val_id || payload.val_id || null,
+
         paidAt: new Date(),
+
         failureReason: null,
       },
     });
@@ -382,6 +396,7 @@ const handlePaymentSuccess = async (payload: ISSLCommerzCallbackPayload) => {
       where: {
         id: payment.tripId,
       },
+
       data: {
         status: TripStatus.COMPLETED,
         completedAt: new Date(),
@@ -393,6 +408,7 @@ const handlePaymentSuccess = async (payload: ISSLCommerzCallbackPayload) => {
       where: {
         id: payment.trip.emergencyRequestId,
       },
+
       data: {
         status: EmergencyRequestStatus.COMPLETED,
       },
@@ -403,6 +419,7 @@ const handlePaymentSuccess = async (payload: ISSLCommerzCallbackPayload) => {
       where: {
         id: payment.trip.ambulanceId,
       },
+
       data: {
         status: "AVAILABLE",
       },
@@ -413,6 +430,7 @@ const handlePaymentSuccess = async (payload: ISSLCommerzCallbackPayload) => {
       where: {
         id: payment.trip.driverId,
       },
+
       data: {
         isAvailable: true,
       },
@@ -420,6 +438,27 @@ const handlePaymentSuccess = async (payload: ISSLCommerzCallbackPayload) => {
 
     return updatedPayment;
   });
+
+  // ==========================================
+  // 11. STOP REAL-TIME TRACKING
+  // ==========================================
+
+  const io = getIO();
+
+  const tripRoom = `trip:${payment.tripId}`;
+
+  // Tell customer + driver that tracking has stopped
+  io.to(tripRoom).emit("trip:tracking_stopped", {
+    tripId: payment.tripId,
+    reason: "TRIP_COMPLETED",
+  });
+
+  // Remove everyone from this trip room
+  io.in(tripRoom).socketsLeave(tripRoom);
+
+  console.log(`🛑 Trip tracking stopped: ${payment.tripId}`);
+
+  console.log(`🚪 Users removed from trip room: ${tripRoom}`);
 
   return result;
 };

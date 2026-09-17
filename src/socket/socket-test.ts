@@ -3,8 +3,6 @@ import { io } from "socket.io-client";
 const ACCESS_TOKEN =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIwY2M5ZjM5NC0xZDk0LTQ1OGUtODZmMi1lMGY5OGFhNGZlNDQiLCJuYW1lIjoicmFqdSIsImVtYWlsIjoibGFwdG9wYWxpODQ3QGdtYWlsLmNvbSIsInJvbGUiOiJDVVNUT01FUiIsImlhdCI6MTc4OTYzMjQ5OCwiZXhwIjoxNzg5NzE4ODk4fQ.4KKrf3nWgJoS2mp7Sj3WrBUa8AajqMen2vOiF_iDkzw";
 
-const TRIP_ID = "YOUR_IN_PROGRESS_TRIP_ID";
-
 const socket = io("http://localhost:5000", {
   auth: {
     token: ACCESS_TOKEN,
@@ -41,6 +39,10 @@ socket.on("trip:tracking_started", (data) => {
 
 socket.on("trip:joined", (data) => {
   console.log("✅ Successfully joined trip room:", data);
+});
+
+socket.on("trip:location_updated", (data) => {
+  console.log("🚑 DRIVER LOCATION UPDATED:", data);
 });
 
 // ==========================================
