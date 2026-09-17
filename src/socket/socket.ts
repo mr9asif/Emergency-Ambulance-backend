@@ -1,8 +1,11 @@
 import { Server, Socket } from "socket.io";
 
 import config from "../config/index.js";
+
 import { TripStatus, UserRole } from "../generated/prisma/enums.js";
+
 import { prisma } from "../lib/prisma.js";
+
 import { jwtUtils } from "../utils/jwt.js";
 
 interface SocketUser {
@@ -14,6 +17,12 @@ interface SocketUser {
 
 interface AuthenticatedSocket extends Socket {
   user?: SocketUser;
+}
+
+interface LocationUpdate {
+  tripId: string;
+  latitude: number;
+  longitude: number;
 }
 
 // Store Socket.IO instance
@@ -238,12 +247,156 @@ export const initializeSocket = (server: any) => {
     });
 
     // ========================================
+    // GPS LOCATION UPDATE
+    // ========================================
+
+    socket.on("location:update", async (data: LocationUpdate) => {
+      try {
+        // ------------------------------
+        // 1. Authentication check
+        // ------------------------------
+
+        if (!user) {
+          return socket.emit("location:update_error", {
+            message: "Socket authentication required.",
+          });
+        }
+
+        // ------------------------------
+        // 2. Only driver can send location
+        // ------------------------------
+
+        if (user.role !== UserRole.OPERATOR) {
+          return socket.emit("location:update_error", {
+            message: "Only the ambulance driver can send location.",
+          });
+        }
+
+        // ------------------------------
+        // 3. Validate payload
+        // ------------------------------
+
+        if (!data) {
+          return socket.emit("location:update_error", {
+            message: "Location data is required.",
+          });
+        }
+
+        const { tripId, latitude, longitude } = data;
+
+        if (!tripId) {
+          return socket.emit("location:update_error", {
+            message: "Trip ID is required.",
+          });
+        }
+
+        if (typeof latitude !== "number" || typeof longitude !== "number") {
+          return socket.emit("location:update_error", {
+            message: "Latitude and longitude must be numbers.",
+          });
+        }
+
+        // ------------------------------
+        // 4. Validate latitude
+        // ------------------------------
+
+        if (latitude < -90 || latitude > 90) {
+          return socket.emit("location:update_error", {
+            message: "Latitude must be between -90 and 90.",
+          });
+        }
+
+        // ------------------------------
+        // 5. Validate longitude
+        // ------------------------------
+
+        if (longitude < -180 || longitude > 180) {
+          return socket.emit("location:update_error", {
+            message: "Longitude must be between -180 and 180.",
+          });
+        }
+
+        // ------------------------------
+        // 6. Find trip
+        // ------------------------------
+
+        const trip = await prisma.trip.findUnique({
+          where: {
+            id: tripId,
+          },
+          select: {
+            id: true,
+            status: true,
+
+            driver: {
+              select: {
+                userId: true,
+              },
+            },
+          },
+        });
+
+        // ------------------------------
+        // 7. Trip must exist
+        // ------------------------------
+
+        if (!trip) {
+          return socket.emit("location:update_error", {
+            message: "Trip not found.",
+          });
+        }
+
+        // ------------------------------
+        // 8. Trip must be in progress
+        // ------------------------------
+
+        if (trip.status !== TripStatus.IN_PROGRESS) {
+          return socket.emit("location:update_error", {
+            message: "Trip tracking is not active.",
+          });
+        }
+
+        // ------------------------------
+        // 9. Verify driver belongs to trip
+        // ------------------------------
+
+        if (trip.driver.userId !== user.userId) {
+          return socket.emit("location:update_error", {
+            message: "You are not the driver assigned to this trip.",
+          });
+        }
+
+        // ------------------------------
+        // 10. Broadcast location
+        // ------------------------------
+
+        const tripRoom = `trip:${tripId}`;
+
+        io.to(tripRoom).emit("trip:location_updated", {
+          tripId,
+          latitude,
+          longitude,
+          timestamp: new Date().toISOString(),
+        });
+
+        console.log(
+          `📍 Location update | Trip: ${tripId} | Lat: ${latitude} | Lng: ${longitude}`,
+        );
+      } catch (error) {
+        console.error("Location update error:", error);
+
+        socket.emit("location:update_error", {
+          message: "Failed to update location.",
+        });
+      }
+    });
+
+    // ========================================
     // DISCONNECT
     // ========================================
 
     socket.on("disconnect", (reason) => {
       console.log("Socket disconnected:", socket.id);
-
       console.log("Reason:", reason);
     });
   });
