@@ -24,7 +24,7 @@ export const createEmergencyRequestSchema = z.object({
 
   priority: z.enum(Priority),
 
-  requiredTime: z.string().datetime("Invalid required time"),
+  requiredTime: z.string().datetime("Invalid required time").optional(),
 
   notes: z
     .string()

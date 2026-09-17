@@ -2,6 +2,7 @@ import httpStatus from "http-status";
 import { AppError } from "../../error/AppError.js";
 import { Prisma, UserRole } from "../../generated/prisma/client.js";
 import { prisma } from "../../lib/prisma.js";
+import { getIO } from "../../socket/socket.js";
 import { calculateDistanceKm, calculateFare } from "./fare.utils.js";
 
 const generateTripNumber = async (
@@ -41,7 +42,10 @@ const generateTripNumber = async (
 
 const startTrip = async (driverUserId: string, tripId: string) => {
   const result = await prisma.$transaction(async (tx) => {
+    // ========================================
     // 1. Find active driver
+    // ========================================
+
     const driver = await tx.operatorProfile.findFirst({
       where: {
         userId: driverUserId,
@@ -60,7 +64,10 @@ const startTrip = async (driverUserId: string, tripId: string) => {
       );
     }
 
+    // ========================================
     // 2. Find trip
+    // ========================================
+
     const trip = await tx.trip.findUnique({
       where: {
         id: tripId,
@@ -75,7 +82,10 @@ const startTrip = async (driverUserId: string, tripId: string) => {
       throw new AppError(httpStatus.NOT_FOUND, "Trip not found");
     }
 
-    // 3. Make sure this trip belongs to this driver
+    // ========================================
+    // 3. Make sure trip belongs to driver
+    // ========================================
+
     if (trip.driverId !== driver.id) {
       throw new AppError(
         httpStatus.FORBIDDEN,
@@ -83,7 +93,10 @@ const startTrip = async (driverUserId: string, tripId: string) => {
       );
     }
 
+    // ========================================
     // 4. Trip must be NOT_STARTED
+    // ========================================
+
     if (trip.status !== "NOT_STARTED") {
       throw new AppError(
         httpStatus.BAD_REQUEST,
@@ -91,7 +104,10 @@ const startTrip = async (driverUserId: string, tripId: string) => {
       );
     }
 
+    // ========================================
     // 5. Emergency request must be ASSIGNED
+    // ========================================
+
     if (trip.emergencyRequest.status !== "ASSIGNED") {
       throw new AppError(
         httpStatus.BAD_REQUEST,
@@ -99,8 +115,11 @@ const startTrip = async (driverUserId: string, tripId: string) => {
       );
     }
 
+    // ========================================
     // 6. Update trip
-    const updatedTrip = await tx.trip.update({
+    // ========================================
+
+    await tx.trip.update({
       where: {
         id: tripId,
       },
@@ -110,7 +129,10 @@ const startTrip = async (driverUserId: string, tripId: string) => {
       },
     });
 
+    // ========================================
     // 7. Update emergency request
+    // ========================================
+
     await tx.emergencyRequest.update({
       where: {
         id: trip.emergencyRequestId,
@@ -120,7 +142,10 @@ const startTrip = async (driverUserId: string, tripId: string) => {
       },
     });
 
-    // 8. Return fresh trip
+    // ========================================
+    // 8. Get fresh trip
+    // ========================================
+
     const freshTrip = await tx.trip.findUnique({
       where: {
         id: tripId,
@@ -132,7 +157,9 @@ const startTrip = async (driverUserId: string, tripId: string) => {
             hospital: true,
           },
         },
+
         ambulance: true,
+
         driver: {
           include: {
             user: {
@@ -145,6 +172,7 @@ const startTrip = async (driverUserId: string, tripId: string) => {
             },
           },
         },
+
         dispatchAssignment: true,
       },
     });
@@ -154,6 +182,26 @@ const startTrip = async (driverUserId: string, tripId: string) => {
     }
 
     return freshTrip;
+  });
+
+  // ==========================================
+  // SOCKET.IO
+  // Tracking has now started
+  // ==========================================
+
+  const io = getIO();
+
+  // Notify CUSTOMER
+  io.to(`user:${result.emergencyRequest.customerId}`).emit(
+    "trip:tracking_started",
+    {
+      tripId: result.id,
+    },
+  );
+
+  // Notify DRIVER
+  io.to(`user:${result.driver.userId}`).emit("trip:tracking_started", {
+    tripId: result.id,
   });
 
   return result;

@@ -67,8 +67,6 @@ const createEmergencyRequest = async (
 
       priority: payload.priority,
 
-      requiredTime: new Date(payload.requiredTime),
-
       notes: payload.notes,
     },
 
@@ -433,7 +431,7 @@ const assignEmergencyRequest = async (
         offeredAt: new Date(),
 
         // Give driver limited time to respond
-        expiresAt: new Date(Date.now() + 5 * 60 * 1000),
+        expiresAt: new Date(Date.now() + 10 * 60 * 1000),
       },
 
       include: {

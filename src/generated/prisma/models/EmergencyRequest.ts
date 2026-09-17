@@ -272,7 +272,7 @@ export type EmergencyRequestGroupByOutputType = {
   pickupLongitude: runtime.Decimal
   emergencyType: $Enums.EmergencyType
   priority: $Enums.Priority
-  requiredTime: Date
+  requiredTime: Date | null
   notes: string | null
   status: $Enums.EmergencyRequestStatus
   cancellationReason: string | null
@@ -316,7 +316,7 @@ export type EmergencyRequestWhereInput = {
   pickupLongitude?: Prisma.DecimalFilter<"EmergencyRequest"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType?: Prisma.EnumEmergencyTypeFilter<"EmergencyRequest"> | $Enums.EmergencyType
   priority?: Prisma.EnumPriorityFilter<"EmergencyRequest"> | $Enums.Priority
-  requiredTime?: Prisma.DateTimeFilter<"EmergencyRequest"> | Date | string
+  requiredTime?: Prisma.DateTimeNullableFilter<"EmergencyRequest"> | Date | string | null
   notes?: Prisma.StringNullableFilter<"EmergencyRequest"> | string | null
   status?: Prisma.EnumEmergencyRequestStatusFilter<"EmergencyRequest"> | $Enums.EmergencyRequestStatus
   cancellationReason?: Prisma.StringNullableFilter<"EmergencyRequest"> | string | null
@@ -343,7 +343,7 @@ export type EmergencyRequestOrderByWithRelationInput = {
   pickupLongitude?: Prisma.SortOrder
   emergencyType?: Prisma.SortOrder
   priority?: Prisma.SortOrder
-  requiredTime?: Prisma.SortOrder
+  requiredTime?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   cancellationReason?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -373,7 +373,7 @@ export type EmergencyRequestWhereUniqueInput = Prisma.AtLeast<{
   pickupLongitude?: Prisma.DecimalFilter<"EmergencyRequest"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType?: Prisma.EnumEmergencyTypeFilter<"EmergencyRequest"> | $Enums.EmergencyType
   priority?: Prisma.EnumPriorityFilter<"EmergencyRequest"> | $Enums.Priority
-  requiredTime?: Prisma.DateTimeFilter<"EmergencyRequest"> | Date | string
+  requiredTime?: Prisma.DateTimeNullableFilter<"EmergencyRequest"> | Date | string | null
   notes?: Prisma.StringNullableFilter<"EmergencyRequest"> | string | null
   status?: Prisma.EnumEmergencyRequestStatusFilter<"EmergencyRequest"> | $Enums.EmergencyRequestStatus
   cancellationReason?: Prisma.StringNullableFilter<"EmergencyRequest"> | string | null
@@ -400,7 +400,7 @@ export type EmergencyRequestOrderByWithAggregationInput = {
   pickupLongitude?: Prisma.SortOrder
   emergencyType?: Prisma.SortOrder
   priority?: Prisma.SortOrder
-  requiredTime?: Prisma.SortOrder
+  requiredTime?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   cancellationReason?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -429,7 +429,7 @@ export type EmergencyRequestScalarWhereWithAggregatesInput = {
   pickupLongitude?: Prisma.DecimalWithAggregatesFilter<"EmergencyRequest"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType?: Prisma.EnumEmergencyTypeWithAggregatesFilter<"EmergencyRequest"> | $Enums.EmergencyType
   priority?: Prisma.EnumPriorityWithAggregatesFilter<"EmergencyRequest"> | $Enums.Priority
-  requiredTime?: Prisma.DateTimeWithAggregatesFilter<"EmergencyRequest"> | Date | string
+  requiredTime?: Prisma.DateTimeNullableWithAggregatesFilter<"EmergencyRequest"> | Date | string | null
   notes?: Prisma.StringNullableWithAggregatesFilter<"EmergencyRequest"> | string | null
   status?: Prisma.EnumEmergencyRequestStatusWithAggregatesFilter<"EmergencyRequest"> | $Enums.EmergencyRequestStatus
   cancellationReason?: Prisma.StringNullableWithAggregatesFilter<"EmergencyRequest"> | string | null
@@ -447,7 +447,7 @@ export type EmergencyRequestCreateInput = {
   pickupLongitude: runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType: $Enums.EmergencyType
   priority: $Enums.Priority
-  requiredTime: Date | string
+  requiredTime?: Date | string | null
   notes?: string | null
   status?: $Enums.EmergencyRequestStatus
   cancellationReason?: string | null
@@ -473,7 +473,7 @@ export type EmergencyRequestUncheckedCreateInput = {
   pickupLongitude: runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType: $Enums.EmergencyType
   priority: $Enums.Priority
-  requiredTime: Date | string
+  requiredTime?: Date | string | null
   notes?: string | null
   status?: $Enums.EmergencyRequestStatus
   cancellationReason?: string | null
@@ -493,7 +493,7 @@ export type EmergencyRequestUpdateInput = {
   pickupLongitude?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType?: Prisma.EnumEmergencyTypeFieldUpdateOperationsInput | $Enums.EmergencyType
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
-  requiredTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  requiredTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEmergencyRequestStatusFieldUpdateOperationsInput | $Enums.EmergencyRequestStatus
   cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -519,7 +519,7 @@ export type EmergencyRequestUncheckedUpdateInput = {
   pickupLongitude?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType?: Prisma.EnumEmergencyTypeFieldUpdateOperationsInput | $Enums.EmergencyType
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
-  requiredTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  requiredTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEmergencyRequestStatusFieldUpdateOperationsInput | $Enums.EmergencyRequestStatus
   cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -542,7 +542,7 @@ export type EmergencyRequestCreateManyInput = {
   pickupLongitude: runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType: $Enums.EmergencyType
   priority: $Enums.Priority
-  requiredTime: Date | string
+  requiredTime?: Date | string | null
   notes?: string | null
   status?: $Enums.EmergencyRequestStatus
   cancellationReason?: string | null
@@ -560,7 +560,7 @@ export type EmergencyRequestUpdateManyMutationInput = {
   pickupLongitude?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType?: Prisma.EnumEmergencyTypeFieldUpdateOperationsInput | $Enums.EmergencyType
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
-  requiredTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  requiredTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEmergencyRequestStatusFieldUpdateOperationsInput | $Enums.EmergencyRequestStatus
   cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -580,7 +580,7 @@ export type EmergencyRequestUncheckedUpdateManyInput = {
   pickupLongitude?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType?: Prisma.EnumEmergencyTypeFieldUpdateOperationsInput | $Enums.EmergencyType
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
-  requiredTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  requiredTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEmergencyRequestStatusFieldUpdateOperationsInput | $Enums.EmergencyRequestStatus
   cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -894,7 +894,7 @@ export type EmergencyRequestCreateWithoutDispatchAssignmentsInput = {
   pickupLongitude: runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType: $Enums.EmergencyType
   priority: $Enums.Priority
-  requiredTime: Date | string
+  requiredTime?: Date | string | null
   notes?: string | null
   status?: $Enums.EmergencyRequestStatus
   cancellationReason?: string | null
@@ -919,7 +919,7 @@ export type EmergencyRequestUncheckedCreateWithoutDispatchAssignmentsInput = {
   pickupLongitude: runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType: $Enums.EmergencyType
   priority: $Enums.Priority
-  requiredTime: Date | string
+  requiredTime?: Date | string | null
   notes?: string | null
   status?: $Enums.EmergencyRequestStatus
   cancellationReason?: string | null
@@ -954,7 +954,7 @@ export type EmergencyRequestUpdateWithoutDispatchAssignmentsInput = {
   pickupLongitude?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType?: Prisma.EnumEmergencyTypeFieldUpdateOperationsInput | $Enums.EmergencyType
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
-  requiredTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  requiredTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEmergencyRequestStatusFieldUpdateOperationsInput | $Enums.EmergencyRequestStatus
   cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -979,7 +979,7 @@ export type EmergencyRequestUncheckedUpdateWithoutDispatchAssignmentsInput = {
   pickupLongitude?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType?: Prisma.EnumEmergencyTypeFieldUpdateOperationsInput | $Enums.EmergencyType
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
-  requiredTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  requiredTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEmergencyRequestStatusFieldUpdateOperationsInput | $Enums.EmergencyRequestStatus
   cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -998,7 +998,7 @@ export type EmergencyRequestCreateWithoutHospitalInput = {
   pickupLongitude: runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType: $Enums.EmergencyType
   priority: $Enums.Priority
-  requiredTime: Date | string
+  requiredTime?: Date | string | null
   notes?: string | null
   status?: $Enums.EmergencyRequestStatus
   cancellationReason?: string | null
@@ -1022,7 +1022,7 @@ export type EmergencyRequestUncheckedCreateWithoutHospitalInput = {
   pickupLongitude: runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType: $Enums.EmergencyType
   priority: $Enums.Priority
-  requiredTime: Date | string
+  requiredTime?: Date | string | null
   notes?: string | null
   status?: $Enums.EmergencyRequestStatus
   cancellationReason?: string | null
@@ -1074,7 +1074,7 @@ export type EmergencyRequestScalarWhereInput = {
   pickupLongitude?: Prisma.DecimalFilter<"EmergencyRequest"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType?: Prisma.EnumEmergencyTypeFilter<"EmergencyRequest"> | $Enums.EmergencyType
   priority?: Prisma.EnumPriorityFilter<"EmergencyRequest"> | $Enums.Priority
-  requiredTime?: Prisma.DateTimeFilter<"EmergencyRequest"> | Date | string
+  requiredTime?: Prisma.DateTimeNullableFilter<"EmergencyRequest"> | Date | string | null
   notes?: Prisma.StringNullableFilter<"EmergencyRequest"> | string | null
   status?: Prisma.EnumEmergencyRequestStatusFilter<"EmergencyRequest"> | $Enums.EmergencyRequestStatus
   cancellationReason?: Prisma.StringNullableFilter<"EmergencyRequest"> | string | null
@@ -1092,7 +1092,7 @@ export type EmergencyRequestCreateWithoutPatientInput = {
   pickupLongitude: runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType: $Enums.EmergencyType
   priority: $Enums.Priority
-  requiredTime: Date | string
+  requiredTime?: Date | string | null
   notes?: string | null
   status?: $Enums.EmergencyRequestStatus
   cancellationReason?: string | null
@@ -1116,7 +1116,7 @@ export type EmergencyRequestUncheckedCreateWithoutPatientInput = {
   pickupLongitude: runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType: $Enums.EmergencyType
   priority: $Enums.Priority
-  requiredTime: Date | string
+  requiredTime?: Date | string | null
   notes?: string | null
   status?: $Enums.EmergencyRequestStatus
   cancellationReason?: string | null
@@ -1162,7 +1162,7 @@ export type EmergencyRequestCreateWithoutTripInput = {
   pickupLongitude: runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType: $Enums.EmergencyType
   priority: $Enums.Priority
-  requiredTime: Date | string
+  requiredTime?: Date | string | null
   notes?: string | null
   status?: $Enums.EmergencyRequestStatus
   cancellationReason?: string | null
@@ -1187,7 +1187,7 @@ export type EmergencyRequestUncheckedCreateWithoutTripInput = {
   pickupLongitude: runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType: $Enums.EmergencyType
   priority: $Enums.Priority
-  requiredTime: Date | string
+  requiredTime?: Date | string | null
   notes?: string | null
   status?: $Enums.EmergencyRequestStatus
   cancellationReason?: string | null
@@ -1222,7 +1222,7 @@ export type EmergencyRequestUpdateWithoutTripInput = {
   pickupLongitude?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType?: Prisma.EnumEmergencyTypeFieldUpdateOperationsInput | $Enums.EmergencyType
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
-  requiredTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  requiredTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEmergencyRequestStatusFieldUpdateOperationsInput | $Enums.EmergencyRequestStatus
   cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1247,7 +1247,7 @@ export type EmergencyRequestUncheckedUpdateWithoutTripInput = {
   pickupLongitude?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType?: Prisma.EnumEmergencyTypeFieldUpdateOperationsInput | $Enums.EmergencyType
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
-  requiredTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  requiredTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEmergencyRequestStatusFieldUpdateOperationsInput | $Enums.EmergencyRequestStatus
   cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1266,7 +1266,7 @@ export type EmergencyRequestCreateWithoutCustomerInput = {
   pickupLongitude: runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType: $Enums.EmergencyType
   priority: $Enums.Priority
-  requiredTime: Date | string
+  requiredTime?: Date | string | null
   notes?: string | null
   status?: $Enums.EmergencyRequestStatus
   cancellationReason?: string | null
@@ -1290,7 +1290,7 @@ export type EmergencyRequestUncheckedCreateWithoutCustomerInput = {
   pickupLongitude: runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType: $Enums.EmergencyType
   priority: $Enums.Priority
-  requiredTime: Date | string
+  requiredTime?: Date | string | null
   notes?: string | null
   status?: $Enums.EmergencyRequestStatus
   cancellationReason?: string | null
@@ -1320,7 +1320,7 @@ export type EmergencyRequestCreateWithoutCancelledByUserInput = {
   pickupLongitude: runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType: $Enums.EmergencyType
   priority: $Enums.Priority
-  requiredTime: Date | string
+  requiredTime?: Date | string | null
   notes?: string | null
   status?: $Enums.EmergencyRequestStatus
   cancellationReason?: string | null
@@ -1345,7 +1345,7 @@ export type EmergencyRequestUncheckedCreateWithoutCancelledByUserInput = {
   pickupLongitude: runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType: $Enums.EmergencyType
   priority: $Enums.Priority
-  requiredTime: Date | string
+  requiredTime?: Date | string | null
   notes?: string | null
   status?: $Enums.EmergencyRequestStatus
   cancellationReason?: string | null
@@ -1408,7 +1408,7 @@ export type EmergencyRequestCreateManyHospitalInput = {
   pickupLongitude: runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType: $Enums.EmergencyType
   priority: $Enums.Priority
-  requiredTime: Date | string
+  requiredTime?: Date | string | null
   notes?: string | null
   status?: $Enums.EmergencyRequestStatus
   cancellationReason?: string | null
@@ -1426,7 +1426,7 @@ export type EmergencyRequestUpdateWithoutHospitalInput = {
   pickupLongitude?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType?: Prisma.EnumEmergencyTypeFieldUpdateOperationsInput | $Enums.EmergencyType
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
-  requiredTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  requiredTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEmergencyRequestStatusFieldUpdateOperationsInput | $Enums.EmergencyRequestStatus
   cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1450,7 +1450,7 @@ export type EmergencyRequestUncheckedUpdateWithoutHospitalInput = {
   pickupLongitude?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType?: Prisma.EnumEmergencyTypeFieldUpdateOperationsInput | $Enums.EmergencyType
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
-  requiredTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  requiredTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEmergencyRequestStatusFieldUpdateOperationsInput | $Enums.EmergencyRequestStatus
   cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1472,7 +1472,7 @@ export type EmergencyRequestUncheckedUpdateManyWithoutHospitalInput = {
   pickupLongitude?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType?: Prisma.EnumEmergencyTypeFieldUpdateOperationsInput | $Enums.EmergencyType
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
-  requiredTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  requiredTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEmergencyRequestStatusFieldUpdateOperationsInput | $Enums.EmergencyRequestStatus
   cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1492,7 +1492,7 @@ export type EmergencyRequestCreateManyPatientInput = {
   pickupLongitude: runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType: $Enums.EmergencyType
   priority: $Enums.Priority
-  requiredTime: Date | string
+  requiredTime?: Date | string | null
   notes?: string | null
   status?: $Enums.EmergencyRequestStatus
   cancellationReason?: string | null
@@ -1510,7 +1510,7 @@ export type EmergencyRequestUpdateWithoutPatientInput = {
   pickupLongitude?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType?: Prisma.EnumEmergencyTypeFieldUpdateOperationsInput | $Enums.EmergencyType
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
-  requiredTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  requiredTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEmergencyRequestStatusFieldUpdateOperationsInput | $Enums.EmergencyRequestStatus
   cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1534,7 +1534,7 @@ export type EmergencyRequestUncheckedUpdateWithoutPatientInput = {
   pickupLongitude?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType?: Prisma.EnumEmergencyTypeFieldUpdateOperationsInput | $Enums.EmergencyType
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
-  requiredTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  requiredTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEmergencyRequestStatusFieldUpdateOperationsInput | $Enums.EmergencyRequestStatus
   cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1556,7 +1556,7 @@ export type EmergencyRequestUncheckedUpdateManyWithoutPatientInput = {
   pickupLongitude?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType?: Prisma.EnumEmergencyTypeFieldUpdateOperationsInput | $Enums.EmergencyType
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
-  requiredTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  requiredTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEmergencyRequestStatusFieldUpdateOperationsInput | $Enums.EmergencyRequestStatus
   cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1576,7 +1576,7 @@ export type EmergencyRequestCreateManyCustomerInput = {
   pickupLongitude: runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType: $Enums.EmergencyType
   priority: $Enums.Priority
-  requiredTime: Date | string
+  requiredTime?: Date | string | null
   notes?: string | null
   status?: $Enums.EmergencyRequestStatus
   cancellationReason?: string | null
@@ -1597,7 +1597,7 @@ export type EmergencyRequestCreateManyCancelledByUserInput = {
   pickupLongitude: runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType: $Enums.EmergencyType
   priority: $Enums.Priority
-  requiredTime: Date | string
+  requiredTime?: Date | string | null
   notes?: string | null
   status?: $Enums.EmergencyRequestStatus
   cancellationReason?: string | null
@@ -1614,7 +1614,7 @@ export type EmergencyRequestUpdateWithoutCustomerInput = {
   pickupLongitude?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType?: Prisma.EnumEmergencyTypeFieldUpdateOperationsInput | $Enums.EmergencyType
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
-  requiredTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  requiredTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEmergencyRequestStatusFieldUpdateOperationsInput | $Enums.EmergencyRequestStatus
   cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1638,7 +1638,7 @@ export type EmergencyRequestUncheckedUpdateWithoutCustomerInput = {
   pickupLongitude?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType?: Prisma.EnumEmergencyTypeFieldUpdateOperationsInput | $Enums.EmergencyType
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
-  requiredTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  requiredTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEmergencyRequestStatusFieldUpdateOperationsInput | $Enums.EmergencyRequestStatus
   cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1660,7 +1660,7 @@ export type EmergencyRequestUncheckedUpdateManyWithoutCustomerInput = {
   pickupLongitude?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType?: Prisma.EnumEmergencyTypeFieldUpdateOperationsInput | $Enums.EmergencyType
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
-  requiredTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  requiredTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEmergencyRequestStatusFieldUpdateOperationsInput | $Enums.EmergencyRequestStatus
   cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1678,7 +1678,7 @@ export type EmergencyRequestUpdateWithoutCancelledByUserInput = {
   pickupLongitude?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType?: Prisma.EnumEmergencyTypeFieldUpdateOperationsInput | $Enums.EmergencyType
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
-  requiredTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  requiredTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEmergencyRequestStatusFieldUpdateOperationsInput | $Enums.EmergencyRequestStatus
   cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1703,7 +1703,7 @@ export type EmergencyRequestUncheckedUpdateWithoutCancelledByUserInput = {
   pickupLongitude?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType?: Prisma.EnumEmergencyTypeFieldUpdateOperationsInput | $Enums.EmergencyType
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
-  requiredTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  requiredTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEmergencyRequestStatusFieldUpdateOperationsInput | $Enums.EmergencyRequestStatus
   cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1725,7 +1725,7 @@ export type EmergencyRequestUncheckedUpdateManyWithoutCancelledByUserInput = {
   pickupLongitude?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   emergencyType?: Prisma.EnumEmergencyTypeFieldUpdateOperationsInput | $Enums.EmergencyType
   priority?: Prisma.EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
-  requiredTime?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  requiredTime?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumEmergencyRequestStatusFieldUpdateOperationsInput | $Enums.EmergencyRequestStatus
   cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1908,7 +1908,7 @@ export type $EmergencyRequestPayload<ExtArgs extends runtime.Types.Extensions.In
     pickupLongitude: runtime.Decimal
     emergencyType: $Enums.EmergencyType
     priority: $Enums.Priority
-    requiredTime: Date
+    requiredTime: Date | null
     notes: string | null
     status: $Enums.EmergencyRequestStatus
     cancellationReason: string | null

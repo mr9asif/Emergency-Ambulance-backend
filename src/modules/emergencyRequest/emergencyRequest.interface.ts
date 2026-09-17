@@ -7,7 +7,7 @@ export interface ICreateEmergencyRequest {
   pickupLongitude: number;
   emergencyType: EmergencyType;
   priority: Priority;
-  requiredTime: string;
+  requiredTime?: string;
   notes?: string;
 }
 

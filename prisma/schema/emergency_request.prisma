@@ -42,7 +42,7 @@ model EmergencyRequest {
 
     emergencyType EmergencyType @map("emergency_type")
     priority      Priority
-    requiredTime  DateTime      @map("required_time")
+    requiredTime  DateTime?     @map("required_time")
     notes         String?       @db.Text
 
     status EmergencyRequestStatus @default(PENDING)
