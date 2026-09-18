@@ -176,6 +176,27 @@ const resetPassword = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const uploadProfileImage = catchAsync(async (req: Request, res: Response) => {
+  const user = req.user as unknown as IRequestUser;
+
+  if (!user) {
+    throw new AppError(httpsStatus.UNAUTHORIZED, "User information is missing");
+  }
+
+  if (!req.file) {
+    throw new AppError(httpsStatus.BAD_REQUEST, "Profile image is required");
+  }
+
+  const result = await authService.uploadProfileImage(user.userId, req.file);
+
+  sendResponse(res, {
+    statusCode: httpsStatus.OK,
+    success: true,
+    message: "Profile image uploaded successfully",
+    data: result,
+  });
+});
+
 export const authController = {
   registerUser,
   verifyUserEmail,
@@ -185,4 +206,5 @@ export const authController = {
   setOperatorPassword,
   forgotPassword,
   resetPassword,
+  uploadProfileImage,
 };

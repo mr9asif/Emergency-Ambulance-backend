@@ -7,9 +7,12 @@ import path from "path";
 import config from "../../config/index.js";
 import { AppError } from "../../error/AppError.js";
 import { UserStatus } from "../../generated/prisma/enums.js";
+
+import cloudinary from "../../lib/cloudinary.js";
 import { transporter } from "../../lib/nodemailer.js";
 import { prisma } from "../../lib/prisma.js";
 import { reddisClient } from "../../lib/reddis.js";
+import { uploadToCloudinary } from "../../utils/cloudinary.js";
 import { invitationUtils } from "../../utils/invitation.js";
 import { jwtUtils } from "../../utils/jwt.js";
 import { otpUtils } from "../../utils/otp.js";
@@ -546,6 +549,67 @@ const resetPassword = async (
     html,
   });
 };
+
+const uploadProfileImage = async (
+  userId: string,
+  file: Express.Multer.File,
+) => {
+  // 1. Find user
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+  });
+
+  if (!user) {
+    throw new AppError(httpsStatus.NOT_FOUND, "User not found");
+  }
+
+  // 2. Check account status
+  if (user.isDeleted) {
+    throw new AppError(
+      httpsStatus.BAD_REQUEST,
+      "This account is no longer available",
+    );
+  }
+
+  if (user.status === UserStatus.BLOCKED) {
+    throw new AppError(httpsStatus.FORBIDDEN, "Your account is blocked");
+  }
+
+  // 3. Upload new image to Cloudinary
+  const uploadResult = await uploadToCloudinary(
+    file.buffer,
+    "emergency-ambulance/profile-images",
+  );
+
+  // 4. Delete old image from Cloudinary
+  if (user.profileImageKey) {
+    try {
+      await cloudinary.uploader.destroy(user.profileImageKey, {
+        resource_type: "image",
+      });
+    } catch (error) {
+      console.error("Failed to delete old profile image:", error);
+    }
+  }
+
+  // 5. Update database
+  const updatedUser = await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      profileImage: uploadResult.secure_url,
+      profileImageKey: uploadResult.public_id,
+    },
+    omit: {
+      passwordHash: true,
+    },
+  });
+
+  return updatedUser;
+};
 export const authService = {
   registerUser,
   verifyRegisterPatiend,
@@ -555,4 +619,5 @@ export const authService = {
   setOperatorPassword,
   forgotPassword,
   resetPassword,
+  uploadProfileImage,
 };

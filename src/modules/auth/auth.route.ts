@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { UserRole } from "../../generated/prisma/enums.js";
+import { upload } from "../../lib/multer.js";
 import { auth } from "../../middleware/checkAuth.js";
 import { validateRequest } from "../../middleware/validateRequest.js";
 import { authController } from "./auth.controller.js";
@@ -41,6 +42,13 @@ router.get(
   auth(UserRole.ADMIN, UserRole.ADMIN, UserRole.OPERATOR, UserRole.CUSTOMER),
   // validateRequest
   authController.getMe,
+);
+
+router.patch(
+  "/profile-image",
+  auth(UserRole.ADMIN, UserRole.OPERATOR, UserRole.CUSTOMER),
+  upload.single("profileImage"),
+  authController.uploadProfileImage,
 );
 
 router.post(
