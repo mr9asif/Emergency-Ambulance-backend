@@ -7,11 +7,18 @@ import { AppError } from "../../error/AppError.js";
 import { transporter } from "../../lib/nodemailer.js";
 import { prisma } from "../../lib/prisma.js";
 
+import {
+  AmbulanceStatus,
+  TripStatus,
+  UserRole,
+} from "../../generated/prisma/enums.js";
 import { invitationUtils } from "../../utils/invitation.js";
 import {
   IApproveOperatorApplication,
   IOperatorApplicationQuery,
   IRejectOperatorApplication,
+  IUpdateUserStatus,
+  IUserQuery,
 } from "./admin.interface.js";
 
 const getAllOperatorApplications = async (query: IOperatorApplicationQuery) => {
@@ -303,6 +310,328 @@ const getOperatorById = async (operatorId: string) => {
   return operator;
 };
 
+// get all users
+const getAllUsers = async (query: IUserQuery) => {
+  const { search, role, status, page = 1, limit = 10 } = query;
+
+  const skip = (page - 1) * limit;
+
+  const where = {
+    ...(role && {
+      role,
+    }),
+
+    ...(status && {
+      status,
+    }),
+
+    ...(search && {
+      OR: [
+        {
+          name: {
+            contains: search,
+            mode: "insensitive" as const,
+          },
+        },
+        {
+          email: {
+            contains: search,
+            mode: "insensitive" as const,
+          },
+        },
+        {
+          phone: {
+            contains: search,
+            mode: "insensitive" as const,
+          },
+        },
+      ],
+    }),
+  };
+
+  const [users, total] = await prisma.$transaction([
+    prisma.user.findMany({
+      where,
+      skip,
+      take: limit,
+
+      select: {
+        id: true,
+        name: true,
+        phone: true,
+        email: true,
+        profileImage: true,
+        emailVerified: true,
+        role: true,
+        status: true,
+        authProvider: true,
+        needPasswordChange: true,
+        isDeleted: true,
+        deletedAt: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+
+      orderBy: {
+        createdAt: "desc",
+      },
+    }),
+
+    prisma.user.count({
+      where,
+    }),
+  ]);
+
+  const totalPages = Math.ceil(total / limit);
+
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+      totalPages,
+    },
+
+    data: users,
+  };
+};
+
+// get user by id
+const getUserById = async (userId: string) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+
+    select: {
+      id: true,
+      name: true,
+      phone: true,
+      email: true,
+      profileImage: true,
+      emailVerified: true,
+      role: true,
+      status: true,
+      googleId: true,
+      authProvider: true,
+      needPasswordChange: true,
+      isDeleted: true,
+      deletedAt: true,
+      createdAt: true,
+      updatedAt: true,
+
+      operatorProfile: {
+        select: {
+          id: true,
+          operatorType: true,
+          employeeCode: true,
+          licenseNumber: true,
+          isAvailable: true,
+        },
+      },
+
+      patients: {
+        select: {
+          id: true,
+          name: true,
+          phone: true,
+          gender: true,
+          dateOfBirth: true,
+          createdAt: true,
+        },
+      },
+    },
+  });
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "User not found");
+  }
+
+  return user;
+};
+
+// update user status
+const updateUserStatus = async (
+  userId: string,
+  adminId: string,
+  payload: IUpdateUserStatus,
+) => {
+  // 1. Admin cannot change their own status
+  if (userId === adminId) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "You cannot change your own account status",
+    );
+  }
+
+  // 2. Find user
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+  });
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "User not found");
+  }
+
+  // 3. Don't allow changing another ADMIN's status
+  if (user.role === UserRole.ADMIN) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "Admin account status cannot be changed",
+    );
+  }
+
+  // 4. Deleted account
+  if (user.isDeleted) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "This user account has been deleted",
+    );
+  }
+
+  // 5. Update status
+  const updatedUser = await prisma.user.update({
+    where: {
+      id: userId,
+    },
+
+    data: {
+      status: payload.status,
+    },
+
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      phone: true,
+      role: true,
+      status: true,
+      emailVerified: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+
+  return updatedUser;
+};
+
+const getAdminDashboard = async () => {
+  const [
+    totalUsers,
+    totalCustomers,
+    totalOperators,
+    totalAdmins,
+
+    totalAmbulances,
+    availableAmbulances,
+    busyAmbulances,
+    maintenanceAmbulances,
+
+    totalTrips,
+    completedTrips,
+    inProgressTrips,
+    cancelledTrips,
+  ] = await Promise.all([
+    // ==================== USERS ====================
+
+    prisma.user.count({
+      where: {
+        isDeleted: false,
+      },
+    }),
+
+    prisma.user.count({
+      where: {
+        role: UserRole.CUSTOMER,
+        isDeleted: false,
+      },
+    }),
+
+    prisma.user.count({
+      where: {
+        role: UserRole.OPERATOR,
+        isDeleted: false,
+      },
+    }),
+
+    prisma.user.count({
+      where: {
+        role: UserRole.ADMIN,
+        isDeleted: false,
+      },
+    }),
+
+    // ==================== AMBULANCES ====================
+
+    prisma.ambulance.count(),
+
+    prisma.ambulance.count({
+      where: {
+        status: AmbulanceStatus.AVAILABLE,
+      },
+    }),
+
+    prisma.ambulance.count({
+      where: {
+        status: AmbulanceStatus.BUSY,
+      },
+    }),
+
+    prisma.ambulance.count({
+      where: {
+        status: AmbulanceStatus.MAINTENANCE,
+      },
+    }),
+
+    // ==================== TRIPS ====================
+
+    prisma.trip.count(),
+
+    prisma.trip.count({
+      where: {
+        status: TripStatus.COMPLETED,
+      },
+    }),
+
+    prisma.trip.count({
+      where: {
+        status: TripStatus.IN_PROGRESS,
+      },
+    }),
+
+    prisma.trip.count({
+      where: {
+        status: TripStatus.CANCELLED,
+      },
+    }),
+  ]);
+
+  return {
+    users: {
+      total: totalUsers,
+      customers: totalCustomers,
+      operators: totalOperators,
+      admins: totalAdmins,
+    },
+
+    ambulances: {
+      total: totalAmbulances,
+      available: availableAmbulances,
+      busy: busyAmbulances,
+      maintenance: maintenanceAmbulances,
+    },
+
+    trips: {
+      total: totalTrips,
+      completed: completedTrips,
+      inProgress: inProgressTrips,
+      cancelled: cancelledTrips,
+    },
+  };
+};
+
 export const adminService = {
   getAllOperatorApplications,
   getOperatorApplicationById,
@@ -310,4 +639,9 @@ export const adminService = {
   rejectOperatorApplication,
   getAllOperators,
   getOperatorById,
+  // USER MANAGEMENT
+  getAllUsers,
+  getUserById,
+  updateUserStatus,
+  getAdminDashboard,
 };

@@ -89,6 +89,53 @@ const getOperatorById = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getAllUsers = catchAsync(async (req: Request, res: Response) => {
+  const result = await adminService.getAllUsers(req.query);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Users retrieved successfully",
+    data: result,
+  });
+});
+
+const getUserById = catchAsync(async (req: Request, res: Response) => {
+  const result = await adminService.getUserById(req.params.id as string);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "User retrieved successfully",
+    data: result,
+  });
+});
+
+const updateUserStatus = catchAsync(async (req: Request, res: Response) => {
+  const result = await adminService.updateUserStatus(
+    req.params.id as string,
+    req.user!.userId,
+    req.body,
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "User status updated successfully",
+    data: result,
+  });
+});
+
+const getAdminDashboard = catchAsync(async (_req: Request, res: Response) => {
+  const result = await adminService.getAdminDashboard();
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Admin dashboard data retrieved successfully",
+    data: result,
+  });
+});
 export const adminController = {
   getAllOperatorApplications,
   getOperatorApplicationById,
@@ -96,4 +143,9 @@ export const adminController = {
   rejectOperatorApplication,
   getAllOperators,
   getOperatorById,
+  // USER MANAGEMENT
+  getAllUsers,
+  getUserById,
+  updateUserStatus,
+  getAdminDashboard,
 };

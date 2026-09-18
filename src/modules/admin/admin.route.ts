@@ -52,4 +52,32 @@ router.get(
   adminController.getOperatorById,
 );
 
+// ========================================
+// USER MANAGEMENT
+// ========================================
+
+router.get(
+  "/users",
+  auth(UserRole.ADMIN),
+  validateRequest(AdminValidation.userQuerySchema),
+  adminController.getAllUsers,
+);
+
+router.get("/users/:id", auth(UserRole.ADMIN), adminController.getUserById);
+
+router.patch(
+  "/users/:id/status",
+  auth(UserRole.ADMIN),
+  validateRequest(AdminValidation.updateUserStatusSchema),
+  adminController.updateUserStatus,
+);
+
+// ==================== ADMIN DASHBOARD ====================
+
+router.get(
+  "/dashboard",
+  auth(UserRole.ADMIN),
+  adminController.getAdminDashboard,
+);
+
 export const adminRouter = router;

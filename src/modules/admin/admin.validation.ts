@@ -21,8 +21,29 @@ const rejectOperatorApplicationSchema = z.object({
     .max(500, "Rejection reason cannot exceed 500 characters"),
 });
 
+// ========================================
+// USER MANAGEMENT
+// ========================================
+
+const userQuerySchema = z.object({
+  search: z.string().trim().optional(),
+
+  role: z.enum(["CUSTOMER", "OPERATOR", "ADMIN"]).optional(),
+
+  status: z.enum(["ACTIVE", "SUSPENDED", "BLOCKED"]).optional(),
+
+  page: z.coerce.number().int().min(1).default(1),
+
+  limit: z.coerce.number().int().min(1).max(100).default(10),
+});
+
+const updateUserStatusSchema = z.object({
+  status: z.enum(["ACTIVE", "SUSPENDED", "BLOCKED"]),
+});
 export const AdminValidation = {
   operatorApplicationQuerySchema,
   approveOperatorApplicationSchema,
   rejectOperatorApplicationSchema,
+  userQuerySchema,
+  updateUserStatusSchema,
 };
