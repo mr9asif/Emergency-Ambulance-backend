@@ -2,6 +2,7 @@ import httpStatus from "http-status";
 
 import {
   EmergencyRequestStatus,
+  NotificationType,
   PaymentGateway,
   PaymentStatus,
   TripStatus,
@@ -13,6 +14,7 @@ import { AppError } from "../../error/AppError.js";
 import { prisma } from "../../lib/prisma.js";
 
 import { getIO } from "../../socket/socket.js";
+import { notificationService } from "../notification/notification.services.js";
 import {
   ICreatePaymentPayload,
   ISSLCommerzCallbackPayload,
@@ -301,7 +303,6 @@ const handlePaymentSuccess = async (payload: ISSLCommerzCallbackPayload) => {
     where: {
       paymentNumber: payload.tran_id,
     },
-
     include: {
       trip: {
         include: {
@@ -326,9 +327,7 @@ const handlePaymentSuccess = async (payload: ISSLCommerzCallbackPayload) => {
   );
 
   console.log("========== SSLCOMMERZ VALIDATION ==========");
-
   console.log(validationResponse);
-
   console.log("============================================");
 
   // 6. Gateway must say VALID
@@ -373,20 +372,15 @@ const handlePaymentSuccess = async (payload: ISSLCommerzCallbackPayload) => {
       where: {
         id: payment.id,
       },
-
       data: {
         status: PaymentStatus.SUCCESS,
-
         transactionId:
           validationResponse.bank_tran_id ||
           payload.bank_tran_id ||
           validationResponse.tran_id ||
           null,
-
         gatewayReference: validationResponse.val_id || payload.val_id || null,
-
         paidAt: new Date(),
-
         failureReason: null,
       },
     });
@@ -396,7 +390,6 @@ const handlePaymentSuccess = async (payload: ISSLCommerzCallbackPayload) => {
       where: {
         id: payment.tripId,
       },
-
       data: {
         status: TripStatus.COMPLETED,
         completedAt: new Date(),
@@ -408,7 +401,6 @@ const handlePaymentSuccess = async (payload: ISSLCommerzCallbackPayload) => {
       where: {
         id: payment.trip.emergencyRequestId,
       },
-
       data: {
         status: EmergencyRequestStatus.COMPLETED,
       },
@@ -419,7 +411,6 @@ const handlePaymentSuccess = async (payload: ISSLCommerzCallbackPayload) => {
       where: {
         id: payment.trip.ambulanceId,
       },
-
       data: {
         status: "AVAILABLE",
       },
@@ -430,7 +421,6 @@ const handlePaymentSuccess = async (payload: ISSLCommerzCallbackPayload) => {
       where: {
         id: payment.trip.driverId,
       },
-
       data: {
         isAvailable: true,
       },
@@ -440,7 +430,64 @@ const handlePaymentSuccess = async (payload: ISSLCommerzCallbackPayload) => {
   });
 
   // ==========================================
-  // 11. STOP REAL-TIME TRACKING
+  // 11. CUSTOMER PAYMENT NOTIFICATION
+  // ==========================================
+
+  await notificationService.createAndSendNotification({
+    userId: payment.trip.emergencyRequest.customerId,
+    type: NotificationType.PAYMENT_SUCCESS,
+    title: "Payment Successful",
+    message:
+      "Your ambulance trip payment has been completed successfully. You can now download your receipt.",
+    data: {
+      tripId: payment.tripId,
+      paymentId: result.id,
+      paymentNumber: result.paymentNumber,
+      transactionId: result.transactionId,
+      amount: result.amount,
+      currency: result.currency,
+
+      // Frontend can use this information
+      // to open the receipt download page/API.
+      receiptAvailable: true,
+    },
+  });
+
+  // ==========================================
+  // 12. DRIVER PAYMENT NOTIFICATION
+  // ==========================================
+
+  // payment.trip.driverId is the OperatorProfile ID,
+  // so we need the driver's User ID.
+  const driver = await prisma.operatorProfile.findUnique({
+    where: {
+      id: payment.trip.driverId,
+    },
+    select: {
+      userId: true,
+    },
+  });
+
+  if (driver) {
+    await notificationService.createAndSendNotification({
+      userId: driver.userId,
+      type: NotificationType.PAYMENT_SUCCESS,
+      title: "Payment Completed",
+      message:
+        "Payment for this ambulance trip has been completed successfully.",
+      data: {
+        tripId: payment.tripId,
+        paymentId: result.id,
+        paymentNumber: result.paymentNumber,
+        transactionId: result.transactionId,
+        amount: result.amount,
+        currency: result.currency,
+      },
+    });
+  }
+
+  // ==========================================
+  // 13. STOP REAL-TIME TRACKING
   // ==========================================
 
   const io = getIO();
@@ -462,16 +509,24 @@ const handlePaymentSuccess = async (payload: ISSLCommerzCallbackPayload) => {
 
   return result;
 };
-
 // failed payment
 const handlePaymentFail = async (payload: ISSLCommerzCallbackPayload) => {
+  // 1. Check transaction ID
   if (!payload.tran_id) {
     throw new AppError(httpStatus.BAD_REQUEST, "Transaction ID is missing");
   }
 
+  // 2. Find our payment
   const payment = await prisma.payment.findUnique({
     where: {
       paymentNumber: payload.tran_id,
+    },
+    include: {
+      trip: {
+        include: {
+          emergencyRequest: true,
+        },
+      },
     },
   });
 
@@ -479,11 +534,12 @@ const handlePaymentFail = async (payload: ISSLCommerzCallbackPayload) => {
     throw new AppError(httpStatus.NOT_FOUND, "Payment not found");
   }
 
-  // Never change a successful payment to FAILED
+  // 3. Never change a successful payment to FAILED
   if (payment.status === PaymentStatus.SUCCESS) {
     return payment;
   }
 
+  // 4. Update payment status
   const updatedPayment = await prisma.payment.update({
     where: {
       id: payment.id,
@@ -495,18 +551,47 @@ const handlePaymentFail = async (payload: ISSLCommerzCallbackPayload) => {
     },
   });
 
+  // ==========================================
+  // CUSTOMER PAYMENT FAILURE NOTIFICATION
+  // ==========================================
+
+  await notificationService.createAndSendNotification({
+    userId: payment.trip.emergencyRequest.customerId,
+    type: NotificationType.SYSTEM,
+    title: "Payment Failed",
+    message:
+      "Your ambulance trip payment could not be completed. Please try again.",
+    data: {
+      tripId: payment.tripId,
+      paymentId: updatedPayment.id,
+      paymentNumber: updatedPayment.paymentNumber,
+      amount: updatedPayment.amount,
+      currency: updatedPayment.currency,
+      failureReason: updatedPayment.failureReason,
+      paymentStatus: "FAILED",
+    },
+  });
+
   return updatedPayment;
 };
-
 // cencel payment
 const handlePaymentCancel = async (payload: ISSLCommerzCallbackPayload) => {
+  // 1. Check transaction ID
   if (!payload.tran_id) {
     throw new AppError(httpStatus.BAD_REQUEST, "Transaction ID is missing");
   }
 
+  // 2. Find our payment
   const payment = await prisma.payment.findUnique({
     where: {
       paymentNumber: payload.tran_id,
+    },
+    include: {
+      trip: {
+        include: {
+          emergencyRequest: true,
+        },
+      },
     },
   });
 
@@ -514,11 +599,12 @@ const handlePaymentCancel = async (payload: ISSLCommerzCallbackPayload) => {
     throw new AppError(httpStatus.NOT_FOUND, "Payment not found");
   }
 
-  // Never change a successful payment to CANCELLED
+  // 3. Never change a successful payment to CANCELLED
   if (payment.status === PaymentStatus.SUCCESS) {
     return payment;
   }
 
+  // 4. Update payment status
   const updatedPayment = await prisma.payment.update({
     where: {
       id: payment.id,
@@ -529,9 +615,28 @@ const handlePaymentCancel = async (payload: ISSLCommerzCallbackPayload) => {
     },
   });
 
+  // ==========================================
+  // CUSTOMER PAYMENT CANCELLATION NOTIFICATION
+  // ==========================================
+
+  await notificationService.createAndSendNotification({
+    userId: payment.trip.emergencyRequest.customerId,
+    type: NotificationType.SYSTEM,
+    title: "Payment Cancelled",
+    message:
+      "Your ambulance trip payment was cancelled. You can try the payment again.",
+    data: {
+      tripId: payment.tripId,
+      paymentId: updatedPayment.id,
+      paymentNumber: updatedPayment.paymentNumber,
+      amount: updatedPayment.amount,
+      currency: updatedPayment.currency,
+      paymentStatus: "CANCELLED",
+    },
+  });
+
   return updatedPayment;
 };
-
 const handlePaymentIPN = async (payload: ISSLCommerzCallbackPayload) => {
   console.log("========== SSLCOMMERZ IPN ==========");
   console.log("IPN BODY:", payload);

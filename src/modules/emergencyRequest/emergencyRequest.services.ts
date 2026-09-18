@@ -1,7 +1,9 @@
 import httpStatus from "http-status";
 
 import { AppError } from "../../error/AppError.js";
+import { NotificationType } from "../../generated/prisma/enums.js";
 import { prisma } from "../../lib/prisma.js";
+import { notificationService } from "../notification/notification.services.js";
 import {
   IAssignEmergencyRequest,
   ICreateEmergencyRequest,
@@ -72,6 +74,18 @@ const createEmergencyRequest = async (
 
     include: {
       patient: true,
+    },
+  });
+
+  // Send notification to customer
+  await notificationService.createAndSendNotification({
+    userId,
+    type: NotificationType.REQUEST_CREATED,
+    title: "Emergency Request Created",
+    message: "Your emergency ambulance request has been created successfully.",
+    data: {
+      emergencyRequestId: emergencyRequest.id,
+      requestNumber: emergencyRequest.requestNumber,
     },
   });
 

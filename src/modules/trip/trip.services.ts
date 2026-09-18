@@ -1,8 +1,13 @@
 import httpStatus from "http-status";
 import { AppError } from "../../error/AppError.js";
-import { Prisma, UserRole } from "../../generated/prisma/client.js";
+import {
+  NotificationType,
+  Prisma,
+  UserRole,
+} from "../../generated/prisma/client.js";
 import { prisma } from "../../lib/prisma.js";
 import { getIO } from "../../socket/socket.js";
+import { notificationService } from "../notification/notification.services.js";
 import { calculateDistanceKm, calculateFare } from "./fare.utils.js";
 
 const generateTripNumber = async (
@@ -204,6 +209,23 @@ const startTrip = async (driverUserId: string, tripId: string) => {
     tripId: result.id,
   });
 
+  // ==========================================
+  // CUSTOMER NOTIFICATION
+  // Driver has started journey
+  // ==========================================
+
+  await notificationService.createAndSendNotification({
+    userId: result.emergencyRequest.customerId,
+    type: NotificationType.DRIVER_ARRIVING,
+    title: "Driver Is On The Way",
+    message:
+      "Your ambulance driver has started the journey and is on the way to your pickup location.",
+    data: {
+      tripId: result.id,
+      emergencyRequestId: result.emergencyRequestId,
+    },
+  });
+
   return result;
 };
 
@@ -312,6 +334,22 @@ const arriveAtPickup = async (driverUserId: string, tripId: string) => {
     return freshTrip;
   });
 
+  // ==========================================
+  // CUSTOMER NOTIFICATION
+  // Ambulance has arrived at pickup location
+  // ==========================================
+
+  await notificationService.createAndSendNotification({
+    userId: result.emergencyRequest.customerId,
+    type: NotificationType.DRIVER_ARRIVED,
+    title: "Ambulance Has Arrived",
+    message: "The ambulance has arrived at your pickup location.",
+    data: {
+      tripId: result.id,
+      emergencyRequestId: result.emergencyRequestId,
+    },
+  });
+
   return result;
 };
 
@@ -378,7 +416,7 @@ const confirmPickup = async (customerUserId: string, tripId: string) => {
       );
     }
 
-    // 6. Update emergency request
+    // 6. Update trip pickup time
     await tx.trip.update({
       where: {
         id: tripId,
@@ -388,6 +426,7 @@ const confirmPickup = async (customerUserId: string, tripId: string) => {
       },
     });
 
+    // 7. Update emergency request status
     await tx.emergencyRequest.update({
       where: {
         id: trip.emergencyRequestId,
@@ -397,7 +436,7 @@ const confirmPickup = async (customerUserId: string, tripId: string) => {
       },
     });
 
-    // 7. Fetch fresh trip
+    // 8. Fetch fresh trip
     const freshTrip = await tx.trip.findUnique({
       where: {
         id: tripId,
@@ -431,6 +470,40 @@ const confirmPickup = async (customerUserId: string, tripId: string) => {
     }
 
     return freshTrip;
+  });
+
+  // ==========================================
+  // CUSTOMER NOTIFICATION
+  // ==========================================
+
+  await notificationService.createAndSendNotification({
+    userId: result.emergencyRequest.customerId,
+    type: NotificationType.PATIENT_PICKED_UP,
+    title: "Patient Pickup Confirmed",
+    message:
+      "Patient pickup has been confirmed successfully. The ambulance is ready to continue to the hospital.",
+    data: {
+      tripId: result.id,
+      emergencyRequestId: result.emergencyRequestId,
+      hospitalId: result.emergencyRequest.hospitalId,
+    },
+  });
+
+  // ==========================================
+  // DRIVER NOTIFICATION
+  // ==========================================
+
+  await notificationService.createAndSendNotification({
+    userId: result.driver.userId,
+    type: NotificationType.PATIENT_PICKED_UP,
+    title: "Patient Pickup Confirmed",
+    message:
+      "Patient pickup has been confirmed. You can now start the journey to the assigned hospital.",
+    data: {
+      tripId: result.id,
+      emergencyRequestId: result.emergencyRequestId,
+      hospitalId: result.emergencyRequest.hospitalId,
+    },
   });
 
   return result;
@@ -553,6 +626,40 @@ const startHospitalJourney = async (driverUserId: string, tripId: string) => {
     }
 
     return freshTrip;
+  });
+
+  // ==========================================
+  // CUSTOMER NOTIFICATION
+  // Ambulance is heading to hospital
+  // ==========================================
+
+  await notificationService.createAndSendNotification({
+    userId: result.emergencyRequest.customerId,
+    type: NotificationType.PATIENT_PICKED_UP,
+    title: "Heading To Hospital",
+    message: "The ambulance has started the journey to the assigned hospital.",
+    data: {
+      tripId: result.id,
+      emergencyRequestId: result.emergencyRequestId,
+      hospitalId: result.emergencyRequest.hospitalId,
+    },
+  });
+
+  // ==========================================
+  // DRIVER NOTIFICATION
+  // Hospital journey has started
+  // ==========================================
+
+  await notificationService.createAndSendNotification({
+    userId: result.driver.userId,
+    type: NotificationType.PATIENT_PICKED_UP,
+    title: "Hospital Journey Started",
+    message: "The journey to the assigned hospital has started.",
+    data: {
+      tripId: result.id,
+      emergencyRequestId: result.emergencyRequestId,
+      hospitalId: result.emergencyRequest.hospitalId,
+    },
   });
 
   return result;
@@ -695,9 +802,7 @@ const arriveAtHospital = async (driverUserId: string, tripId: string) => {
             hospital: true,
           },
         },
-
         ambulance: true,
-
         driver: {
           include: {
             user: {
@@ -710,7 +815,6 @@ const arriveAtHospital = async (driverUserId: string, tripId: string) => {
             },
           },
         },
-
         dispatchAssignment: true,
       },
     });
@@ -720,6 +824,44 @@ const arriveAtHospital = async (driverUserId: string, tripId: string) => {
     }
 
     return freshTrip;
+  });
+
+  // ==========================================
+  // CUSTOMER NOTIFICATION
+  // Ambulance has arrived at hospital
+  // ==========================================
+
+  await notificationService.createAndSendNotification({
+    userId: result.emergencyRequest.customerId,
+    type: NotificationType.HOSPITAL_ARRIVED,
+    title: "Arrived At Hospital",
+    message: "The ambulance has arrived at the assigned hospital.",
+    data: {
+      tripId: result.id,
+      emergencyRequestId: result.emergencyRequestId,
+      hospitalId: result.emergencyRequest.hospitalId,
+      fareAmount: result.fareAmount,
+      distanceKm: result.distanceKm,
+    },
+  });
+
+  // ==========================================
+  // DRIVER NOTIFICATION
+  // Hospital arrival confirmed
+  // ==========================================
+
+  await notificationService.createAndSendNotification({
+    userId: result.driver.userId,
+    type: NotificationType.HOSPITAL_ARRIVED,
+    title: "Hospital Arrival Confirmed",
+    message: "The ambulance has arrived at the assigned hospital successfully.",
+    data: {
+      tripId: result.id,
+      emergencyRequestId: result.emergencyRequestId,
+      hospitalId: result.emergencyRequest.hospitalId,
+      fareAmount: result.fareAmount,
+      distanceKm: result.distanceKm,
+    },
   });
 
   return result;

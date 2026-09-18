@@ -7,6 +7,7 @@ import { authRouter } from "./modules/auth/auth.route.js";
 import { dispatchAssignmentRouter } from "./modules/dispatchAssignment/dispatchAssignment.route.js";
 import { emergencyRequestRouter } from "./modules/emergencyRequest/emergencyRequest.route.js";
 import { hospitalRouter } from "./modules/hospital/hospital.route.js";
+import { notificationRouter } from "./modules/notification/notification.route.js";
 import { operatorRouter } from "./modules/operator/operator.route.js";
 import { operatorApplicationRouter } from "./modules/operatorApplication/operatorApplication.route.js";
 import { patientRouter } from "./modules/patient/patient.route.js";
@@ -31,5 +32,6 @@ app.use("/api/emergencyRequest", emergencyRequestRouter);
 app.use("/api/dispatch-assignments", dispatchAssignmentRouter);
 app.use("/api/trip", tripRoute);
 app.use("/api/payment", paymentRouter);
+app.use("/api/notification", notificationRouter);
 
 export default app;
