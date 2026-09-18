@@ -13,10 +13,12 @@ import { transporter } from "../../lib/nodemailer.js";
 import { prisma } from "../../lib/prisma.js";
 import { reddisClient } from "../../lib/reddis.js";
 import { uploadToCloudinary } from "../../utils/cloudinary.js";
+import { verifyGoogleIdToken } from "../../utils/google.js";
 import { invitationUtils } from "../../utils/invitation.js";
 import { jwtUtils } from "../../utils/jwt.js";
 import { otpUtils } from "../../utils/otp.js";
 import {
+  IGoogleLoginPayload,
   ILoginUserPayload,
   IRegisterPayload,
   IRequestUser,
@@ -610,6 +612,154 @@ const uploadProfileImage = async (
 
   return updatedUser;
 };
+
+// google login
+const googleLogin = async (payload: IGoogleLoginPayload) => {
+  const googlePayload = await verifyGoogleIdToken(payload.idToken);
+
+  const googleId = googlePayload.sub;
+  const email = googlePayload.email?.trim().toLowerCase();
+  const name = googlePayload.name;
+
+  if (!googleId || !email) {
+    throw new AppError(
+      httpsStatus.BAD_REQUEST,
+      "Invalid Google account information",
+    );
+  }
+
+  if (!googlePayload.email_verified) {
+    throw new AppError(httpsStatus.BAD_REQUEST, "Google email is not verified");
+  }
+
+  // 1. Check if Google account already exists
+  const existingGoogleUser = await prisma.user.findUnique({
+    where: {
+      googleId,
+    },
+  });
+
+  if (existingGoogleUser) {
+    if (existingGoogleUser.isDeleted) {
+      throw new AppError(
+        httpsStatus.BAD_REQUEST,
+        "This account is no longer available",
+      );
+    }
+
+    if (existingGoogleUser.status === UserStatus.BLOCKED) {
+      throw new AppError(httpsStatus.FORBIDDEN, "Your account is blocked");
+    }
+
+    const jwtPayload = {
+      userId: existingGoogleUser.id,
+      name: existingGoogleUser.name,
+      email: existingGoogleUser.email,
+      role: existingGoogleUser.role,
+    };
+
+    const accessToken = jwtUtils.createToken(
+      jwtPayload,
+      config.jwt_access_secret,
+      config.jwt_access_expires_in as SignOptions,
+    );
+
+    const refreshToken = jwtUtils.createToken(
+      jwtPayload,
+      config.jwt_refresh_secret,
+      config.jwt_refresh_expires_in as SignOptions,
+    );
+
+    return {
+      isNewUser: false,
+      accessToken,
+      refreshToken,
+    };
+  }
+
+  // 2. Check if this email already belongs to another account
+  const existingEmailUser = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  });
+
+  if (existingEmailUser) {
+    throw new AppError(
+      httpsStatus.CONFLICT,
+      "This email is already registered. Please login using your email and password.",
+    );
+  }
+
+  // 3. New Google user needs phone number
+  if (!payload.phone) {
+    return {
+      isNewUser: true,
+      requiresPhone: true,
+      email,
+      name,
+    };
+  }
+
+  // 4. Check phone uniqueness
+  const existingPhoneUser = await prisma.user.findUnique({
+    where: {
+      phone: payload.phone,
+    },
+  });
+
+  if (existingPhoneUser) {
+    throw new AppError(
+      httpsStatus.CONFLICT,
+      "This phone number is already registered",
+    );
+  }
+
+  // 5. Create Google user
+  const newUser = await prisma.user.create({
+    data: {
+      name: name || "Google User",
+      phone: payload.phone,
+      email,
+      googleId,
+      authProvider: "GOOGLE",
+      emailVerified: true,
+      passwordHash: null,
+    },
+    omit: {
+      passwordHash: true,
+    },
+  });
+
+  // 6. Generate JWT
+  const jwtPayload = {
+    userId: newUser.id,
+    name: newUser.name,
+    email: newUser.email,
+    role: newUser.role,
+  };
+
+  const accessToken = jwtUtils.createToken(
+    jwtPayload,
+    config.jwt_access_secret,
+    config.jwt_access_expires_in as SignOptions,
+  );
+
+  const refreshToken = jwtUtils.createToken(
+    jwtPayload,
+    config.jwt_refresh_secret,
+    config.jwt_refresh_expires_in as SignOptions,
+  );
+
+  return {
+    isNewUser: true,
+    requiresPhone: false,
+    accessToken,
+    refreshToken,
+    user: newUser,
+  };
+};
+
 export const authService = {
   registerUser,
   verifyRegisterPatiend,
@@ -620,4 +770,5 @@ export const authService = {
   forgotPassword,
   resetPassword,
   uploadProfileImage,
+  googleLogin,
 };

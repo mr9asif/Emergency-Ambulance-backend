@@ -197,6 +197,58 @@ const uploadProfileImage = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const googleLogin = catchAsync(async (req: Request, res: Response) => {
+  const payload = req.body;
+
+  const result = await authService.googleLogin(payload);
+
+  // New Google user needs phone number
+  if (result.requiresPhone) {
+    sendResponse(res, {
+      statusCode: httpsStatus.OK,
+      success: true,
+      message: "Phone number is required to create your account.",
+      data: {
+        requiresPhone: true,
+        email: result.email,
+        name: result.name,
+      },
+    });
+
+    return;
+  }
+
+  const { accessToken, refreshToken } = result;
+
+  // Access token cookie
+  res.cookie("accessToken", accessToken, {
+    httpOnly: true,
+    secure: false,
+    sameSite: "none",
+    maxAge: 1000 * 60 * 60 * 24,
+  });
+
+  // Refresh token cookie
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: false,
+    sameSite: "none",
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+  });
+
+  sendResponse(res, {
+    statusCode: httpsStatus.OK,
+    success: true,
+    message: result.isNewUser
+      ? "Google account created and logged in successfully."
+      : "Google login successful.",
+    data: {
+      accessToken,
+      refreshToken,
+    },
+  });
+});
+
 export const authController = {
   registerUser,
   verifyUserEmail,
@@ -207,4 +259,5 @@ export const authController = {
   forgotPassword,
   resetPassword,
   uploadProfileImage,
+  googleLogin,
 };

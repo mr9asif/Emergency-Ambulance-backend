@@ -72,6 +72,16 @@ const setOperatorPasswordSchema = z
     path: ["confirmPassword"],
   });
 
+const googleLoginSchema = z.object({
+  idToken: z.string().min(1, "Google ID token is required"),
+
+  phone: z
+    .string()
+    .trim()
+    .regex(/^01[3-9]\d{8}$/, "Invalid Bangladeshi phone number")
+    .optional(),
+});
+
 export const authValidation = {
   registerSchema,
   LoginZodSchema,
@@ -79,4 +89,5 @@ export const authValidation = {
   ResetPasswordZodSchema,
   PatientEmailVerifyZodSchema,
   setOperatorPasswordSchema,
+  googleLoginSchema,
 };

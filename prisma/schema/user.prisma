@@ -20,7 +20,7 @@ model User {
   name               String       @db.VarChar(100)
   phone              String       @unique @db.VarChar(20)
   email              String?      @unique @db.VarChar(255)
-  passwordHash       String       @map("password_hash") @db.VarChar(255)
+  passwordHash       String?      @map("password_hash") @db.VarChar(255)
   profileImage       String?      @map("profile_image") @db.Text
   profileImageKey    String?      @map("profile_image_key") @db.VarChar(255)
   emailVerified      Boolean      @default(false)
