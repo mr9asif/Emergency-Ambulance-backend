@@ -21,6 +21,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+app.use("/", (req, res) => {
+  res.send("server running well");
+});
+
 app.use("/api/auth", authRouter);
 app.use("/api/hospital", hospitalRouter);
 app.use("/api/ambulance", ambulanceRouter);
