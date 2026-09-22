@@ -1,9 +1,9 @@
 import { io } from "socket.io-client";
 
 const ACCESS_TOKEN =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyMDc3NTUzMC0yOWQ1LTQ4YjktYWM4MC03ZWEyYTc0YzYxMzIiLCJuYW1lIjoiSW1yYW4gQWhtZWQiLCJlbWFpbCI6ImRlbW8uZHJpdmVyNUBnbWFpbC5jb20iLCJyb2xlIjoiT1BFUkFUT1IiLCJpYXQiOjE3ODk2MzI4OTAsImV4cCI6MTc4OTcxOTI5MH0.mpIDeU8BJzHvPihsmxwmRMnzFsv4GtOcrd3X5zB59zE";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIyMDc3NTUzMC0yOWQ1LTQ4YjktYWM4MC03ZWEyYTc0YzYxMzIiLCJuYW1lIjoiSW1yYW4gQWhtZWQiLCJlbWFpbCI6ImRlbW8uZHJpdmVyNUBnbWFpbC5jb20iLCJyb2xlIjoiT1BFUkFUT1IiLCJpYXQiOjE3ODk3ODkwNjQsImV4cCI6MTc4OTg3NTQ2NH0.iYbQobCZgcYxz0mw4RaKV1pm4osH2yqwT_HkFXRpWws";
 
-const socket = io("http://localhost:5000", {
+const socket = io("https://emergency-ambulance-backend.onrender.com", {
   auth: {
     token: ACCESS_TOKEN,
   },

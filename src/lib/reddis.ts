@@ -7,5 +7,6 @@ export const reddisClient = createClient({
   socket: {
     host: config.redis_host,
     port: Number(config.redis_port),
+    tls: true,
   },
 });
