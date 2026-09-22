@@ -402,6 +402,62 @@ const setOperatorPassword = async (
 };
 
 // forget passwod
+// const forgotPassword = async (email: string) => {
+//   const normalizedEmail = email.trim().toLowerCase();
+
+//   const user = await prisma.user.findUnique({
+//     where: {
+//       email: normalizedEmail,
+//     },
+//   });
+
+//   // Don't reveal whether the email exists
+//   if (!user) {
+//     return;
+//   }
+
+//   if (user.isDeleted) {
+//     return;
+//   }
+
+//   if (user.status === UserStatus.BLOCKED) {
+//     return;
+//   }
+
+//   // Generate OTP
+//   const otp = otpUtils.generateOtp();
+
+//   // Redis key
+//   const otpKey = `forgot-password-otp=${normalizedEmail}`;
+
+//   // Store OTP for 5 minutes
+//   await otpUtils.setOtp(otpKey, otp, otpUtils.OTP_EXPIRATION_SECONDS);
+
+//   // Email template
+//   const templatePath = path.join(
+//     process.cwd(),
+//     "src/modules/template/forget-password.ejs",
+//   );
+
+//   const templateData = {
+//     name: user.name,
+//     email: normalizedEmail,
+//     otp,
+//     expiryTime: otpUtils.OTP_EXPIRATION_SECONDS / 60,
+//     appName: "Emergency-Ambulance",
+//   };
+
+//   const html = await ejs.renderFile(templatePath, templateData);
+
+//   await transporter.sendMail({
+//     from: config.smtp_sender,
+//     to: normalizedEmail,
+//     subject: "Reset your Emergency Ambulance password",
+//     html,
+//   });
+// };
+
+// foget pass
 const forgotPassword = async (email: string) => {
   const normalizedEmail = email.trim().toLowerCase();
 
@@ -449,12 +505,16 @@ const forgotPassword = async (email: string) => {
 
   const html = await ejs.renderFile(templatePath, templateData);
 
+  console.log("📧 Sending password reset email...");
+
   await transporter.sendMail({
     from: config.smtp_sender,
     to: normalizedEmail,
     subject: "Reset your Emergency Ambulance password",
     html,
   });
+
+  console.log("✅ Password reset email sent");
 };
 
 // reset pass`
