@@ -1,6 +1,7 @@
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
+import { globalErrorHandler } from "./middleware/globalErrorHandler.js";
 import { adminRouter } from "./modules/admin/admin.route.js";
 import { ambulanceRouter } from "./modules/ambulance/ambulance.route.js";
 import { authRouter } from "./modules/auth/auth.route.js";
@@ -37,5 +38,7 @@ app.use("/api/dispatch-assignments", dispatchAssignmentRouter);
 app.use("/api/trip", tripRoute);
 app.use("/api/payment", paymentRouter);
 app.use("/api/notification", notificationRouter);
+
+app.use(globalErrorHandler);
 
 export default app;

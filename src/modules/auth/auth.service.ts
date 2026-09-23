@@ -5,9 +5,10 @@ import httpsStatus from "http-status";
 import { JwtPayload, SignOptions } from "jsonwebtoken";
 import path from "path";
 import config from "../../config/index.js";
-import { AppError } from "../../error/AppError.js";
+
 import { UserStatus } from "../../generated/prisma/enums.js";
 
+import { AppError } from "../../error/AppError.js";
 import cloudinary from "../../lib/cloudinary.js";
 import { transporter } from "../../lib/nodemailer.js";
 import { prisma } from "../../lib/prisma.js";
@@ -28,18 +29,25 @@ import {
 
 const registerUser = async (payload: IRegisterPayload) => {
   const { name, phone, email, password } = payload;
+
   const isUserExist = await prisma.user.findUnique({
     where: { email },
   });
 
   if (isUserExist) {
-    throw new Error("user already exist, please logged in to your account.");
+    throw new AppError(
+      409,
+      "User already exists, please log in to your account.",
+    );
   }
 
   const hashPassword = await bcrypt.hash(password, 8);
+
   console.log("hash", hashPassword);
+
   const expirationSeconds = 5 * 60;
-  // save temperory in reddis for verify email
+
+  // Save temporary data in Redis for email verification
   const registerDataPayload = {
     name,
     phone,
@@ -48,6 +56,7 @@ const registerUser = async (payload: IRegisterPayload) => {
   };
 
   const otp = crypto.randomInt(100000, 1000000).toString();
+
   const otpkey = `verify-otp-key=${email}`;
   const registerVerifyEmailKey = `verify-user-registration=${email}`;
 
@@ -73,6 +82,7 @@ const registerUser = async (payload: IRegisterPayload) => {
     process.cwd(),
     "src/modules/template/verify-email.ejs",
   );
+
   const templateData = {
     name,
     email,
@@ -80,6 +90,7 @@ const registerUser = async (payload: IRegisterPayload) => {
     expiryTime: expirationSeconds / 60,
     appName: "Emergency-Ambulance",
   };
+
   const html = await ejs.renderFile(templatePath, templateData);
 
   await transporter.sendMail({
@@ -93,12 +104,13 @@ const registerUser = async (payload: IRegisterPayload) => {
 const verifyRegisterPatiend = async (payload: IVerifyEmailPayload) => {
   const email = payload.email.trim().toLowerCase();
   const otp = payload.otp;
+
   const isUserExist = await prisma.user.findUnique({
     where: { email },
   });
 
   if (isUserExist) {
-    throw new Error("User already exit");
+    throw new AppError(409, "User already exists");
   }
 
   const otpkey = `verify-otp-key=${email}`;
@@ -108,18 +120,19 @@ const verifyRegisterPatiend = async (payload: IVerifyEmailPayload) => {
   const registerUserData = await reddisClient.get(registerVerifyEmailKey);
 
   if (!otpValue) {
-    throw new Error("otp invalid");
+    throw new AppError(400, "OTP is invalid or expired");
   }
 
   if (!registerUserData) {
-    throw new Error("user data not exit");
+    throw new AppError(400, "Registration data has expired");
   }
 
   if (otp !== otpValue) {
-    throw new Error("OTP doesn't match. try again.");
+    throw new AppError(400, "OTP doesn't match. Try again.");
   }
 
   const UserPayload: IRegisterPayload = JSON.parse(registerUserData);
+
   const createdUser = await prisma.user.create({
     data: {
       name: UserPayload.name,
@@ -130,6 +143,7 @@ const verifyRegisterPatiend = async (payload: IVerifyEmailPayload) => {
     },
     omit: { passwordHash: true },
   });
+
   await reddisClient.del(otpkey);
   await reddisClient.del(registerVerifyEmailKey);
 
@@ -149,12 +163,11 @@ const verifyRegisterPatiend = async (payload: IVerifyEmailPayload) => {
     from: config.smtp_sender,
     to: email,
     subject: "Welcome To Emergency Amublance System",
-    // text : `Your OTP is ${otp}`
-    // html: `<h1>Your OTP is ${otp}</h1>`
     html,
   });
 
   const { ...user } = createdUser;
+
   const jwtPayload = {
     userId: user.id,
     name: user.name,
@@ -176,7 +189,6 @@ const verifyRegisterPatiend = async (payload: IVerifyEmailPayload) => {
 
   return {
     user,
-
     accessToken,
     refreshToken,
   };
@@ -191,23 +203,25 @@ const loginUser = async (payload: ILoginUserPayload) => {
   });
 
   if (!user) {
-    throw new Error("User not found");
+    throw new AppError(404, "User not found");
   }
 
   if (user.emailVerified === false) {
-    throw new Error("user not verified");
+    throw new AppError(403, "User email is not verified");
   }
+
   if (user.status === UserStatus.BLOCKED) {
-    throw new Error("User is blocked");
+    throw new AppError(403, "User is blocked");
   }
 
   if (user.isDeleted) {
-    throw new Error("User is deleted");
+    throw new AppError(403, "User is deleted");
   }
 
   if (user.passwordHash === null && user.googleId !== null) {
-    throw new Error(
-      "User Already Has Account Registered With Google. Try To Login With Google.",
+    throw new AppError(
+      400,
+      "User already has an account registered with Google. Try to login with Google.",
     );
   }
 
@@ -217,7 +231,7 @@ const loginUser = async (payload: ILoginUserPayload) => {
   );
 
   if (!isPasswordMatched) {
-    throw new Error("Invalid credentials");
+    throw new AppError(401, "Invalid credentials");
   }
 
   const jwtPayload = {
@@ -252,7 +266,8 @@ const refreshToken = async (token: string) => {
   );
 
   if (!verifiedRefreshToken.success || !verifiedRefreshToken.data) {
-    throw new Error(
+    throw new AppError(
+      401,
       config.node_env === "development"
         ? verifiedRefreshToken.error
         : "Invalid refresh token",
@@ -266,7 +281,7 @@ const refreshToken = async (token: string) => {
   });
 
   if (!user || user.isDeleted || user.status !== UserStatus.ACTIVE) {
-    throw new Error("User is inactive or not found");
+    throw new AppError(401, "User is inactive or not found");
   }
 
   const jwtPayload = {
@@ -293,7 +308,6 @@ const refreshToken = async (token: string) => {
     refreshToken,
   };
 };
-
 const getMe = async (user: IRequestUser) => {
   const isUserExists = await prisma.user.findUnique({
     where: {
