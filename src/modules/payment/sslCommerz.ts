@@ -1,4 +1,5 @@
 import config from "../../config/index.js";
+import { AppError } from "../../error/AppError.js";
 
 import {
   ISSLCommerzPaymentRequest,
@@ -79,7 +80,8 @@ const initiatePayment = async (
   console.log("===============================================");
 
   if (!response.ok) {
-    throw new Error(
+    throw new AppError(
+      500,
       `SSLCOMMERZ request failed with HTTP status ${response.status}: ${responseText}`,
     );
   }
@@ -89,7 +91,7 @@ const initiatePayment = async (
   try {
     data = JSON.parse(responseText) as ISSLCommerzPaymentResponse;
   } catch {
-    throw new Error(`Invalid JSON response from SSLCOMMERZ: ${responseText}`);
+    throw new AppError(500, `Invalid JSON response from SSLCOMMERZ: ${responseText}`);
   }
 
   return data;
@@ -131,7 +133,8 @@ const validatePayment = async (
   console.log("============================================");
 
   if (!response.ok) {
-    throw new Error(
+    throw new AppError(
+      500,
       `SSLCOMMERZ validation request failed with HTTP status ${response.status}: ${responseText}`,
     );
   }
@@ -141,7 +144,8 @@ const validatePayment = async (
   try {
     data = JSON.parse(responseText) as ISSLCommerzValidationResponse;
   } catch {
-    throw new Error(
+    throw new AppError(
+      500,
       `Invalid JSON validation response from SSLCOMMERZ: ${responseText}`,
     );
   }

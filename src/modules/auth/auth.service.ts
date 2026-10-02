@@ -322,7 +322,7 @@ const getMe = async (user: IRequestUser) => {
   });
 
   if (!isUserExists) {
-    throw new Error("User not found");
+    throw new AppError(404, "User not found");
   }
 
   return isUserExists;

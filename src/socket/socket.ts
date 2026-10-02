@@ -7,6 +7,7 @@ import { TripStatus, UserRole } from "../generated/prisma/enums.js";
 import { prisma } from "../lib/prisma.js";
 
 import { jwtUtils } from "../utils/jwt.js";
+import { AppError } from "../error/AppError.js";
 
 interface SocketUser {
   email: string;
@@ -30,7 +31,7 @@ let io: Server;
 
 export const getIO = () => {
   if (!io) {
-    throw new Error("Socket.IO has not been initialized.");
+    throw new AppError(500, "Socket.IO has not been initialized.");
   }
 
   return io;

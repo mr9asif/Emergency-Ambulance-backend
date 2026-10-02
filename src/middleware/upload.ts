@@ -1,4 +1,5 @@
 import multer from "multer";
+import { AppError } from "../error/AppError.js";
 
 const storage = multer.memoryStorage();
 
@@ -9,9 +10,10 @@ const fileFilter: multer.Options["fileFilter"] = (_req, file, cb) => {
     cb(null, true);
   } else {
     cb(
-      new Error(
+      new AppError(
+        400,
         "Invalid file type. Only JPEG, PNG, and WEBP images are allowed.",
-      ),
+      ) as any, // Cast to any to satisfy multer callback type signature if needed
     );
   }
 };

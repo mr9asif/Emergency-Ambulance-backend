@@ -1,3 +1,4 @@
+import { AppError } from "../../error/AppError.js";
 import { prisma } from "../../lib/prisma.js";
 import { getIO } from "../../socket/socket.js";
 import type {
@@ -101,7 +102,7 @@ const markAsRead = async (notificationId: string, userId: string) => {
   });
 
   if (!notification) {
-    throw new Error("Notification not found");
+    throw new AppError(404, "Notification not found");
   }
 
   const updatedNotification = await prisma.notification.update({

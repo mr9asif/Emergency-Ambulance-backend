@@ -84,7 +84,7 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
 
 const refreshToken = catchAsync(async (req: Request, res: Response) => {
   if (!req.cookies.refreshToken) {
-    throw new Error("Refresh token is missing");
+    throw new AppError(401, "Refresh token is missing");
   }
   const result = await authService.refreshToken(req.cookies.refreshToken);
   const { accessToken, refreshToken: newRefreshToken } = result;
@@ -117,7 +117,7 @@ const getMe = catchAsync(async (req: Request, res: Response) => {
   const user = req.user as unknown as IRequestUser;
 
   if (!user) {
-    throw new Error("User information is missing in the request");
+    throw new AppError(401, "User information is missing in the request");
   }
 
   const result = await authService.getMe(user);

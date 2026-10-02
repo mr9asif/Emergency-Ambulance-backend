@@ -1,4 +1,5 @@
 import { Readable } from "stream";
+import { AppError } from "../error/AppError.js";
 
 import cloudinary from "../lib/cloudinary.js";
 
@@ -24,7 +25,7 @@ export const uploadToCloudinary = (
         }
 
         if (!result) {
-          reject(new Error("Cloudinary upload failed"));
+          reject(new AppError(500, "Cloudinary upload failed"));
           return;
         }
 

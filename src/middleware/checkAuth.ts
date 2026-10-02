@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import type { JwtPayload } from "jsonwebtoken";
 import config from "../config/index.js";
+import { AppError } from "../error/AppError.js";
 import { UserRole } from "../generated/prisma/enums.js";
 import { prisma } from "../lib/prisma.js";
 import { catchAsync } from "../utils/catchAsync.js";
@@ -32,7 +33,8 @@ export const auth = (...requiredRoles: UserRole[]) => {
         : req.headers.authorization;
 
     if (!token) {
-      throw new Error(
+      throw new AppError(
+        401,
         "You are not logged in. Please log in to access this resource.",
       );
     }
@@ -40,13 +42,14 @@ export const auth = (...requiredRoles: UserRole[]) => {
     const verifiedToken = jwtUtils.verifyToken(token, config.jwt_access_secret);
 
     if (!verifiedToken.success) {
-      throw new Error(verifiedToken.error);
+      throw new AppError(401, verifiedToken.error as string);
     }
 
     const { email, name, userId, role } = verifiedToken.data as JwtPayload;
 
     if (requiredRoles.length && !requiredRoles.includes(role)) {
-      throw new Error(
+      throw new AppError(
+        403,
         "Forbidden. You don't have permission to access this resource.",
       );
     }
@@ -61,11 +64,11 @@ export const auth = (...requiredRoles: UserRole[]) => {
     });
 
     if (!user) {
-      throw new Error("User not found. Please log in again.");
+      throw new AppError(401, "User not found. Please log in again.");
     }
 
     if (user.status === "BLOCKED") {
-      throw new Error("Your account has been blocked. Please contact support.");
+      throw new AppError(403, "Your account has been blocked. Please contact support.");
     }
 
     req.user = {
