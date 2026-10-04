@@ -26,6 +26,8 @@ declare global {
 // auth() => ...requiredRoles => [Role.ADMIN, Role.USER, Role.AUTHOR]
 export const auth = (...requiredRoles: UserRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    console.log("COOKIES:", req.cookies);
+    console.log("ACCESS TOKEN:", req.cookies?.accessToken);
     const token = req.cookies.accessToken
       ? req.cookies.accessToken
       : req.headers.authorization?.startsWith("Bearer ")
@@ -68,7 +70,10 @@ export const auth = (...requiredRoles: UserRole[]) => {
     }
 
     if (user.status === "BLOCKED") {
-      throw new AppError(403, "Your account has been blocked. Please contact support.");
+      throw new AppError(
+        403,
+        "Your account has been blocked. Please contact support.",
+      );
     }
 
     req.user = {

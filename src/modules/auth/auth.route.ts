@@ -44,7 +44,7 @@ router.post(
 router.post("/refresh-token", authController.refreshToken);
 router.get(
   "/me",
-  auth(UserRole.ADMIN, UserRole.ADMIN, UserRole.OPERATOR, UserRole.CUSTOMER),
+  auth(UserRole.ADMIN, UserRole.OPERATOR, UserRole.CUSTOMER),
   // validateRequest
   authController.getMe,
 );
