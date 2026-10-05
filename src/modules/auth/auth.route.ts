@@ -55,11 +55,17 @@ router.patch(
   upload.single("profileImage"),
   authController.uploadProfileImage,
 );
-
+router.patch(
+  "/profile-name",
+  auth(UserRole.ADMIN, UserRole.OPERATOR, UserRole.CUSTOMER),
+  authController.updateName,
+);
 router.post(
   "/set-password",
   validateRequest(authValidation.setOperatorPasswordSchema),
   authController.setOperatorPassword,
 );
+
+router.post("/logout", authController.logout);
 
 export const authRouter = router;

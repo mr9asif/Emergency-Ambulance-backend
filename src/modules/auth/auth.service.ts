@@ -834,6 +834,70 @@ const googleLogin = async (payload: IGoogleLoginPayload) => {
   };
 };
 
+// logout
+const logout = async () => {
+  return {
+    message: "Logout successful",
+  };
+};
+
+const updateName = async (userId: string, name: string) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+  });
+
+  if (!user) {
+    throw new AppError(httpsStatus.NOT_FOUND, "User not found");
+  }
+
+  if (user.isDeleted) {
+    throw new AppError(
+      httpsStatus.BAD_REQUEST,
+      "This account is no longer available",
+    );
+  }
+
+  if (user.status === UserStatus.BLOCKED) {
+    throw new AppError(httpsStatus.FORBIDDEN, "Your account is blocked");
+  }
+
+  const trimmedName = name.trim();
+
+  if (!trimmedName) {
+    throw new AppError(httpsStatus.BAD_REQUEST, "Name cannot be empty");
+  }
+
+  if (trimmedName.length < 2) {
+    throw new AppError(
+      httpsStatus.BAD_REQUEST,
+      "Name must be at least 2 characters long",
+    );
+  }
+
+  if (trimmedName.length > 100) {
+    throw new AppError(
+      httpsStatus.BAD_REQUEST,
+      "Name cannot exceed 100 characters",
+    );
+  }
+
+  const updatedUser = await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      name: trimmedName,
+    },
+    omit: {
+      passwordHash: true,
+    },
+  });
+
+  return updatedUser;
+};
+
 export const authService = {
   registerUser,
   verifyRegisterPatiend,
@@ -845,4 +909,6 @@ export const authService = {
   resetPassword,
   uploadProfileImage,
   googleLogin,
+  logout,
+  updateName,
 };

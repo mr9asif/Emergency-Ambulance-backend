@@ -214,6 +214,35 @@ const googleLogin = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const logout = catchAsync(async (req, res) => {
+  const result = await authService.logout();
+
+  res.clearCookie("accessToken");
+  res.clearCookie("refreshToken");
+
+  sendResponse(res, {
+    statusCode: httpsStatus.OK,
+    success: true,
+    message: result.message,
+    data: null,
+  });
+});
+
+const updateName = catchAsync(async (req, res) => {
+  const userId = req.user!.userId;
+
+  const { name } = req.body;
+
+  const result = await authService.updateName(userId, name);
+
+  sendResponse(res, {
+    statusCode: httpsStatus.OK,
+    success: true,
+    message: "Name updated successfully",
+    data: result,
+  });
+});
+
 export const authController = {
   registerUser,
   verifyUserEmail,
@@ -225,4 +254,6 @@ export const authController = {
   resetPassword,
   uploadProfileImage,
   googleLogin,
+  logout,
+  updateName,
 };
