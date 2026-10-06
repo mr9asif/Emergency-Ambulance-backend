@@ -113,6 +113,23 @@ const assignEmergencyRequest = catchAsync(
   },
 );
 
+const getMyPendingEmergencyRequests = catchAsync(
+  async (req: Request, res: Response) => {
+    const userId = req.user?.userId;
+
+    const result = await emergencyRequestService.getMyPendingEmergencyRequests(
+      userId as string,
+    );
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Your pending emergency requests retrieved successfully",
+      data: result,
+    });
+  },
+);
+
 export const emergencyRequestController = {
   createEmergencyRequest,
   getPendingEmergencyRequests,
@@ -120,4 +137,5 @@ export const emergencyRequestController = {
   getAvailableAmbulances,
   getNearbyHospitals,
   assignEmergencyRequest,
+  getMyPendingEmergencyRequests,
 };

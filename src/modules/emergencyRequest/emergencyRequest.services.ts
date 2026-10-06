@@ -479,6 +479,36 @@ const assignEmergencyRequest = async (
   return assignment;
 };
 
+const getMyPendingEmergencyRequests = async (userId: string) => {
+  const emergencyRequests = await prisma.emergencyRequest.findMany({
+    where: {
+      status: "PENDING",
+
+      customer: {
+        id: userId,
+      },
+    },
+
+    include: {
+      patient: true,
+
+      customer: {
+        select: {
+          id: true,
+          name: true,
+          phone: true,
+          email: true,
+        },
+      },
+    },
+
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return emergencyRequests;
+};
 export const emergencyRequestService = {
   createEmergencyRequest,
   getPendingEmergencyRequests,
@@ -487,4 +517,5 @@ export const emergencyRequestService = {
 
   getNearbyHospitals,
   assignEmergencyRequest,
+  getMyPendingEmergencyRequests,
 };

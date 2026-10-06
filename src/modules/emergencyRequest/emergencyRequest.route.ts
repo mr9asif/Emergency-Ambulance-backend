@@ -24,6 +24,11 @@ router.post(
 
   emergencyRequestController.createEmergencyRequest,
 );
+router.get(
+  "/my-pending",
+  auth(UserRole.CUSTOMER),
+  emergencyRequestController.getMyPendingEmergencyRequests,
+);
 
 router.get(
   "/pending",
