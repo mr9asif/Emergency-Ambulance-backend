@@ -24,6 +24,7 @@ router.post(
 
   emergencyRequestController.createEmergencyRequest,
 );
+
 router.get(
   "/my-pending",
   auth(UserRole.CUSTOMER),
@@ -35,6 +36,7 @@ router.get(
   auth(UserRole.OPERATOR),
   emergencyRequestController.getPendingEmergencyRequests,
 );
+
 router.patch(
   "/:emergencyRequestId/cancel",
   auth(UserRole.CUSTOMER),
