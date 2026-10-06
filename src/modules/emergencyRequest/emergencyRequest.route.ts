@@ -35,6 +35,11 @@ router.get(
   auth(UserRole.OPERATOR),
   emergencyRequestController.getPendingEmergencyRequests,
 );
+router.patch(
+  "/:emergencyRequestId/cancel",
+  auth(UserRole.CUSTOMER),
+  emergencyRequestController.cancelEmergencyRequest,
+);
 
 router.get(
   "/available-drivers",

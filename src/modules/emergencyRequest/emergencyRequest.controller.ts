@@ -130,6 +130,24 @@ const getMyPendingEmergencyRequests = catchAsync(
   },
 );
 
+const cancelEmergencyRequest = catchAsync(
+  async (req: Request, res: Response) => {
+    const userId = req.user?.userId;
+    const { emergencyRequestId } = req.params;
+
+    const result = await emergencyRequestService.cancelEmergencyRequest(
+      userId as string,
+      emergencyRequestId as string,
+    );
+
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Emergency request cancelled successfully",
+      data: result,
+    });
+  },
+);
 export const emergencyRequestController = {
   createEmergencyRequest,
   getPendingEmergencyRequests,
@@ -138,4 +156,5 @@ export const emergencyRequestController = {
   getNearbyHospitals,
   assignEmergencyRequest,
   getMyPendingEmergencyRequests,
+  cancelEmergencyRequest,
 };

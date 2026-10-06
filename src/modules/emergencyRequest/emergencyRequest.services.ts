@@ -509,6 +509,52 @@ const getMyPendingEmergencyRequests = async (userId: string) => {
 
   return emergencyRequests;
 };
+
+const cancelEmergencyRequest = async (
+  userId: string,
+  emergencyRequestId: string,
+) => {
+  // 1. Find the emergency request
+  const emergencyRequest = await prisma.emergencyRequest.findUnique({
+    where: {
+      id: emergencyRequestId,
+    },
+  });
+
+  // 2. Check if request exists
+  if (!emergencyRequest) {
+    throw new AppError(httpStatus.NOT_FOUND, "Emergency request not found");
+  }
+
+  // 3. Make sure this request belongs to the logged-in customer
+  if (emergencyRequest.customerId !== userId) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "You are not allowed to cancel this emergency request",
+    );
+  }
+
+  // 4. Only PENDING requests can be cancelled
+  if (emergencyRequest.status !== "PENDING") {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Only pending emergency requests can be cancelled",
+    );
+  }
+
+  // 5. Change status to CANCELLED
+  const cancelledRequest = await prisma.emergencyRequest.update({
+    where: {
+      id: emergencyRequestId,
+    },
+
+    data: {
+      status: "CANCELLED",
+    },
+  });
+
+  return cancelledRequest;
+};
 export const emergencyRequestService = {
   createEmergencyRequest,
   getPendingEmergencyRequests,
@@ -518,4 +564,5 @@ export const emergencyRequestService = {
   getNearbyHospitals,
   assignEmergencyRequest,
   getMyPendingEmergencyRequests,
+  cancelEmergencyRequest,
 };
